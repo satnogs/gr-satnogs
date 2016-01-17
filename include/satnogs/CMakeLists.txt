@@ -22,5 +22,5 @@
 ########################################################################
 install(FILES
     api.h
-    DESTINATION include/satnogs
+    cw_matched_filter_ff.h DESTINATION include/satnogs
 )

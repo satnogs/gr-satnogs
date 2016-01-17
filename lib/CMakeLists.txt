@@ -24,9 +24,8 @@ include(GrPlatform) #define LIB_SUFFIX
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
-
 list(APPEND satnogs_sources
-)
+    cw_matched_filter_ff_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)
@@ -58,21 +57,21 @@ install(TARGETS gnuradio-satnogs
 ########################################################################
 include(GrTest)
 
-include_directories(${CPPUNIT_INCLUDE_DIRS})
+#include_directories(${CPPUNIT_INCLUDE_DIRS})
 
-list(APPEND test_satnogs_sources
-    ${CMAKE_CURRENT_SOURCE_DIR}/test_satnogs.cc
-    ${CMAKE_CURRENT_SOURCE_DIR}/qa_satnogs.cc
-)
+#list(APPEND test_satnogs_sources
+#    ${CMAKE_CURRENT_SOURCE_DIR}/test_satnogs.cc
+#    ${CMAKE_CURRENT_SOURCE_DIR}/qa_satnogs.cc
+#)
 
-add_executable(test-satnogs ${test_satnogs_sources})
+#add_executable(test-satnogs ${test_satnogs_sources})
 
-target_link_libraries(
-  test-satnogs
-  ${GNURADIO_RUNTIME_LIBRARIES}
-  ${Boost_LIBRARIES}
-  ${CPPUNIT_LIBRARIES}
-  gnuradio-satnogs
-)
+#target_link_libraries(
+#  test-satnogs
+#  ${GNURADIO_RUNTIME_LIBRARIES}
+#  ${Boost_LIBRARIES}
+#  ${CPPUNIT_LIBRARIES}
+#  gnuradio-satnogs
+#)
 
-GR_ADD_TEST(test_satnogs test-satnogs)
+#GR_ADD_TEST(test_satnogs test-satnogs)

@@ -8,6 +8,8 @@
 %include "satnogs_swig_doc.i"
 
 %{
+#include "satnogs/cw_matched_filter_ff.h"
 %}
 
-
+%include "satnogs/cw_matched_filter_ff.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, cw_matched_filter_ff);
