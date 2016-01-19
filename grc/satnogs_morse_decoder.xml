@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<block>
+  <name>morse_decoder</name>
+  <key>satnogs_morse_decoder</key>
+  <category>satnogs</category>
+  <import>import satnogs</import>
+  <make>satnogs.morse_decoder()</make>
+  <sink>
+    <name>in</name>
+    <type>message</type>
+  </sink>
+</block>

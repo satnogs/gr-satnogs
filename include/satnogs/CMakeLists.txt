@@ -22,5 +22,7 @@
 ########################################################################
 install(FILES
     api.h
-    cw_matched_filter_ff.h DESTINATION include/satnogs
+    cw_matched_filter_ff.h
+    morse_decoder.h
+    morse_tree.h DESTINATION include/satnogs
 )
