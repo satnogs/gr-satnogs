@@ -18,36 +18,30 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_MORSE_DECODER_H
-#define INCLUDED_SATNOGS_MORSE_DECODER_H
+#ifndef INCLUDED_SATNOGS_MORSE_DECODER_IMPL_H
+#define INCLUDED_SATNOGS_MORSE_DECODER_IMPL_H
 
-#include <satnogs/api.h>
-#include <gnuradio/block.h>
+#include <satnogs/morse_decoder.h>
+#include <satnogs/morse_tree.h>
 
 namespace gr {
   namespace satnogs {
-    /*!
-     * \brief Morse code decoder block.
-     *
-     * This block received messages from the previous blocks
-     * and try to decode the dot and dashes into clear text.
-     */
-    class SATNOGS_API morse_decoder : virtual public gr::block
-    {
-     public:
-      typedef boost::shared_ptr<morse_decoder> sptr;
 
-      /*!
-       * Creates a Morse decoder block
-       * @param unrecognized_char the character that will be placed
-       * in situations where the decoder can not decide which character
-       * was received.
-       */
-      static sptr make(char unrecognized_char = '#');
+    class morse_decoder_impl : public morse_decoder
+    {
+     private:
+      morse_tree d_morse_tree;
+
+      void
+      symbol_msg_handler(pmt::pmt_t msg);
+
+     public:
+      morse_decoder_impl(char unrecognized_char);
+
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_MORSE_DECODER_H */
+#endif /* INCLUDED_SATNOGS_MORSE_DECODER_IMPL_H */
 

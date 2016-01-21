@@ -18,25 +18,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
+#ifndef INCLUDE_SATNOGS_MORSE_H_
+#define INCLUDE_SATNOGS_MORSE_H_
 
-#include <gnuradio/io_signature.h>
-#include <satnogs/morse_decoder.h>
+/**
+ * The different Morse symbols
+ */
+typedef enum {
+  MORSE_DOT = 0,//!< MORSE_DOT Morse dot (.) symbol
+  MORSE_DASH,   //!< MORSE_DASH Morse dash (-) symbol
+  MORSE_S_SPACE,//!< MORSE_S_SPACE Morse short space between characters
+  MORSE_L_SPACE //!< MORSE_L_SPACE Morse long space between words
+} morse_symbol_t;
 
-namespace gr {
-  namespace satnogs {
 
-    morse_decoder::morse_decoder() :
-	d_morse_tree()
-    {
-    }
 
-    morse_decoder::~morse_decoder()
-    {
-    }
-
-  } /* namespace satnogs */
-} /* namespace gr */
-
+#endif /* INCLUDE_SATNOGS_MORSE_H_ */

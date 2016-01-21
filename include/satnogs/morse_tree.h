@@ -22,9 +22,14 @@
 #define INCLUDED_SATNOGS_MORSE_TREE_H
 
 #include <satnogs/api.h>
+#include <memory>
+#include <string>
+#include <satnogs/morse.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
     /*!
      * \brief Binary tree node containing the corresponding character
@@ -46,16 +51,19 @@ namespace gr {
       set_right_child (tree_node *child);
 
       tree_node*
-      get_left_child();
+      get_left_child ();
 
       tree_node*
-      get_right_child();
+      get_right_child ();
+
+      char
+      get_char ();
     };
 
     /*!
      * \brief A Binary tree representation of the Morse coding scheme.
      * Left transitions occur when a dot is received, whereas right transitions
-     * are perfromed during the reception of a dash.
+     * are performed during the reception of a dash.
      *
      * The tree follows the ITU International Morse code representation
      * ITU-R M.1677-1
@@ -63,16 +71,28 @@ namespace gr {
     class SATNOGS_API morse_tree
     {
     public:
-      morse_tree();
-      ~morse_tree();
+      morse_tree ();
+      morse_tree (char unrecognized);
+      ~morse_tree ();
+      void
+      reset ();
+      bool
+      received_symbol (morse_symbol_t s);
+      std::string
+      get_word ();
 
-      void reset();
     private:
+      const char d_unrecognized_symbol;
       tree_node *d_root;
       tree_node *d_current;
+      const size_t d_buff_len;
+      size_t d_word_len;
+      std::unique_ptr<char[]> d_word_buffer;
 
-      void construct_tree();
-      void delete_tree(tree_node *node);
+      void
+      construct_tree ();
+      void
+      delete_tree (tree_node *node);
     };
 
   } // namespace satnogs

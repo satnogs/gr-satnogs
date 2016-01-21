@@ -9,11 +9,12 @@
 
 %{
 #include "satnogs/cw_matched_filter_ff.h"
-#include "satnogs/morse_decoder.h"
 #include "satnogs/morse_tree.h"
+#include "satnogs/morse_decoder.h"
 %}
 
 %include "satnogs/cw_matched_filter_ff.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, cw_matched_filter_ff);
-%include "satnogs/morse_decoder.h"
 %include "satnogs/morse_tree.h"
+%include "satnogs/morse_decoder.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, morse_decoder);

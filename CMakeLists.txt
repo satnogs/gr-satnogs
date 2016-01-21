@@ -20,9 +20,12 @@
 ########################################################################
 # Project setup
 ########################################################################
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 project(gr-satnogs CXX C)
 enable_testing()
+
+# Enable C++11 support
+set (CMAKE_CXX_STANDARD 11)
 
 #select the release build type by default to get optimization flags
 if(NOT CMAKE_BUILD_TYPE)
