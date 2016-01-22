@@ -34,7 +34,7 @@ namespace gr
     /*!
      * \brief Binary tree node containing the corresponding character
      */
-    class tree_node
+    class SATNOGS_API tree_node
     {
     private:
       const char d_char;

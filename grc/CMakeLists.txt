@@ -18,5 +18,6 @@
 # Boston, MA 02110-1301, USA.
 install(FILES
     satnogs_cw_matched_filter_ff.xml
-    satnogs_morse_decoder.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_morse_decoder.xml
+    satnogs_morse_debug_source.xml DESTINATION share/gnuradio/grc/blocks
 )

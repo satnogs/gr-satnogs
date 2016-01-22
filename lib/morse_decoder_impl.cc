@@ -24,7 +24,7 @@
 
 #include <gnuradio/io_signature.h>
 #include "morse_decoder_impl.h"
-
+#include <satnogs/log.h>
 namespace gr
 {
   namespace satnogs
@@ -43,7 +43,22 @@ namespace gr
       morse_symbol_t s;
       s = (morse_symbol_t) pmt::to_long (msg);
 
-      //TODO Continue the logic based on s
+      switch(s) {
+	case MORSE_DOT:
+	  LOG_DEBUG("Dot received");
+	  break;
+	case MORSE_DASH:
+	  LOG_DEBUG("Dash received");
+	  break;
+	case MORSE_S_SPACE:
+	  LOG_DEBUG("Short space received");
+	  break;
+	case MORSE_L_SPACE:
+	  LOG_DEBUG("Long space received");
+	  break;
+	default:
+	  LOG_ERROR("Unknown Morse symbol");
+      }
     }
 
     /*

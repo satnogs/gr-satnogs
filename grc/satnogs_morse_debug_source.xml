@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<block>
+  <name>Morse code Debug Source</name>
+  <key>satnogs_morse_debug_source</key>
+  <category>satnogs</category>
+  <import>import satnogs</import>
+  <make>satnogs.morse_debug_source($debug_seq)</make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+  <param>
+    <name>Sentence</name>
+    <key>debug_seq</key>
+    <value>"HELLO WORLD"</value>
+    <type>string</type>
+  </param>
+
+  <source>
+    <name>out</name>
+    <type>message</type>
+  </source>
+</block>

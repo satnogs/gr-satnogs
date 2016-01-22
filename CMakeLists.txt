@@ -26,6 +26,7 @@ enable_testing()
 
 # Enable C++11 support
 set (CMAKE_CXX_STANDARD 11)
+add_definitions(-std=c++11)
 
 #select the release build type by default to get optimization flags
 if(NOT CMAKE_BUILD_TYPE)
@@ -102,6 +103,11 @@ if(APPLE)
             BOOL "Do Build Using Library Install RPath" FORCE)
     endif(NOT CMAKE_BUILD_WITH_INSTALL_RPATH)
 endif(APPLE)
+
+########################################################################
+# Find gnuradio build dependencies
+########################################################################
+find_package (Threads REQUIRED)
 
 ########################################################################
 # Find gnuradio build dependencies

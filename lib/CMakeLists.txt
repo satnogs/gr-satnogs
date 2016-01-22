@@ -27,7 +27,8 @@ link_directories(${Boost_LIBRARY_DIRS})
 list(APPEND satnogs_sources
     cw_matched_filter_ff_impl.cc
     morse_tree.cc
-    morse_decoder_impl.cc )
+    morse_decoder_impl.cc
+    morse_debug_source_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)
@@ -36,7 +37,11 @@ if(NOT satnogs_sources)
 endif(NOT satnogs_sources)
 
 add_library(gnuradio-satnogs SHARED ${satnogs_sources})
-target_link_libraries(gnuradio-satnogs ${Boost_LIBRARIES} ${GNURADIO_ALL_LIBRARIES})
+target_link_libraries(gnuradio-satnogs 
+    ${Boost_LIBRARIES} 
+    ${GNURADIO_ALL_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT})
+    
 set_target_properties(gnuradio-satnogs PROPERTIES DEFINE_SYMBOL "gnuradio_satnogs_EXPORTS")
 
 if(APPLE)
