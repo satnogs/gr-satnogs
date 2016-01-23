@@ -84,7 +84,7 @@ namespace gr {
       size_t len = sentence.length();
       pmt::pmt_t port = pmt::mp("out");
 
-      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
       while(d_run) {
 	/* Not the best approach, but hey, this is only for debug */
 	for(i = 0; i < len; i++){
@@ -103,12 +103,15 @@ namespace gr {
 	      else{
 		message_port_pub(port, pmt::from_long(MORSE_DASH));
 	      }
-	      /* Send also a character delimiter after waiting a little */
-	      std::this_thread::sleep_for(std::chrono::milliseconds(400));
-	      message_port_pub(port, pmt::from_long(MORSE_S_SPACE));
+	      std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	    }
+
+	    /* Send also a character delimiter after waiting a little */
+	    std::this_thread::sleep_for(std::chrono::milliseconds(200));
+	    message_port_pub(port, pmt::from_long(MORSE_S_SPACE));
 	  }
 	}
+	message_port_pub(port, pmt::from_long(MORSE_L_SPACE));
 	std::this_thread::sleep_for(std::chrono::milliseconds(1000));
       }
     }

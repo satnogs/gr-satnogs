@@ -80,6 +80,10 @@ namespace gr
       received_symbol (morse_symbol_t s);
       std::string
       get_word ();
+      size_t
+      get_max_word_len () const;
+      size_t
+      get_word_len ();
 
     private:
       const char d_unrecognized_symbol;

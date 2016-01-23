@@ -40,24 +40,45 @@ namespace gr
     void
     morse_decoder_impl::symbol_msg_handler (pmt::pmt_t msg)
     {
+      bool res;
+      std::string str;
       morse_symbol_t s;
       s = (morse_symbol_t) pmt::to_long (msg);
 
       switch(s) {
 	case MORSE_DOT:
-	  LOG_DEBUG("Dot received");
-	  break;
 	case MORSE_DASH:
-	  LOG_DEBUG("Dash received");
-	  break;
 	case MORSE_S_SPACE:
-	  LOG_DEBUG("Short space received");
+	  LOG_DEBUG("Received %d", s);
+	  res = d_morse_tree.received_symbol(s);
 	  break;
+	/*
+	 * If a word separator occurs it is a good time to retrieve the decoded
+	 * word
+	 */
 	case MORSE_L_SPACE:
-	  LOG_DEBUG("Long space received");
+	  str = d_morse_tree.get_word();
+	  d_morse_tree.reset();
+	  std::cout << "Received word: " << str << std::endl;
 	  break;
 	default:
 	  LOG_ERROR("Unknown Morse symbol");
+	  return;
+      }
+
+      /*
+       * If the decoding return false, it means that either an non decode-able
+       * character situation occurred or the maximum word limit reached
+       */
+      if (!s) {
+	if(d_morse_tree.get_max_word_len() == d_morse_tree.get_word_len()){
+	  str = d_morse_tree.get_word();
+	  d_morse_tree.reset();
+	  std::cout << "Received word: " << str << std::endl;
+	}
+      }
+      else{
+	LOG_DEBUG("Something went wrong");
       }
     }
 

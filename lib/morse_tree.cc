@@ -41,7 +41,7 @@ namespace gr
 	d_current (d_root),
 	d_buff_len(4096),
 	d_word_len(0),
-	d_word_buffer(new char(d_buff_len))
+	d_word_buffer(new char[d_buff_len])
     {
       construct_tree ();
     }
@@ -57,7 +57,7 @@ namespace gr
 	d_current (d_root),
 	d_buff_len(4096),
 	d_word_len(0),
-	d_word_buffer(new char(d_buff_len))
+	d_word_buffer(new char[d_buff_len])
     {
       construct_tree ();
     }
@@ -197,6 +197,7 @@ namespace gr
     morse_tree::received_symbol (morse_symbol_t s)
     {
       char c = 0;
+      bool ret = false;
       /* Check for overflow */
       if (d_word_len == d_buff_len) {
 	return false;
@@ -206,48 +207,51 @@ namespace gr
 	case MORSE_DOT:
 	  if (d_current->get_left_child ()) {
 	    d_current = d_current->get_left_child ();
-	    c = d_current->get_char ();
-	  }
-	  /*
-	   * There is no left child. Something went wrong. Let the caller decide
-	   */
-	  else {
-	    return false;
+	    ret = true;
 	  }
 	  break;
 	case MORSE_DASH:
 	  if (d_current->get_right_child ()) {
 	    d_current = d_current->get_right_child ();
-	    c = d_current->get_char ();
+	    ret = true;
 	  }
+	  break;
+	case MORSE_S_SPACE:
+	  c = d_current->get_char ();
+	  d_current = d_root;
 	  /*
-	   * There is no right child. Something went wrong.
-	   * Let the caller decide
+	   * Some nodes are null transitions and do not correspond to
+	   * a specific character
 	   */
-	  else {
-	    return false;
+	  if (c != 0) {
+	    d_word_buffer[d_word_len] = c;
+	    d_word_len++;
+	    ret = true;
 	  }
 	  break;
 	default:
 	  LOG_ERROR("Unsupported Morse symbol");
 	  return false;
 	}
-
-      /*
-       * Some nodes are null transitions and do not correspond to
-       * a specific character
-       */
-      if (c != 0) {
-	d_word_buffer[d_word_len] = c;
-	d_word_len++;
-      }
-      return true;
+      return ret;
     }
 
     std::string
     morse_tree::get_word ()
     {
-      return std::string(d_word_buffer.get(), d_buff_len);
+      return std::string(d_word_buffer.get(), d_word_len);
+    }
+
+    size_t
+    morse_tree::get_max_word_len () const
+    {
+      return d_buff_len;
+    }
+
+    size_t
+    morse_tree::get_word_len ()
+    {
+      return d_word_len;
     }
 
     void
