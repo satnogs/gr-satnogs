@@ -28,7 +28,9 @@ namespace gr {
   namespace satnogs {
 
     /*!
-     * \brief A Morse debug source block
+     * \brief A Morse debug source block that supports injection of random
+     * errors based on a Bernulli distribution with probability p.
+     *
      * \ingroup satnogs
      *
      */
@@ -40,10 +42,16 @@ namespace gr {
       /*!
        * \brief A Morse debug source block that produces messages corresponding
        * to Morse symbols, based on the given debug_seq string.
+       * This block can also inject random errors, based on a Bernoulli
+       * distribution.
        *
        * @param debug_seq A string containing the debug sentence
+       * @param inject_errors if set the debug source block will produce
+       * errors that follow a Bernoulli distribution
+       * @param error_prob the probability p of error for the Bernulli distribution
        */
-      static sptr make(const std::string& debug_seq);
+      static sptr make(const std::string& debug_seq, bool inject_errors = false,
+		       float error_prob = 0.1);
     };
 
   } // namespace satnogs

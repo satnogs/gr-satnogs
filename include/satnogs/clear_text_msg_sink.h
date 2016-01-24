@@ -18,38 +18,42 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
-#define INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
+#ifndef INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H
+#define INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H
 
-#include <satnogs/morse_debug_source.h>
-#include <thread>
-#include <algorithm>
-#include <vector>
+#include <satnogs/api.h>
+#include <gnuradio/block.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
-    class morse_debug_source_impl : public morse_debug_source
+    /*!
+     * \brief Block accepting clear text messages from various decoders.
+     * Its purpose is to forward these messages at other services, programs,
+     * stdout, etc,
+     *
+     * \ingroup satnogs
+     *
+     */
+    class SATNOGS_API clear_text_msg_sink : virtual public gr::block
     {
-     private:
-      const bool d_inject_errors;
-      const float d_p;
-      bool d_run;
-      const char d_chars[36];
-      const std::vector<std::string> d_symbols;
-      std::thread d_thread;
+    public:
+      typedef boost::shared_ptr<clear_text_msg_sink> sptr;
 
-      void
-      send_debug_msg(std::string sentence);
-
-     public:
-      morse_debug_source_impl(std::string debug_seq, bool inject_errors,
-			      float error_prob);
-      ~morse_debug_source_impl();
+      /*!
+       * \brief Block accepting clear text messages from various decoders.
+       * Its purpose is to forward these messages at other services, programs,
+       * stdout, etc,
+       *
+       */
+      static sptr
+      make ();
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H */
+#endif /* INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H */
 

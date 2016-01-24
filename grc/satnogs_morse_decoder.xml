@@ -1,21 +1,26 @@
 <?xml version="1.0"?>
 <block>
-  <name>Morse Decoder</name>
-  <key>satnogs_morse_decoder</key>
-  <category>satnogs</category>
-  <import>import satnogs</import>
-  <make>satnogs.morse_decoder($unrecognized_char)</make>
+	<name>Morse Decoder</name>
+	<key>satnogs_morse_decoder</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.morse_decoder($unrecognized_char)</make>
 
-  <param>
-    <name>Unrecognized character</name>
-    <key>unrecognized_char</key>
-    <value>ord('#')</value>
-    <type>int</type>
-  </param>
+	<param>
+		<name>Unrecognized character</name>
+		<key>unrecognized_char</key>
+		<value>ord('#')</value>
+		<type>int</type>
+	</param>
 
 
-  <sink>
-    <name>in</name>
-    <type>message</type>
-  </sink>
+	<sink>
+		<name>in</name>
+		<type>message</type>
+	</sink>
+	
+	<source>
+		<name>out</name>
+		<type>message</type>
+	</source>
 </block>

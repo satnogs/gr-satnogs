@@ -1,24 +1,41 @@
 <?xml version="1.0"?>
 <block>
-  <name>Morse code Debug Source</name>
-  <key>satnogs_morse_debug_source</key>
-  <category>satnogs</category>
-  <import>import satnogs</import>
-  <make>satnogs.morse_debug_source($debug_seq)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
-  <param>
-    <name>Sentence</name>
-    <key>debug_seq</key>
-    <value>"HELLO WORLD"</value>
-    <type>string</type>
-  </param>
+	<name>Morse code Debug Source</name>
+	<key>satnogs_morse_debug_source</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.morse_debug_source($debug_seq, $errors, $p)</make>
 
-  <source>
-    <name>out</name>
-    <type>message</type>
-  </source>
+	<param>
+		<name>Sentence</name>
+		<key>debug_seq</key>
+		<value>"HELLO WORLD"</value>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Inject Errors</name>
+		<key>errors</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Error probability</name>
+		<key>p</key>
+		<value>0.1</value>
+		<type>real</type>
+	</param>
+
+	<source>
+		<name>out</name>
+		<type>message</type>
+	</source>
 </block>

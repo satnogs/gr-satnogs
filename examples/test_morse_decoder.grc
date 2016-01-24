@@ -109,7 +109,7 @@
     </param>
   </block>
   <block>
-    <key>satnogs_morse_debug_source</key>
+    <key>satnogs_clear_text_msg_sink</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -128,6 +128,41 @@
     </param>
     <param>
       <key>_coordinate</key>
+      <value>(944, 184)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_clear_text_msg_sink_0</value>
+    </param>
+  </block>
+  <block>
+    <key>satnogs_morse_debug_source</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>p</key>
+      <value>0.1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
       <value>(240, 196)</value>
     </param>
     <param>
@@ -139,6 +174,10 @@
       <value>satnogs_morse_debug_source_0</value>
     </param>
     <param>
+      <key>errors</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>maxoutbuf</key>
       <value>0</value>
     </param>
@@ -148,7 +187,7 @@
     </param>
     <param>
       <key>debug_seq</key>
-      <value>"HELLO EARTH WORLD"</value>
+      <value>"HELLO EARTH WORLD 123456789"</value>
     </param>
   </block>
   <block>
@@ -171,7 +210,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(752, 276)</value>
+      <value>(672, 180)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -182,6 +221,14 @@
       <value>satnogs_morse_decoder_0</value>
     </param>
     <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>unrecognized_char</key>
       <value>ord('#')</value>
     </param>
@@ -189,6 +236,12 @@
   <connection>
     <source_block_id>satnogs_morse_debug_source_0</source_block_id>
     <sink_block_id>satnogs_morse_decoder_0</sink_block_id>
+    <source_key>out</source_key>
+    <sink_key>in</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_morse_decoder_0</source_block_id>
+    <sink_block_id>satnogs_clear_text_msg_sink_0</sink_block_id>
     <source_key>out</source_key>
     <sink_key>in</sink_key>
   </connection>

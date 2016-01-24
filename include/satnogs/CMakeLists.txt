@@ -28,5 +28,6 @@ install(FILES
     morse_tree.h
     morse.h
     morse_decoder.h
-    morse_debug_source.h DESTINATION include/satnogs
+    morse_debug_source.h
+    clear_text_msg_sink.h DESTINATION include/satnogs
 )

@@ -18,38 +18,29 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
-#define INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
+#ifndef INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H
+#define INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H
 
-#include <satnogs/morse_debug_source.h>
-#include <thread>
-#include <algorithm>
-#include <vector>
+#include <satnogs/clear_text_msg_sink.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
-    class morse_debug_source_impl : public morse_debug_source
+    class clear_text_msg_sink_impl : public clear_text_msg_sink
     {
-     private:
-      const bool d_inject_errors;
-      const float d_p;
-      bool d_run;
-      const char d_chars[36];
-      const std::vector<std::string> d_symbols;
-      std::thread d_thread;
-
+    private:
       void
-      send_debug_msg(std::string sentence);
+      msg_handler(pmt::pmt_t msg);
 
-     public:
-      morse_debug_source_impl(std::string debug_seq, bool inject_errors,
-			      float error_prob);
-      ~morse_debug_source_impl();
+    public:
+      clear_text_msg_sink_impl ();
+
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H */
+#endif /* INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H */
 

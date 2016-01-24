@@ -1,37 +1,38 @@
 <?xml version="1.0"?>
 <block>
-  <name>CW Matched Filter</name>
-  <key>satnogs_cw_matched_filter_ff</key>
-  <category>satnogs</category>
-  <import>import satnogs</import>
-  <make>satnogs.cw_matched_filter_ff($sampling_rate, $carrier_freq, $wpm)</make>
+	<name>CW Matched Filter</name>
+	<key>satnogs_cw_matched_filter_ff</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.cw_matched_filter_ff($sampling_rate, $carrier_freq, $wpm)
+	</make>
 
-  <param>
-    <name>Sampling Rate</name>
-    <key>sampling_rate</key>
-    <type>real</type>
-  </param>
-  
-  <param>
-    <name>Audio Frequency (Hz)</name>
-    <key>carrier_freq</key>
-    <type>real</type>
-  </param>
-  
-  <param>
-    <name>Words per Minute</name>
-    <key>wpm</key>
-    <value>20</value>
-    <type>int</type>
-  </param>
+	<param>
+		<name>Sampling Rate</name>
+		<key>sampling_rate</key>
+		<type>real</type>
+	</param>
 
-  <sink>
-    <name>in</name>
-    <type>float</type>
-  </sink>
+	<param>
+		<name>Audio Frequency (Hz)</name>
+		<key>carrier_freq</key>
+		<type>real</type>
+	</param>
 
-  <source>
-    <name>out</name>
-    <type>float</type>
-  </source>
+	<param>
+		<name>Words per Minute</name>
+		<key>wpm</key>
+		<value>20</value>
+		<type>int</type>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>float</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>float</type>
+	</source>
 </block>

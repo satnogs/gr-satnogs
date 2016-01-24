@@ -25,24 +25,31 @@
 #include <gnuradio/io_signature.h>
 #include "morse_debug_source_impl.h"
 #include <satnogs/morse.h>
+#include <random>
 
 namespace gr {
   namespace satnogs {
 
     morse_debug_source::sptr
-    morse_debug_source::make(const std::string& debug_seq)
+    morse_debug_source::make(const std::string& debug_seq, 
+                             bool inject_errors,
+			     float error_prob)
     {
       return gnuradio::get_initial_sptr
-        (new morse_debug_source_impl(debug_seq));
+        (new morse_debug_source_impl(debug_seq, inject_errors, error_prob));
     }
 
     /*
      * The private constructor
      */
-    morse_debug_source_impl::morse_debug_source_impl(std::string debug_seq)
+    morse_debug_source_impl::morse_debug_source_impl(std::string debug_seq,
+                                                     bool inject_errors,
+						     float error_prob)
       : gr::block("morse_debug_source",
               gr::io_signature::make(0, 0, 0),
               gr::io_signature::make(0, 0, 0)),
+	      d_inject_errors(inject_errors),
+	      d_p(error_prob),
 	      d_run(true),
 	      d_chars { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
 		      'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
@@ -81,12 +88,17 @@ namespace gr {
       size_t idx;
       std::string s;
       char c;
+      std::random_device rd;
+      std::mt19937 gen(rd());
+      std::bernoulli_distribution error_distr(d_p);
+      bool inject_error;
       size_t len = sentence.length();
       pmt::pmt_t port = pmt::mp("out");
 
-      std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+      std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+      
       while(d_run) {
-	/* Not the best approach, but hey, this is only for debug */
+        /* Not the best approach, but hey, this is only for debug */
 	for(i = 0; i < len; i++){
 	  c = std::toupper(sentence[i]);
 	  if(c == ' '){
@@ -95,13 +107,26 @@ namespace gr {
 
 	  idx = find_char_idx(d_chars, sizeof(d_chars), c);
 	  if(idx != sizeof(d_chars)){
+
 	    s = d_symbols[idx];
+	    /* Get from the random distribution if an error should be injected */
+	    inject_error = d_inject_errors && error_distr(gen);
 	    for(j = 0; j < s.length(); j++) {
 	      if(s[j] == '.'){
-		message_port_pub(port, pmt::from_long(MORSE_DOT));
+		if(inject_error){
+		  message_port_pub(port, pmt::from_long(MORSE_DASH));
+		}
+		else{
+		  message_port_pub(port, pmt::from_long(MORSE_DOT));
+		}
 	      }
 	      else{
-		message_port_pub(port, pmt::from_long(MORSE_DASH));
+		if(inject_error){
+		  message_port_pub(port, pmt::from_long(MORSE_DOT));
+		}
+		else{
+		  message_port_pub(port, pmt::from_long(MORSE_DASH));
+		}
 	      }
 	      std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	    }

@@ -49,7 +49,6 @@ namespace gr
 	case MORSE_DOT:
 	case MORSE_DASH:
 	case MORSE_S_SPACE:
-	  LOG_DEBUG("Received %d", s);
 	  res = d_morse_tree.received_symbol(s);
 	  break;
 	/*
@@ -59,7 +58,8 @@ namespace gr
 	case MORSE_L_SPACE:
 	  str = d_morse_tree.get_word();
 	  d_morse_tree.reset();
-	  std::cout << "Received word: " << str << std::endl;
+	  message_port_pub(pmt::mp("out"), pmt::make_blob(str.c_str(),
+							  str.length()));
 	  break;
 	default:
 	  LOG_ERROR("Unknown Morse symbol");
@@ -91,8 +91,9 @@ namespace gr
 		   gr::io_signature::make (0, 0, 0)),
 		   d_morse_tree (unrecognized_char)
     {
-      /* Register the input msg handler */
+      /* Register the input and output msg handler */
       message_port_register_in (pmt::mp ("in"));
+      message_port_register_out(pmt::mp("out"));
       set_msg_handler (
 	  pmt::mp ("in"),
 	  boost::bind (&morse_decoder_impl::symbol_msg_handler, this, _1));

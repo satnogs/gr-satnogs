@@ -5,9 +5,9 @@ for decoding signals from various scientific and academic sattelites.
 ## Install
 
 ### Requirements
-1. GNU Radio
-2. CMake
-3. G++
+1. GNU Radio ( > 3.7.2 )
+2. CMake ( > 3.1)
+3. G++ (with C++11 support)
 4. VOLK
 5. git
 
