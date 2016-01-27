@@ -29,5 +29,6 @@ install(FILES
     morse.h
     morse_decoder.h
     morse_debug_source.h
-    clear_text_msg_sink.h DESTINATION include/satnogs
+    clear_text_msg_sink.h
+    cw_to_symbol.h DESTINATION include/satnogs
 )

@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<block>
+	<name>CW to Symbols</name>
+	<key>satnogs_cw_to_symbol</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.cw_to_symbol($sampling_rate, $threshold, $wpm)</make>
+
+	<param>
+		<name>Sampling Rate</name>
+		<key>sampling_rate</key>
+		<value>samp_rate</value>
+		<type>real</type>
+	</param>
+
+	<param>
+		<name>Activation Threshold</name>
+		<key>threshold</key>
+		<type>real</type>
+	</param>
+
+	<param>
+		<name>Words per Minute</name>
+		<key>wpm</key>
+		<value>20</value>
+		<type>int</type>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>float</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>message</type>
+	</source>
+</block>
