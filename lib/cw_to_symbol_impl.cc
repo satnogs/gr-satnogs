@@ -24,7 +24,6 @@
 
 #include <gnuradio/io_signature.h>
 #include <satnogs/log.h>
-#include <satnogs/morse.h>
 #include "cw_to_symbol_impl.h"
 
 namespace gr
@@ -33,32 +32,40 @@ namespace gr
   {
 
     cw_to_symbol::sptr
-    cw_to_symbol::make (double sampling_rate, float threshold, size_t wpm)
+    cw_to_symbol::make (double sampling_rate, float threshold,
+			float conf_level, size_t wpm)
     {
       return gnuradio::get_initial_sptr (
-	  new cw_to_symbol_impl (sampling_rate, threshold, wpm));
+	  new cw_to_symbol_impl (sampling_rate, threshold, conf_level, wpm));
     }
 
     /*
      * The private constructor
      */
     cw_to_symbol_impl::cw_to_symbol_impl (double sampling_rate, float threshold,
-					  size_t wpm) :
+					  float conf_level, size_t wpm) :
 	gr::sync_block ("cw_to_symbol",
 			gr::io_signature::make (1, 1, sizeof(float)),
 			gr::io_signature::make (0, 0, 0)),
 			d_sampling_rate(sampling_rate),
 			d_act_thrshld(threshold),
-			d_confidence_level(0.90),
+			d_confidence_level(conf_level),
 			d_dot_samples((1.2/wpm) / (1.0 / sampling_rate)),
 			d_dash_samples(3 * d_dot_samples),
 			d_short_pause_samples(3 * d_dot_samples),
 			d_long_pause_samples(7 * d_dot_samples),
 			d_state(IDLE),
 			d_state_cnt(0),
-			d_pause_cnt(0)
+			d_pause_cnt(0),
+			d_seq_started(false)
     {
       message_port_register_out(pmt::mp("out"));
+    }
+
+    inline void
+    cw_to_symbol_impl::send_symbol_msg (morse_symbol_t s)
+    {
+      message_port_pub(pmt::mp("out"), pmt::from_long(s));
     }
 
     /*
@@ -71,6 +78,7 @@ namespace gr
     inline void
     cw_to_symbol_impl::set_idle ()
     {
+      LOG_WARN("Enter IDLE");
       d_state = IDLE;
       d_state_cnt = 0;
       d_pause_cnt = 0;
@@ -79,33 +87,32 @@ namespace gr
     inline void
     cw_to_symbol_impl::set_short_on ()
     {
+      LOG_WARN("Enter SHORT ON");
       d_state = SHORT_ON_PERIOD;
       d_state_cnt = 1;
+      d_pause_cnt = 0;
     }
 
     inline void
     cw_to_symbol_impl::set_long_on ()
     {
+      LOG_WARN("Enter LONG ON");
       d_state = LONG_ON_PERIOD;
-      d_pause_cnt = 0;
     }
 
     inline void
-    cw_to_symbol_impl::set_short_off (size_t borrow_cnt)
+    cw_to_symbol_impl::set_short_off ()
     {
+      LOG_WARN("Enter SHORT OFF");
       d_state = SHORT_OFF_PERIOD;
       d_state_cnt = 0;
-      d_pause_cnt += borrow_cnt;
-
-      /* Due to time-slots borrowing we may be already at the Long pause */
-      if(d_pause_cnt > d_short_pause_samples) {
-	d_state = LONG_OFF_PERIOD;
-      }
+      d_pause_cnt = 1;
     }
 
     inline void
     cw_to_symbol_impl::set_long_off ()
     {
+      LOG_WARN("Enter LONG OFF");
       d_state = LONG_OFF_PERIOD;
     }
 
@@ -124,7 +131,6 @@ namespace gr
 	    if(in[i] > d_act_thrshld) {
 	      set_short_on();
 	    }
-	    // TODO Avoid unnecessary pause messages
 	    break;
 
 	  case SHORT_ON_PERIOD:
@@ -140,17 +146,16 @@ namespace gr
 	       * Before going to short pause, check the confidence level.
 	       *  Perhaps a short symbol should be produced.
 	       *
-	       *  Otherwise, it was a false alarm. So the time-slots counted
-	       *  so far should be assigned as pause time-slots.
+	       *  Otherwise, it was a false alarm.
 	       */
 	      conf_lvl = ((float) d_state_cnt) / d_dot_samples;
 	      if(conf_lvl > d_confidence_level){
-		message_port_pub(pmt::mp("out"), pmt::from_long(MORSE_DOT));
-		set_short_off(0);
+		LOG_DEBUG("Short space");
+		send_symbol_msg(MORSE_S_SPACE);
 	      }
-	      else{
-		set_short_off(d_state_cnt);
-	      }
+
+	      /* Go find a possible short pause symbol */
+	      set_short_off();
 	    }
 	    break;
 
@@ -158,25 +163,37 @@ namespace gr
 	    if( in[i] > d_act_thrshld ) {
 	      d_state_cnt++;
 	    }
-	    else{
-	      /*
-	       * In this case the FSM should continue at the SHORT_OFF state.
-	       * Before this depending the confidence for a long pulse, produce
-	       * a short or long pulse message
-	       */
+	    else {
 	      conf_lvl = ((float) d_state_cnt) / d_dash_samples;
-	      if(conf_lvl > d_confidence_level){
-		message_port_pub(pmt::mp("out"), pmt::from_long(MORSE_DASH));
+	      if(conf_lvl > d_confidence_level) {
+		LOG_DEBUG("DASH");
+		send_symbol_msg(MORSE_DASH);
+		set_short_off();
+		break;
 	      }
-	      else{
-		message_port_pub(pmt::mp("out"), pmt::from_long(MORSE_DOT));
+
+	      /* Perhaps this was a short on symbol */
+	      conf_lvl = ((float) d_state_cnt) / d_dot_samples;
+	      if(conf_lvl > d_confidence_level) {
+		LOG_DEBUG("DOT");
+		send_symbol_msg(MORSE_DOT);
+		set_short_off();
 	      }
-	      set_short_off(0);
+
 	    }
 	    break;
 
 	  case SHORT_OFF_PERIOD:
 	    if(in[i] > d_act_thrshld) {
+	      /*
+	       * Before going to ON state, again check if a short pause symbol
+	       * should be produced
+	       */
+	      conf_lvl = ((float) d_pause_cnt) / d_short_pause_samples;
+	      if(conf_lvl > d_confidence_level) {
+		LOG_DEBUG("Short space");
+		send_symbol_msg(MORSE_S_SPACE);
+	      }
 	      set_short_on();
 	    }
 	    else {
@@ -186,14 +203,32 @@ namespace gr
 	      }
 	    }
 	    break;
+
 	  case LONG_OFF_PERIOD:
 	    if(in[i] > d_act_thrshld) {
+	      conf_lvl = ((float) d_pause_cnt) / d_long_pause_samples;
+	      if (conf_lvl > d_confidence_level) {
+		LOG_DEBUG("Long space");
+		send_symbol_msg (MORSE_L_SPACE);
+		set_idle();
+		break;
+	      }
+	      else {
+		LOG_DEBUG("Short space");
+		send_symbol_msg (MORSE_S_SPACE);
+	      }
 	      set_short_on();
 	    }
 	    else {
 	      d_pause_cnt++;
+	      /*
+	       * If the pause duration is greater than the long pause symbol,
+	       * definitely a long pause symbol should be produced
+	       */
 	      if(d_pause_cnt > d_long_pause_samples) {
-		message_port_pub(pmt::mp("out"), pmt::from_long(MORSE_L_SPACE));
+		LOG_DEBUG("Long space");
+		send_symbol_msg(MORSE_L_SPACE);
+		d_seq_started = false;
 		set_idle();
 	      }
 	    }

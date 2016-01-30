@@ -4,7 +4,7 @@
 	<key>satnogs_cw_to_symbol</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.cw_to_symbol($sampling_rate, $threshold, $wpm)</make>
+	<make>satnogs.cw_to_symbol($sampling_rate, $threshold, $conf_level, $wpm)</make>
 
 	<param>
 		<name>Sampling Rate</name>
@@ -16,6 +16,13 @@
 	<param>
 		<name>Activation Threshold</name>
 		<key>threshold</key>
+		<type>real</type>
+	</param>
+	
+	<param>
+		<name>Confidence Level</name>
+		<key>conf_level</key>
+		<value>0.9</value>
 		<type>real</type>
 	</param>
 

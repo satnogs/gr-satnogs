@@ -217,6 +217,13 @@ namespace gr
 	  }
 	  break;
 	case MORSE_S_SPACE:
+	  /*
+	   * A short space received, but the decoder is still at the root.
+	   * This is not in general an error so we return true
+	   */
+	  if(d_current == d_root){
+	    return true;
+	  }
 	  c = d_current->get_char ();
 	  d_current = d_root;
 	  /*

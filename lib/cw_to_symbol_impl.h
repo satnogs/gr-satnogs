@@ -21,6 +21,7 @@
 #ifndef INCLUDED_SATNOGS_CW_TO_SYMBOL_IMPL_H
 #define INCLUDED_SATNOGS_CW_TO_SYMBOL_IMPL_H
 
+#include <satnogs/morse.h>
 #include <satnogs/cw_to_symbol.h>
 
 namespace gr
@@ -48,6 +49,7 @@ namespace gr
       cw_state_t d_state;
       size_t d_state_cnt;
       size_t d_pause_cnt;
+      bool d_seq_started;
 
       inline void
       set_idle ();
@@ -59,13 +61,17 @@ namespace gr
       set_long_on ();
 
       inline void
-      set_short_off (size_t borrow_cnt);
+      set_short_off ();
 
       inline void
       set_long_off ();
 
+      inline void
+      send_symbol_msg (morse_symbol_t s);
+
     public:
-      cw_to_symbol_impl (double sampling_rate, float threshold, size_t wpm);
+      cw_to_symbol_impl (double sampling_rate, float threshold,
+			 float conf_level, size_t wpm);
       ~cw_to_symbol_impl ();
 
       // Where all the action really happens

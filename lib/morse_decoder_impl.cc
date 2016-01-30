@@ -56,6 +56,11 @@ namespace gr
 	 * word
 	 */
 	case MORSE_L_SPACE:
+	  /* Just ignore the word separator if no word is yet decoded */
+	  if (d_morse_tree.get_word_len() == 0) {
+	    res = true;
+	    break;
+	  }
 	  str = d_morse_tree.get_word();
 	  d_morse_tree.reset();
 	  message_port_pub(pmt::mp("out"), pmt::make_blob(str.c_str(),

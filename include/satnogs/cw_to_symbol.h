@@ -51,9 +51,15 @@ namespace gr {
        *
        * @param sampling_rate the sampling rate of the signal
        * @param threshold the activation threshold
+       * @param conf_level the confidence level, for the decisions made by
+       * the decoder. Higher values, means that the decoder would be more
+       * conservative, whereas lower may help in noisy environments but may
+       * trigger false alarms too, especially for the case of short pauses
+       * symbols
        * @param wpm Morse code Words per Minute
        */
-      static sptr make(double sampling_rate, float threshold, size_t wpm = 20);
+      static sptr make(double sampling_rate, float threshold,
+		       float conf_level = 0.9, size_t wpm = 20);
     };
 
   } // namespace satnogs
