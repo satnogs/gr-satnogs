@@ -45,9 +45,14 @@ namespace gr {
        * @param sampling_rate the sampling rate of the signal
        * @param carrier_freq the audio frequency of the CW signal
        * @param wpm Morse code Words per Minute
+       * @param energy_out if true, the filter produces the energy of the
+       * resulting filtered samples, otherwise the raw filter samples are
+       * produced. This is handy, in order to save the flowgraph from
+       * am additional signal energy block.
        */
       static sptr make(double sampling_rate, double carrier_freq = 500,
-		       size_t wpm = 20);
+		       size_t wpm = 20,
+		       bool energy_out = false);
     };
 
   } // namespace satnogs

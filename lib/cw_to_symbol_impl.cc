@@ -78,7 +78,6 @@ namespace gr
     inline void
     cw_to_symbol_impl::set_idle ()
     {
-      LOG_WARN("Enter IDLE");
       d_state = IDLE;
       d_state_cnt = 0;
       d_pause_cnt = 0;
@@ -87,7 +86,6 @@ namespace gr
     inline void
     cw_to_symbol_impl::set_short_on ()
     {
-      LOG_WARN("Enter SHORT ON");
       d_state = SHORT_ON_PERIOD;
       d_state_cnt = 1;
       d_pause_cnt = 0;
@@ -96,14 +94,12 @@ namespace gr
     inline void
     cw_to_symbol_impl::set_long_on ()
     {
-      LOG_WARN("Enter LONG ON");
       d_state = LONG_ON_PERIOD;
     }
 
     inline void
     cw_to_symbol_impl::set_short_off ()
     {
-      LOG_WARN("Enter SHORT OFF");
       d_state = SHORT_OFF_PERIOD;
       d_state_cnt = 0;
       d_pause_cnt = 1;
@@ -112,7 +108,6 @@ namespace gr
     inline void
     cw_to_symbol_impl::set_long_off ()
     {
-      LOG_WARN("Enter LONG OFF");
       d_state = LONG_OFF_PERIOD;
     }
 
@@ -150,8 +145,8 @@ namespace gr
 	       */
 	      conf_lvl = ((float) d_state_cnt) / d_dot_samples;
 	      if(conf_lvl > d_confidence_level){
-		LOG_DEBUG("Short space");
-		send_symbol_msg(MORSE_S_SPACE);
+		LOG_DEBUG("DOT");
+		send_symbol_msg(MORSE_DOT);
 	      }
 
 	      /* Go find a possible short pause symbol */

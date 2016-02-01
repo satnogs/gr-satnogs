@@ -35,6 +35,11 @@ namespace gr {
 	     */
 	    const double d_dot_duration;
 	    /**
+	     * If set to true, this block produces the energy of the filtered
+	     * samples, rather the samples themselves
+	     */
+	    const bool d_produce_enrg;
+	    /**
 	     * The duration of the dot in number of samples
 	     */
 	    const size_t d_dot_samples;
@@ -43,7 +48,7 @@ namespace gr {
 
      public:
       cw_matched_filter_ff_impl(double sampling_rate, double carrier_freq,
-                                size_t wpm);
+                                size_t wpm, bool energy_out);
       ~cw_matched_filter_ff_impl();
 
       // Where all the action really happens

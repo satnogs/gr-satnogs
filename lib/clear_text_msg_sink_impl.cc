@@ -39,7 +39,7 @@ namespace gr {
     clear_text_msg_sink_impl::msg_handler (pmt::pmt_t msg)
     {
       std::string s((const char *)pmt::blob_data(msg), pmt::blob_length(msg));
-      std::cout << s << " " << std::endl;
+      std::cout << "Received text sequence:" << s << " " << std::endl;
     }
 
     /*

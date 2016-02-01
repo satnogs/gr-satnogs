@@ -29,7 +29,7 @@
 #include <sys/syscall.h>
 
 
-#if CW_DEBUG
+#if ENABLE_DEBUG_MSG
 #define LOG_INFO(M, ...) 							\
 		fprintf(stderr, "[INFO]: " M " \n", ##__VA_ARGS__)
 
@@ -43,7 +43,7 @@
 #define LOG_WARN(M, ...) 								\
 	fprintf(stderr, "[WARNING] %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 
-#if CW_DEBUG
+#if ENABLE_DEBUG_MSG
 #define LOG_DEBUG(M, ...) 							\
 	fprintf(stderr, "[DEBUG]: " M "\n", ##__VA_ARGS__)
 #else

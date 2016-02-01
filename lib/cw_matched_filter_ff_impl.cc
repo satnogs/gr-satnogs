@@ -32,10 +32,12 @@ namespace gr {
   namespace satnogs {
 
     cw_matched_filter_ff::sptr
-    cw_matched_filter_ff::make(double sampling_rate, double carrier_freq, size_t wpm)
+    cw_matched_filter_ff::make(double sampling_rate, double carrier_freq,
+			       size_t wpm, bool energy_out)
     {
       return gnuradio::get_initial_sptr
-        (new cw_matched_filter_ff_impl(sampling_rate, carrier_freq, wpm));
+        (new cw_matched_filter_ff_impl(sampling_rate, carrier_freq,
+				       wpm, energy_out));
     }
 
     /*
@@ -43,11 +45,13 @@ namespace gr {
      */
     cw_matched_filter_ff_impl::cw_matched_filter_ff_impl (double sampling_rate,
 							  double carrier_freq,
-							  size_t wpm) :
+							  size_t wpm,
+							  bool energy_out) :
 	gr::sync_block ("cw_matched_filter_ff",
 			gr::io_signature::make (1, 1, sizeof(float)),
 			gr::io_signature::make (1, 1, sizeof(float))),
 			d_dot_duration(1.2/wpm),
+			d_produce_enrg(energy_out),
 			d_dot_samples(d_dot_duration / (1.0 / sampling_rate))
     {
       const int alignment_multiple = volk_get_alignment() / sizeof(float);
@@ -84,6 +88,9 @@ namespace gr {
         for(int i = 0; i < noutput_items; i++ ){
             volk_32f_x2_dot_prod_32f(out + i, in + i, d_sin_wave,
 				     d_dot_samples);
+        }
+        if(d_produce_enrg){
+          volk_32f_s32f_power_32f(out, out, 2, noutput_items);
         }
 
         return noutput_items;

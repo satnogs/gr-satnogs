@@ -22,6 +22,11 @@
 #define INCLUDE_SATNOGS_CONFIG_H_
 
 /*!
+ * Enable debug messages for the module
+ */
+#define ENABLE_DEBUG_MSG 0
+
+/*!
  * Enable debug messages for the CW decoding mechanism
  */
 #define CW_DEBUG 1

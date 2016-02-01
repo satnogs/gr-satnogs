@@ -10,4 +10,10 @@ Words per Minute (WPM) is about 20.
 
 ## Flowgraphs
 * `test_matched_filter.grc`: Demonstrates the performance of the implemented
- matched filter for CW decoding.  
+ matched filter for CW decoding.
+ 
+ * `morse_decoding_flowgraph.grc`: This flowgraph decodes a CW signal and 
+ prints the corresponding message at the `stdout`. To demonstrate the 
+ capabilities of the decoder, signal and noise power GUI sliders are provided
+ for easy testing and experimenting. 
+ 

@@ -56,6 +56,11 @@ namespace gr
 	 * word
 	 */
 	case MORSE_L_SPACE:
+	  /*
+	   * Inject a character separator, for the morse decoder to commit
+	   * the outstanding character
+	   */
+	  res = d_morse_tree.received_symbol(MORSE_S_SPACE);
 	  /* Just ignore the word separator if no word is yet decoded */
 	  if (d_morse_tree.get_word_len() == 0) {
 	    res = true;

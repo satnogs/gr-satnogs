@@ -4,7 +4,7 @@
 	<key>satnogs_cw_matched_filter_ff</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.cw_matched_filter_ff($sampling_rate, $carrier_freq, $wpm)
+	<make>satnogs.cw_matched_filter_ff($sampling_rate, $carrier_freq, $wpm, $energy)
 	</make>
 
 	<param>
@@ -24,6 +24,20 @@
 		<key>wpm</key>
 		<value>20</value>
 		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Compute Energy</name>
+		<key>energy</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
 	</param>
 
 	<sink>
