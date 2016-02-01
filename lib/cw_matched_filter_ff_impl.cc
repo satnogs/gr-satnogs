@@ -50,6 +50,8 @@ namespace gr {
 			d_dot_duration(1.2/wpm),
 			d_dot_samples(d_dot_duration / (1.0 / sampling_rate))
     {
+      const int alignment_multiple = volk_get_alignment() / sizeof(float);
+      set_alignment(std::max(1,alignment_multiple));
       set_history(d_dot_samples);
 
       d_sin_wave = (float *)volk_malloc(d_dot_samples * sizeof(float), 32);
@@ -80,8 +82,8 @@ namespace gr {
         float *out = (float *) output_items[0];
 
         for(int i = 0; i < noutput_items; i++ ){
-            volk_32f_x2_dot_prod_32f_a(out + i, in + i, d_sin_wave,
-				       d_dot_samples);
+            volk_32f_x2_dot_prod_32f(out + i, in + i, d_sin_wave,
+				     d_dot_samples);
         }
 
         return noutput_items;
