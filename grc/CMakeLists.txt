@@ -21,5 +21,6 @@ install(FILES
     satnogs_morse_decoder.xml
     satnogs_morse_debug_source.xml
     satnogs_clear_text_msg_sink.xml
-    satnogs_cw_to_symbol.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_cw_to_symbol.xml
+    satnogs_afsk_decoder.xml DESTINATION share/gnuradio/grc/blocks
 )

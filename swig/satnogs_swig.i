@@ -14,6 +14,7 @@
 #include "satnogs/morse_debug_source.h"
 #include "satnogs/clear_text_msg_sink.h"
 #include "satnogs/cw_to_symbol.h"
+#include "satnogs/afsk_decoder.h"
 %}
 
 %include "satnogs/cw_matched_filter_ff.h"
@@ -27,3 +28,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, morse_debug_source);
 GR_SWIG_BLOCK_MAGIC2(satnogs, clear_text_msg_sink);
 %include "satnogs/cw_to_symbol.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, cw_to_symbol);
+%include "satnogs/afsk_decoder.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, afsk_decoder);
