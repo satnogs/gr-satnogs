@@ -60,6 +60,8 @@ namespace gr {
        */
       static sptr make(double sampling_rate, float threshold,
 		       float conf_level = 0.9, size_t wpm = 20);
+
+      virtual void set_act_threshold(float thrld) = 0;
     };
 
   } // namespace satnogs

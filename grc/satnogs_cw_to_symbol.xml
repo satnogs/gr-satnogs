@@ -5,7 +5,8 @@
 	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.cw_to_symbol($sampling_rate, $threshold, $conf_level, $wpm)</make>
-
+	<callback>set_act_threshold($threshold)</callback>
+	
 	<param>
 		<name>Sampling Rate</name>
 		<key>sampling_rate</key>
@@ -33,6 +34,12 @@
 		<type>int</type>
 	</param>
 
+	<sink>
+		<name>act_threshold</name>
+		<type>message</type>
+		<optional>1</optional>
+	</sink>
+	
 	<sink>
 		<name>in</name>
 		<type>float</type>

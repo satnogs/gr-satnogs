@@ -40,7 +40,7 @@ namespace gr
       } cw_state_t;
     private:
       const double d_sampling_rate;
-      const float d_act_thrshld;
+      float d_act_thrshld;
       const float d_confidence_level;
       const size_t d_dot_samples;
       const size_t d_dash_samples;
@@ -69,6 +69,8 @@ namespace gr
       inline void
       send_symbol_msg (morse_symbol_t s);
 
+      void set_act_threshold_msg_handler(pmt::pmt_t msg);
+
     public:
       cw_to_symbol_impl (double sampling_rate, float threshold,
 			 float conf_level, size_t wpm);
@@ -78,6 +80,8 @@ namespace gr
       int
       work (int noutput_items, gr_vector_const_void_star &input_items,
 	    gr_vector_void_star &output_items);
+
+      void set_act_threshold(float thrhld);
     };
 
   } // namespace satnogs

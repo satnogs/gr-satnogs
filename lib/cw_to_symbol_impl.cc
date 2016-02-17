@@ -59,7 +59,11 @@ namespace gr
 			d_pause_cnt(0),
 			d_seq_started(false)
     {
+      message_port_register_in(pmt::mp("act_threshold"));
       message_port_register_out(pmt::mp("out"));
+      set_msg_handler(pmt::mp("act_threshold"),
+      		      boost::bind(&cw_to_symbol_impl::set_act_threshold_msg_handler,
+      				  this, _1));
     }
 
     inline void
@@ -109,6 +113,14 @@ namespace gr
     cw_to_symbol_impl::set_long_off ()
     {
       d_state = LONG_OFF_PERIOD;
+    }
+
+    void
+    cw_to_symbol_impl::set_act_threshold_msg_handler (pmt::pmt_t msg)
+    {
+      if(pmt::is_pair(msg)){
+	set_act_threshold(pmt::to_float(pmt::cdr(msg)));
+      }
     }
 
     int
@@ -234,6 +246,12 @@ namespace gr
 	}
       }
       return noutput_items;
+    }
+
+    void
+    cw_to_symbol_impl::set_act_threshold (float thrhld)
+    {
+      d_act_thrshld = thrhld;
     }
 
   } /* namespace satnogs */
