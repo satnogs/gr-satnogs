@@ -15,6 +15,7 @@
 #include "satnogs/clear_text_msg_sink.h"
 #include "satnogs/cw_to_symbol.h"
 #include "satnogs/afsk_decoder.h"
+#include "satnogs/sine_matched_filter_ff.h"
 %}
 
 %include "satnogs/cw_matched_filter_ff.h"
@@ -30,3 +31,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, clear_text_msg_sink);
 GR_SWIG_BLOCK_MAGIC2(satnogs, cw_to_symbol);
 %include "satnogs/afsk_decoder.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, afsk_decoder);
+%include "satnogs/sine_matched_filter_ff.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, sine_matched_filter_ff);

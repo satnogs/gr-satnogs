@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<block>
+	<name>Sine Matched filter</name>
+	<key>satnogs_sine_matched_filter_ff</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.sine_matched_filter_ff($sampling_rate, $sine_freq, $baud, $compute_energy)</make>
+
+	<param>
+		<name>Sampling Rate</name>
+		<key>sampling_rate</key>
+		<type>real</type>
+	</param>
+
+	<param>
+		<name>Sine Frequency (Hz)</name>
+		<key>sine_freq</key>
+		<type>real</type>
+	</param>
+	
+	<param>
+		<name>Baudrate</name>
+		<key>baud</key>
+		<type>real</type>
+	</param>
+
+	<param>
+		<name>Compute Energy</name>
+		<key>compute_energy</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<sink>
+		<name>freq</name>
+		<type>message</type>
+		<optional>1</optional>
+	</sink>
+
+	<sink>
+		<name>in</name>
+		<type>float</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>float</type>
+	</source>
+</block>

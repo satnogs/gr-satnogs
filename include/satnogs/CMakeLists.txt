@@ -31,5 +31,6 @@ install(FILES
     morse_debug_source.h
     clear_text_msg_sink.h
     cw_to_symbol.h
-    afsk_decoder.h DESTINATION include/satnogs
+    afsk_decoder.h
+    sine_matched_filter_ff.h DESTINATION include/satnogs
 )
