@@ -32,5 +32,6 @@ install(FILES
     clear_text_msg_sink.h
     cw_to_symbol.h
     afsk_decoder.h
-    sine_matched_filter_ff.h DESTINATION include/satnogs
+    sine_matched_filter_ff.h
+    utils.h DESTINATION include/satnogs
 )

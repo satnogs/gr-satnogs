@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>morse_decoding_flowgraph</value>
+      <value>morse_decoding_goliat</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -133,7 +133,7 @@
     </param>
     <param>
       <key>stop</key>
-      <value>5</value>
+      <value>20</value>
     </param>
     <param>
       <key>rangeType</key>
@@ -168,7 +168,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>700.0</value>
+      <value>1200.0</value>
     </param>
   </block>
   <block>
@@ -179,7 +179,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>0.6</value>
+      <value>0.4</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -344,7 +344,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(608, 336)</value>
+      <value>(592, 360)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -403,7 +403,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 447)</value>
+      <value>(24, 423)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -458,11 +458,11 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(960, 188)</value>
+      <value>(1152, 276)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -505,7 +505,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(200, 352)</value>
+      <value>(192, 328)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -615,58 +615,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(304, 364)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_multiply_const_vxx_0</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>float</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_multiply_const_vxx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>const</key>
-      <value>const</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(336, 220)</value>
+      <value>(248, 236)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -713,7 +662,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(456, 364)</value>
+      <value>(432, 388)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -768,11 +717,11 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>file</key>
-      <value>/home/surligas/workspace/gr-satnogs/examples/morse_ref.wav</value>
+      <value>/home/surligas/workspace/gr-satnogs/examples/Goliat_Morse_8k.wav</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(0, 293)</value>
+      <value>(8, 229)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -862,7 +811,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(704, 486)</value>
+      <value>(712, 510)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -1221,7 +1170,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(512, 222)</value>
+      <value>(632, 208)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -1568,7 +1517,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(928, 584)</value>
+      <value>(984, 584)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1607,7 +1556,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(808, 351)</value>
+      <value>(984, 335)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1713,7 +1662,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(664, 580)</value>
+      <value>(488, 580)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1756,9 +1705,15 @@ of a full period of the CW signal with frequency freq.</value>
   </connection>
   <connection>
     <source_block_id>blocks_add_xx_0</source_block_id>
-    <sink_block_id>blocks_multiply_const_vxx_0</sink_block_id>
+    <sink_block_id>blocks_throttle_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_add_xx_0</source_block_id>
+    <sink_block_id>qtgui_time_sink_x_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>1</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_moving_average_xx_0</source_block_id>
@@ -1773,22 +1728,10 @@ of a full period of the CW signal with frequency freq.</value>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
-    <sink_block_id>audio_sink_0</sink_block_id>
+    <source_block_id>blocks_multiply_const_vxx_0_0</source_block_id>
+    <sink_block_id>blocks_add_xx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
-    <sink_block_id>blocks_throttle_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
-    <sink_block_id>qtgui_time_sink_x_0_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>1</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_multiply_const_vxx_0_0</source_block_id>
@@ -1799,12 +1742,6 @@ of a full period of the CW signal with frequency freq.</value>
   <connection>
     <source_block_id>blocks_throttle_0</source_block_id>
     <sink_block_id>analog_agc2_xx_0_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_wavfile_source_0</source_block_id>
-    <sink_block_id>blocks_add_xx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

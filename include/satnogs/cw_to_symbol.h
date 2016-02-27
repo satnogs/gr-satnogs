@@ -56,12 +56,20 @@ namespace gr {
        * conservative, whereas lower may help in noisy environments but may
        * trigger false alarms too, especially for the case of short pauses
        * symbols
+       *
        * @param wpm Morse code Words per Minute
+       *
+       * @param auto_config if set to true, the block will try first to
+       * automatically adjust the WPM in order to extract the dot and dash
+       * durations. If set to false, the given WPM is used.
        */
-      static sptr make(double sampling_rate, float threshold,
-		       float conf_level = 0.9, size_t wpm = 20);
+      static cw_to_symbol::sptr
+      make (double sampling_rate, float threshold, float conf_level = 0.9,
+	    size_t wpm = 20, bool auto_config = false);
 
       virtual void set_act_threshold(float thrld) = 0;
+
+      virtual void start_timing_recovery() = 0;
     };
 
   } // namespace satnogs

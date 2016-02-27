@@ -38,18 +38,33 @@ namespace gr
 	SHORT_OFF_PERIOD,
 	LONG_OFF_PERIOD
       } cw_state_t;
+
+      /**
+       * Different states during the WPM auto synchronization
+       */
+      typedef enum {
+	SYNC_TRIGGER_OFF,//!< SYNC_TRIGGER_OFF Signal is below threshold
+	SYNC_TRIGGER_ON  //!< SYNC_TRIGGER_ON Signal is above threshold
+      } sync_state_t;
+
     private:
       const double d_sampling_rate;
       float d_act_thrshld;
       const float d_confidence_level;
-      const size_t d_dot_samples;
-      const size_t d_dash_samples;
-      const size_t d_short_pause_samples;
-      const size_t d_long_pause_samples;
+      const size_t d_sync_limit;
+      const bool d_auto_sync;
+      size_t d_dot_samples;
+      size_t d_dash_samples;
+      size_t d_short_pause_samples;
+      size_t d_long_pause_samples;
       cw_state_t d_state;
       size_t d_state_cnt;
       size_t d_pause_cnt;
+      size_t d_est_cnt;
+      size_t d_mean_cnt;
+      bool d_have_sync;
       bool d_seq_started;
+      sync_state_t d_sync_state;
 
       inline void
       set_idle ();
@@ -71,9 +86,17 @@ namespace gr
 
       void set_act_threshold_msg_handler(pmt::pmt_t msg);
 
+      void sync_msg_handler(pmt::pmt_t msg);
+
+      void estimate_dot_duration(size_t estimate);
+
+      void set_symbols_duration();
+
+      void reset_sync();
+
     public:
       cw_to_symbol_impl (double sampling_rate, float threshold,
-			 float conf_level, size_t wpm);
+			 float conf_level, size_t wpm, bool auto_config);
       ~cw_to_symbol_impl ();
 
       // Where all the action really happens
@@ -82,6 +105,8 @@ namespace gr
 	    gr_vector_void_star &output_items);
 
       void set_act_threshold(float thrhld);
+
+      void start_timing_recovery();
     };
 
   } // namespace satnogs

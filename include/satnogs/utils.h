@@ -18,21 +18,33 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDE_SATNOGS_MORSE_H_
-#define INCLUDE_SATNOGS_MORSE_H_
+#ifndef INCLUDE_SATNOGS_UTILS_H_
+#define INCLUDE_SATNOGS_UTILS_H_
 
-#define MIN_WPM 5
-#define MAX_WPM 30
+
+namespace gr
+{
+
+namespace satnogs
+{
+
 /**
- * The different Morse symbols
+ * Computes the Mean Absolute Percentage Error
+ * @param ref the reference value
+ * @param estimation the estimated value
+ * @return the mean absolute percentage error
  */
-typedef enum {
-  MORSE_DOT = 0,//!< MORSE_DOT Morse dot (.) symbol
-  MORSE_DASH,   //!< MORSE_DASH Morse dash (-) symbol
-  MORSE_S_SPACE,//!< MORSE_S_SPACE Morse short space between characters
-  MORSE_L_SPACE //!< MORSE_L_SPACE Morse long space between words
-} morse_symbol_t;
+static inline double
+mape(double ref, double estimation)
+{
+  return std::abs(ref - estimation) / ref;
+}
+
+}  // namespace satnogs
+
+
+}  // namespace gr
 
 
 
-#endif /* INCLUDE_SATNOGS_MORSE_H_ */
+#endif /* INCLUDE_SATNOGS_UTILS_H_ */
