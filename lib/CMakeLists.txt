@@ -32,7 +32,8 @@ list(APPEND satnogs_sources
     clear_text_msg_sink_impl.cc
     cw_to_symbol_impl.cc
     afsk_decoder_impl.cc
-    sine_matched_filter_ff_impl.cc )
+    sine_matched_filter_ff_impl.cc
+    ax25_encoder_bf_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)

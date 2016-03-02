@@ -22,6 +22,7 @@
 ########################################################################
 install(FILES
     api.h
+    ax25.h
     config.h
     cw_matched_filter_ff.h
     log.h
@@ -33,5 +34,6 @@ install(FILES
     cw_to_symbol.h
     afsk_decoder.h
     sine_matched_filter_ff.h
-    utils.h DESTINATION include/satnogs
+    utils.h
+    ax25_encoder_bf.h DESTINATION include/satnogs
 )

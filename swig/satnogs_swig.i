@@ -2,6 +2,7 @@
 
 #define SATNOGS_API
 
+%include <typemaps.i>
 %include "gnuradio.i"			// the common stuff
 
 //load generated python docstrings
@@ -16,7 +17,9 @@
 #include "satnogs/cw_to_symbol.h"
 #include "satnogs/afsk_decoder.h"
 #include "satnogs/sine_matched_filter_ff.h"
+#include "satnogs/ax25_encoder_bf.h"
 %}
+
 
 %include "satnogs/cw_matched_filter_ff.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, cw_matched_filter_ff);
@@ -33,3 +36,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, cw_to_symbol);
 GR_SWIG_BLOCK_MAGIC2(satnogs, afsk_decoder);
 %include "satnogs/sine_matched_filter_ff.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, sine_matched_filter_ff);
+%include "satnogs/ax25_encoder_bf.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_encoder_bf);
