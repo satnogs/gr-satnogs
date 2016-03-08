@@ -15,5 +15,11 @@ Words per Minute (WPM) is about 20.
  * `morse_decoding_flowgraph.grc`: This flowgraph decodes a CW signal and 
  prints the corresponding message at the `stdout`. To demonstrate the 
  capabilities of the decoder, signal and noise power GUI sliders are provided
- for easy testing and experimenting. 
+ for easy testing and experimenting.
+ 
+ * `ax25_example.grc`: This flowgraph semonstrates the AX.25 encoder and 
+ decoder. It has two different AX.25 payload source blocks. The first one is the
+ `Debug Message Source` block that assigns as payload a predefined message,
+ whereas the second one is a `UDP Message Source` block that receives the
+ AX.25 payload from a UDP packet. 
  
