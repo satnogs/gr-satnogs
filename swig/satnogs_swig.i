@@ -18,6 +18,9 @@
 #include "satnogs/afsk_decoder.h"
 #include "satnogs/sine_matched_filter_ff.h"
 #include "satnogs/ax25_encoder_bf.h"
+#include "satnogs/ax25_decoder_b.h"
+#include "satnogs/udp_msg_source.h"
+#include "satnogs/debug_msg_source.h"
 %}
 
 
@@ -38,3 +41,9 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, afsk_decoder);
 GR_SWIG_BLOCK_MAGIC2(satnogs, sine_matched_filter_ff);
 %include "satnogs/ax25_encoder_bf.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_encoder_bf);
+%include "satnogs/ax25_decoder_b.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_decoder_b);
+%include "satnogs/udp_msg_source.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_source);
+%include "satnogs/debug_msg_source.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, debug_msg_source);

@@ -24,5 +24,8 @@ install(FILES
     satnogs_cw_to_symbol.xml
     satnogs_afsk_decoder.xml
     satnogs_sine_matched_filter_ff.xml
-    satnogs_ax25_encoder_bf.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_ax25_encoder_bf.xml
+    satnogs_ax25_decoder_b.xml
+    satnogs_udp_msg_source.xml
+    satnogs_debug_msg_source.xml DESTINATION share/gnuradio/grc/blocks
 )

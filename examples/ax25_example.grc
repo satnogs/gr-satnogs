@@ -136,38 +136,7 @@
     </param>
   </block>
   <block>
-    <key>blocks_message_debug</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(664, 224)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_message_debug_0</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_message_strobe</key>
+    <key>digital_binary_slicer_fb</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -186,7 +155,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(120, 397)</value>
+      <value>(752, 512)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -194,23 +163,15 @@
     </param>
     <param>
       <key>id</key>
-      <value>blocks_message_strobe_0</value>
+      <value>digital_binary_slicer_fb_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
       <value>0</value>
     </param>
     <param>
-      <key>msg</key>
-      <value>pmt.init_u8vector(30, [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9,8, 9])</value>
-    </param>
-    <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-    <param>
-      <key>period</key>
-      <value>100</value>
     </param>
   </block>
   <block>
@@ -245,7 +206,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(856, 390)</value>
+      <value>(608, 382)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -553,7 +514,7 @@
     </param>
     <param>
       <key>update_time</key>
-      <value>0.10</value>
+      <value>0.02</value>
     </param>
     <param>
       <key>ylabel</key>
@@ -570,6 +531,57 @@
     <param>
       <key>ymin</key>
       <value>-1</value>
+    </param>
+  </block>
+  <block>
+    <key>satnogs_ax25_decoder_b</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(600, 702)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_ax25_decoder_b_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>promisc</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>addr</key>
+      <value>ABCD</value>
+    </param>
+    <param>
+      <key>ssid</key>
+      <value>0</value>
     </param>
   </block>
   <block>
@@ -600,7 +612,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(536, 479)</value>
+      <value>(328, 487)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -627,22 +639,173 @@
       <value>0</value>
     </param>
   </block>
+  <block>
+    <key>satnogs_clear_text_msg_sink</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(856, 720)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_clear_text_msg_sink_0</value>
+    </param>
+  </block>
+  <block>
+    <key>satnogs_debug_msg_source</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>delay</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(88, 686)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_debug_msg_source_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>msg</key>
+      <value>"HELLO EARTH WORLD FROM SPACE"</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>repeat</key>
+      <value>True</value>
+    </param>
+  </block>
+  <block>
+    <key>satnogs_udp_msg_source</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(64, 430)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_udp_msg_source_0</value>
+    </param>
+    <param>
+      <key>addr</key>
+      <value>"127.0.0.1"</value>
+    </param>
+    <param>
+      <key>mtu</key>
+      <value>1500</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>port</key>
+      <value>16886</value>
+    </param>
+  </block>
   <connection>
-    <source_block_id>blocks_message_strobe_0</source_block_id>
-    <sink_block_id>blocks_message_debug_0</sink_block_id>
-    <source_key>strobe</source_key>
-    <sink_key>print</sink_key>
+    <source_block_id>digital_binary_slicer_fb_0</source_block_id>
+    <sink_block_id>satnogs_ax25_decoder_b_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_message_strobe_0</source_block_id>
-    <sink_block_id>satnogs_ax25_encoder_bf_0</sink_block_id>
-    <source_key>strobe</source_key>
-    <sink_key>info</sink_key>
+    <source_block_id>satnogs_ax25_decoder_b_0</source_block_id>
+    <sink_block_id>satnogs_clear_text_msg_sink_0</sink_block_id>
+    <source_key>pdu</source_key>
+    <sink_key>in</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_ax25_encoder_bf_0</source_block_id>
+    <sink_block_id>digital_binary_slicer_fb_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>satnogs_ax25_encoder_bf_0</source_block_id>
     <sink_block_id>qtgui_time_sink_x_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_debug_msg_source_0</source_block_id>
+    <sink_block_id>satnogs_ax25_encoder_bf_0</sink_block_id>
+    <source_key>msg</source_key>
+    <sink_key>info</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_udp_msg_source_0</source_block_id>
+    <sink_block_id>satnogs_ax25_encoder_bf_0</sink_block_id>
+    <source_key>msg</source_key>
+    <sink_key>info</sink_key>
   </connection>
 </flow_graph>

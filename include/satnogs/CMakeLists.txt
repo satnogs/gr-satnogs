@@ -35,5 +35,8 @@ install(FILES
     afsk_decoder.h
     sine_matched_filter_ff.h
     utils.h
-    ax25_encoder_bf.h DESTINATION include/satnogs
+    ax25_encoder_bf.h
+    ax25_decoder_b.h
+    udp_msg_source.h
+    debug_msg_source.h DESTINATION include/satnogs
 )

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<block>
+	<name>AX.25 Decoder</name>
+	<key>satnogs_ax25_decoder_b</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.ax25_decoder_b($addr, $ssid, $promisc)</make>
+
+	<param>
+		<name>Receiver Callsign</name>
+		<key>addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Receiver SSID</name>
+		<key>ssid</key>
+		<type>int</type>
+	</param>
+
+
+	<param>
+		<name>Promiscuous mode</name>
+		<key>promisc</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>byte</type>
+	</sink>
+
+	<source>
+		<name>pdu</name>
+		<type>message</type>
+	</source>
+</block>

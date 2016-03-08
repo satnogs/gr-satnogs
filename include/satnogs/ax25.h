@@ -157,11 +157,10 @@ namespace gr
        * inserted
        */
       if(type == AX25_I_FRAME){
-	out[i] = 0xF0;
-	i++;
+	out[i++] = 0xF0;
       }
       memcpy(out + i, info, info_len);
-      i =+ info_len;
+      i += info_len;
 
       /* Compute the FCS. Ignore the first flag byte */
       fcs = ax25_fcs(out + 1, i - 1);
@@ -188,6 +187,7 @@ namespace gr
       /* Leading FLAG field does not need bit stuffing */
       memcpy(out, AX25_SYNC_FLAG_MAP, 8 * sizeof(float));
       out_idx = 8;
+
       /* Skip the leading and trailing FLAG field */
       buffer++;
       for(i = 0; i < 8 * (buffer_len - 2); i++){

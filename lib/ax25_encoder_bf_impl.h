@@ -34,9 +34,9 @@ namespace gr {
       size_t d_remaining;
       size_t d_produced;
       /* Twice the maximum frame length is enough to hold all possible input data*/
-      float d_endoded_frame[(AX25_MAX_FRAME_LEN * 2)];
-      uint8_t d_tmp_buf[AX25_MAX_FRAME_LEN * 2];
-      uint8_t d_addr_field[AX25_MAX_ADDR_LEN];
+      float *d_endoded_frame;
+      uint8_t *d_tmp_buf;
+      uint8_t *d_addr_field;
       size_t d_addr_len;
       boost::mutex d_mutex;
 

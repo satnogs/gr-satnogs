@@ -55,7 +55,10 @@ namespace gr
 			gr::io_signature::make (1, 1, sizeof(float))),
 			d_type (type),
 			d_remaining (0),
-			d_produced(0)
+			d_produced(0),
+			d_endoded_frame(new float[(AX25_MAX_FRAME_LEN * 2)]),
+			d_tmp_buf(new uint8_t[AX25_MAX_FRAME_LEN * 2]),
+			d_addr_field(new uint8_t[AX25_MAX_ADDR_LEN])
     {
       /* Input is a key-value pair containing the info field data */
       message_port_register_in (pmt::mp ("info"));
@@ -68,6 +71,9 @@ namespace gr
      */
     ax25_encoder_bf_impl::~ax25_encoder_bf_impl ()
     {
+      delete[] d_endoded_frame;
+      delete[] d_tmp_buf;
+      delete[] d_addr_field;
     }
 
     int
