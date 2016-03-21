@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<block>
+	<name>TCP rigctl Message Source</name>
+	<key>satnogs_tcp_rigctl_msg_source</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.tcp_rigctl_msg_source($addr, $port, $mtu)</make>
+
+	<param>
+		<name>IP Address</name>
+		<key>addr</key>
+		<value>"127.0.0.1"</value>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Listen port</name>
+		<key>port</key>
+		<value>16886</value>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>MTU</name>
+		<key>mtu</key>
+		<value>1500</value>
+		<type>int</type>
+	</param>
+
+	<source>
+		<name>freq</name>
+		<type>message</type>
+	</source>
+</block>

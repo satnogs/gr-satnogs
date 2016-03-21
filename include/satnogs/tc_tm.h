@@ -133,12 +133,12 @@ namespace gr
      */
     typedef enum
     {
-      R_OBC_PKT_ILLEGAL_APPID = 0,   //!< R_OBC_PKT_ILLEGAL_APPID illegal application ID
+      R_OBC_PKT_ILLEGAL_APPID = 0, //!< R_OBC_PKT_ILLEGAL_APPID illegal application ID
       R_OBC_PKT_INV_LEN = 1,         //!< R_OBC_PKT_INV_LEN invalid length
       R_OBC_PKT_INC_CRC = 2,         //!< R_OBC_PKT_INC_CRC incorrect CRC
       R_OBC_PKT_ILLEGAL_PKT_TP = 3,  //!< R_OBC_PKT_ILLEGAL_PKT_TP
       R_OBC_PKT_ILLEGAL_PKT_STP = 4, //!< R_OBC_PKT_ILLEGAL_PKT_STP
-      R_OBC_PKT_ILLEGAL_APP_DATA = 5,//!< R_OBC_PKT_ILLEGAL_APP_DATA
+      R_OBC_PKT_ILLEGAL_APP_DATA = 5, //!< R_OBC_PKT_ILLEGAL_APP_DATA
       R_OBC_OK = 6,                  //!< R_OBC_OK All ok
       R_OBC_ERROR = 7,               //!< R_OBC_ERROR an error occured
       R_OBC_EOT = 8,                 //!< R_OBC_EOT End-of-transfer
@@ -174,33 +174,217 @@ namespace gr
       uint16_t dest_id;
 
       uint8_t *data; /* variable data, this should be fixed array */
-      uint8_t padding;  /* x bits, padding for word alligment */
+      uint8_t padding; /* x bits, padding for word alligment */
 
       uint16_t crc; /* CRC or checksum, mission specific*/
     } tc_tm_pkt;
 
-    extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
-    extern const uint8_t app_id_verification[MAX_APP_ID];
-    extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
+    /*
+     extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
+     extern const uint8_t app_id_verification[MAX_APP_ID];
+     extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
-    extern OBC_ret_state_t
-    verification_pack_pkt_api (uint8_t *buf, tc_tm_pkt *pkt,
-			       uint16_t *buf_pointer);
-    extern OBC_ret_state_t
-    hk_pack_pkt_api (uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
+     extern OBC_ret_state_t
+     verification_pack_pkt_api (uint8_t *buf, tc_tm_pkt *pkt,
+     uint16_t *buf_pointer);
+     extern OBC_ret_state_t
+     hk_pack_pkt_api (uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
+     */
 
-    uint8_t
-    checkSum (const uint8_t *data, uint16_t size);
+    static inline uint8_t
+    ecss_tm_checksum (const uint8_t *data, uint16_t size)
+    {
+      uint8_t CRC = 0;
+      for (int i = 0; i <= size; i++) {
+	CRC = CRC ^ data[i];
+      }
+      return CRC;
+    }
 
-    OBC_ret_state_t
-    unpack_pkt (const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size);
+    /*Must check for endianess*/
+    static inline OBC_ret_state_t
+    ecss_tm_unpack_pkt (const uint8_t *buf, tc_tm_pkt *pkt, const uint16_t size)
+    {
+      union _cnv cnv;
+      uint8_t tmp_crc[2];
 
-    OBC_ret_state_t
-    pack_pkt (uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size);
+      uint8_t ver, dfield_hdr, ccsds_sec_hdr, tc_pus;
 
-    OBC_ret_state_t
-    crt_pkt (tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack,
-	     uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id);
+      tmp_crc[0] = buf[size - 1];
+      tmp_crc[1] = checkSum (buf, size - 2);
+
+      ver = buf[0] >> 5;
+
+      pkt->type = (buf[0] >> 4) & 0x01;
+      dfield_hdr = (buf[0] >> 3) & 0x01;
+
+      cnv.cnv8[0] = buf[1];
+      cnv.cnv8[1] = 0x07 & buf[0];
+      pkt->app_id = cnv.cnv16[0];
+
+      pkt->seq_flags = buf[2] >> 6;
+
+      cnv.cnv8[0] = buf[3];
+      cnv.cnv8[1] = buf[2] & 0x3F;
+      pkt->seq_count = cnv.cnv16[0];
+
+      cnv.cnv8[0] = buf[4];
+      cnv.cnv8[1] = buf[5];
+      pkt->len = cnv.cnv16[0];
+
+      ccsds_sec_hdr = buf[6] >> 7;
+
+      tc_pus = buf[6] >> 4;
+
+      pkt->ack = 0x04 & buf[6];
+
+      pkt->ser_type = buf[7];
+      pkt->ser_subtype = buf[8];
+      pkt->dest_id = buf[9];
+
+      if (app_id_verification[pkt->app_id] != 1) {
+	return R_OBC_PKT_ILLEGAL_APPID;
+      }
+
+      if (pkt->len != size - 7) {
+	return R_OBC_PKT_INV_LEN;
+      }
+
+      if (tmp_crc[0] != tmp_crc[1]) {
+	return R_OBC_PKT_INC_CRC;
+      }
+
+      if (services_verification_TC_TM[pkt->ser_type][pkt->ser_subtype][pkt->type]
+	  != 1) {
+	return R_OBC_PKT_ILLEGAL_PKT_TP;
+      }
+
+      if (ver != 0) {
+	return R_OBC_ERROR;
+      }
+
+      if (tc_pus != 1) {
+	return R_OBC_ERROR;
+      }
+
+      if (ccsds_sec_hdr != 0) {
+	return R_OBC_ERROR;
+      }
+
+      if (pkt->type != TC && pkt->type != TM) {
+	return R_OBC_ERROR;
+      }
+
+      if (dfield_hdr != 1) {
+	return R_OBC_ERROR;
+      }
+
+      if (pkt->ack != TC_ACK_NO || pkt->ack != TC_ACK_ACC
+	  || pkt->ack != TC_ACK_EXE_COMP) {
+	return R_OBC_ERROR;
+      }
+
+      for (int i = 0; i < pkt->len - 4; i++) {
+	pkt->data[i] = buf[10 + i];
+      }
+
+      return R_OBC_OK;
+    }
+
+    /**
+     * Packs a TC packet into a byte buffer
+     * @param buf buffer to store the data to be sent
+     * @param pkt the data to be stored in the buffer
+     * @param size size of the array
+     * @return appropriate error code or R_OBC_OK if all operation succeed
+     */
+    static inline OBC_ret_state_t
+    ecss_tm_pack_pkt (uint8_t *buf, tc_tm_pkt *pkt, uint16_t *size)
+    {
+
+      union _cnv cnv;
+      uint8_t buf_pointer;
+
+      cnv.cnv16[0] = pkt->app_id;
+
+      buf[0] = ( ECSS_VER_NUMBER << 5 | pkt->type << 4
+	  | ECSS_DATA_FIELD_HDR_FLG << 3 | cnv.cnv8[1]);
+      buf[1] = cnv.cnv8[0];
+
+      cnv.cnv16[0] = pkt->seq_count;
+      buf[2] = (pkt->seq_flags << 6 | cnv.cnv8[1]);
+      buf[3] = cnv.cnv8[0];
+
+      /* TYPE = 0 TM, TYPE = 1 TC*/
+      if (pkt->type == TM) {
+	buf[6] = ECSS_PUS_VER << 4;
+      }
+      else if (pkt->type == TC) {
+	buf[6] = ( ECSS_SEC_HDR_FIELD_FLG << 7 | ECSS_PUS_VER << 4 | pkt->ack);
+      }
+      else {
+	return R_OBC_ERROR;
+      }
+
+      buf[7] = pkt->ser_type;
+      buf[8] = pkt->ser_subtype;
+      buf[9] = pkt->dest_id; /*source or destination*/
+
+      buf_pointer = 10;
+
+      if (pkt->ser_type == TC_VERIFICATION_SERVICE) {
+	//cnv.cnv16[0] = tc_pkt_id;
+	//cnv.cnv16[1] = tc_pkt_seq_ctrl;
+
+	/*verification_pack_pkt_api (buf, pkt, &buf_pointer);*/
+
+      }
+      else if (pkt->ser_type == TC_HOUSEKEEPING_SERVICE) {
+
+	/*hk_pack_pkt_api (buf, pkt, &buf_pointer);*/
+
+      }
+      else if (pkt->ser_type == TC_FUNCTION_MANAGEMENT_SERVICE
+	  && pkt->ser_subtype == 1) {
+
+	buf[10] = pkt->data[0];
+
+	buf[11] = pkt->data[1];
+	buf[12] = pkt->data[2];
+	buf[13] = pkt->data[3];
+	buf[14] = pkt->data[4];
+
+	buf_pointer += 5;
+
+      }
+      else {
+	return R_OBC_ERROR;
+      }
+
+      /*check if this is correct*/
+      cnv.cnv16[0] = buf_pointer - 6;
+      buf[4] = cnv.cnv8[0];
+      buf[5] = cnv.cnv8[1];
+
+      buf[buf_pointer] = checkSum (buf, buf_pointer - 1);
+      *size = buf_pointer;
+      return R_OBC_OK;
+    }
+
+    static inline OBC_ret_state_t
+    ecss_tm_crt_pkt (tc_tm_pkt *pkt, uint16_t app_id, uint8_t type, uint8_t ack,
+		     uint8_t ser_type, uint8_t ser_subtype, uint16_t dest_id)
+    {
+
+      pkt->type = type;
+      pkt->app_id = app_id;
+      pkt->dest_id = dest_id;
+
+      pkt->ser_type = ser_type;
+      pkt->ser_subtype = ser_subtype;
+
+      return R_OBC_OK;
+    }
 
   } // namespace satnogs
 } // namespace gr

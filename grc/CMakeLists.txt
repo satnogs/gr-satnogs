@@ -27,5 +27,6 @@ install(FILES
     satnogs_ax25_encoder_bf.xml
     satnogs_ax25_decoder_b.xml
     satnogs_udp_msg_source.xml
-    satnogs_debug_msg_source.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_debug_msg_source.xml
+    satnogs_tcp_rigctl_msg_source.xml DESTINATION share/gnuradio/grc/blocks
 )
