@@ -39,5 +39,6 @@ install(FILES
     ax25_decoder_b.h
     udp_msg_source.h
     debug_msg_source.h
-    tc_tm.h DESTINATION include/satnogs
+    tc_tm.h
+    frame_encoder.h DESTINATION include/satnogs
 )
