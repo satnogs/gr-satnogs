@@ -40,5 +40,6 @@ install(FILES
     udp_msg_source.h
     debug_msg_source.h
     tc_tm.h
-    tcp_rigctl_msg_source.h DESTINATION include/satnogs
+    tcp_rigctl_msg_source.h
+    doppler_correction_cc.h DESTINATION include/satnogs
 )
