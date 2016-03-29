@@ -18,35 +18,37 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
-#define INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
+#ifndef INCLUDED_SATNOGS_DOPPLER_FIT_H
+#define INCLUDED_SATNOGS_DOPPLER_FIT_H
 
-#include <satnogs/frame_encoder.h>
+#include <satnogs/api.h>
+#include <satnogs/freq_drift.h>
+#include <deque>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class frame_encoder_impl : public frame_encoder
+    /*!
+     * \brief Doppler frequency polynomial fitting tool
+     * \ingroup satnogs
+     */
+    class SATNOGS_API doppler_fit
     {
-    private:
-      // Nothing to declare in this block.
-
     public:
-      frame_encoder_impl (bool append_preamble, bool ecss_encap,
-			  const std::string& dest_addr, uint8_t dest_ssid,
-			  const std::string& src_addr, uint8_t src_ssid);
-      ~frame_encoder_impl ();
+      doppler_fit (size_t degree);
+      ~doppler_fit ();
 
-      // Where all the action really happens
-      int
-      work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
+      void fit(std::deque<freq_drift> drifts);
+
+    private:
+      const size_t d_degree;
+      std::vector<double> d_coeff;
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H */
+#endif /* INCLUDED_SATNOGS_DOPPLER_FIT_H */
 

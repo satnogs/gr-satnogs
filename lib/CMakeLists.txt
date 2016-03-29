@@ -37,8 +37,11 @@ list(APPEND satnogs_sources
     ax25_decoder_b_impl.cc
     udp_msg_source_impl.cc
     debug_msg_source_impl.cc
-    tc_tm.cc
-    frame_encoder_impl.cc )
+    tcp_rigctl_msg_source_impl.cc
+    doppler_correction_cc_impl.cc
+    frame_encoder_impl.cc
+    doppler_fit.cc
+    freq_drift.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)

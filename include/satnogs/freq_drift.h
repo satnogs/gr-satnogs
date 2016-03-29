@@ -18,35 +18,43 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
-#define INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
+#ifndef INCLUDED_SATNOGS_FREQ_DRIFT_H
+#define INCLUDED_SATNOGS_FREQ_DRIFT_H
 
-#include <satnogs/frame_encoder.h>
+#include <satnogs/api.h>
+#include <stdint.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class frame_encoder_impl : public frame_encoder
+    /*!
+     * \brief Class that specifies the frequency drift at a given time.
+     * The time is measured in samples.
+     * \ingroup satnogs
+     */
+    class SATNOGS_API freq_drift
     {
-    private:
-      // Nothing to declare in this block.
-
     public:
-      frame_encoder_impl (bool append_preamble, bool ecss_encap,
-			  const std::string& dest_addr, uint8_t dest_ssid,
-			  const std::string& src_addr, uint8_t src_ssid);
-      ~frame_encoder_impl ();
+      freq_drift (uint64_t x, double y);
+      ~freq_drift ();
+      double
+      get_freq_drift () const;
+      void
+      set_freq_drift (double freqDrift);
+      uint64_t
+      get_x () const;
+      void
+      set_x (uint64_t x);
 
-      // Where all the action really happens
-      int
-      work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
+    private:
+      uint64_t d_x;
+      double d_freq_drift;
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H */
+#endif /* INCLUDED_SATNOGS_FREQ_DRIFT_H */
 

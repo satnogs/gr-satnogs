@@ -18,26 +18,41 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
-#define INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
+#ifndef INCLUDED_SATNOGS_DOPPLER_CORRECTION_CC_IMPL_H
+#define INCLUDED_SATNOGS_DOPPLER_CORRECTION_CC_IMPL_H
 
-#include <satnogs/frame_encoder.h>
+#include <satnogs/doppler_correction_cc.h>
+#include <deque>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class frame_encoder_impl : public frame_encoder
+    class doppler_correction_cc_impl : public doppler_correction_cc
     {
     private:
-      // Nothing to declare in this block.
+      const double d_target_freq;
+      const double d_samp_rate;
+      const double d_update_period;
+      const size_t d_est_thrhld;
+
+      double d_freq_diff;
+      bool d_have_est;
+      size_t d_freq_est_num;
+      std::deque<double> d_doppler_freqs;
+      boost::mutex d_mutex;
+
+      void
+      new_freq (pmt::pmt_t msg);
+
+      void
+      reset (pmt::pmt_t msg);
 
     public:
-      frame_encoder_impl (bool append_preamble, bool ecss_encap,
-			  const std::string& dest_addr, uint8_t dest_ssid,
-			  const std::string& src_addr, uint8_t src_ssid);
-      ~frame_encoder_impl ();
+      doppler_correction_cc_impl (double target_freq, double sampling_rate,
+				  size_t corrections_per_sec);
+      ~doppler_correction_cc_impl ();
 
       // Where all the action really happens
       int
@@ -48,5 +63,5 @@ namespace gr
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H */
+#endif /* INCLUDED_SATNOGS_DOPPLER_CORRECTION_CC_IMPL_H */
 

@@ -18,35 +18,43 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
-#define INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
+#ifndef INCLUDED_SATNOGS_TCP_RIGCTL_MSG_SOURCE_H
+#define INCLUDED_SATNOGS_TCP_RIGCTL_MSG_SOURCE_H
 
-#include <satnogs/frame_encoder.h>
+#include <satnogs/api.h>
+#include <gnuradio/block.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class frame_encoder_impl : public frame_encoder
+    /*!
+     * \brief Block that accepts TCP messages with rigctl commands. Depending
+     * the command contents this block produces an appropriate PMT message
+     * to control other blocks in the flowgraph
+     * \ingroup satnogs
+     *
+     */
+    class SATNOGS_API tcp_rigctl_msg_source : virtual public gr::block
     {
-    private:
-      // Nothing to declare in this block.
-
     public:
-      frame_encoder_impl (bool append_preamble, bool ecss_encap,
-			  const std::string& dest_addr, uint8_t dest_ssid,
-			  const std::string& src_addr, uint8_t src_ssid);
-      ~frame_encoder_impl ();
+      typedef boost::shared_ptr<tcp_rigctl_msg_source> sptr;
 
-      // Where all the action really happens
-      int
-      work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
+
+      /**
+       * Rigctl TCP command accepter
+       * @param addr the address of the interface to listen at
+       * @param port the TCP port to listen for TCP connections
+       * @param mtu the maximum MTU
+       * @return
+       */
+      static sptr
+      make (const std::string& addr, uint16_t port, size_t mtu = 1500);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H */
+#endif /* INCLUDED_SATNOGS_TCP_RIGCTL_MSG_SOURCE_H */
 

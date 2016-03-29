@@ -21,7 +21,8 @@
 #include "satnogs/ax25_decoder_b.h"
 #include "satnogs/udp_msg_source.h"
 #include "satnogs/debug_msg_source.h"
-#include "satnogs/tc_tm.h"
+#include "satnogs/tcp_rigctl_msg_source.h"
+#include "satnogs/doppler_correction_cc.h"
 #include "satnogs/frame_encoder.h"
 %}
 
@@ -49,6 +50,9 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_decoder_b);
 GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_source);
 %include "satnogs/debug_msg_source.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, debug_msg_source);
-%include "satnogs/tc_tm.h"
+%include "satnogs/tcp_rigctl_msg_source.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, tcp_rigctl_msg_source);
 %include "satnogs/frame_encoder.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, frame_encoder);
+%include "satnogs/doppler_correction_cc.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, doppler_correction_cc);

@@ -18,35 +18,52 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
-#define INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
 
-#include <satnogs/frame_encoder.h>
+#include <gnuradio/io_signature.h>
+#include <satnogs/freq_drift.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class frame_encoder_impl : public frame_encoder
+    freq_drift::freq_drift (uint64_t x, double y) :
+	    d_x (x),
+	    d_freq_drift (y)
     {
-    private:
-      // Nothing to declare in this block.
+    }
 
-    public:
-      frame_encoder_impl (bool append_preamble, bool ecss_encap,
-			  const std::string& dest_addr, uint8_t dest_ssid,
-			  const std::string& src_addr, uint8_t src_ssid);
-      ~frame_encoder_impl ();
+    freq_drift::~freq_drift ()
+    {
+    }
 
-      // Where all the action really happens
-      int
-      work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
-    };
+    double
+    freq_drift::get_freq_drift () const
+    {
+      return d_freq_drift;
+    }
 
-  } // namespace satnogs
-} // namespace gr
+    void
+    freq_drift::set_freq_drift (double freq_drift)
+    {
+      d_freq_drift = freq_drift;
+    }
 
-#endif /* INCLUDED_SATNOGS_FRAME_ENCODER_IMPL_H */
+    uint64_t
+    freq_drift::get_x () const
+    {
+      return d_x;
+    }
+
+    void
+    freq_drift::set_x (uint64_t x)
+    {
+      d_x = x;
+    }
+
+  } /* namespace satnogs */
+} /* namespace gr */
 

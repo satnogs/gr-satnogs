@@ -39,9 +39,11 @@ install(FILES
     ax25_decoder_b.h
     udp_msg_source.h
     debug_msg_source.h
+    tc_tm.h
+<<<<<<< HEAD
+    frame_encoder.h DESTINATION include/satnogs
+=======
     tcp_rigctl_msg_source.h
-    frame_encoder.h
-    doppler_correction_cc.h
-    doppler_fit.h
-    freq_drift.h DESTINATION include/satnogs
+    doppler_correction_cc.h DESTINATION include/satnogs
+>>>>>>> e2426243126ea374540c7ac95c53b7ba8983a0b1
 )
