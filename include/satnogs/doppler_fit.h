@@ -24,6 +24,7 @@
 #include <satnogs/api.h>
 #include <satnogs/freq_drift.h>
 #include <deque>
+#include <boost/thread/mutex.hpp>
 
 namespace gr
 {
@@ -38,13 +39,19 @@ namespace gr
     {
     public:
       doppler_fit (size_t degree);
-      ~doppler_fit ();
 
-      void fit(std::deque<freq_drift> drifts);
+      void
+      fit (std::deque<freq_drift> drifts);
+
+      void
+      predict_freqs (double *freqs, size_t ncorrections,
+		     size_t samples_per_correction);
 
     private:
       const size_t d_degree;
+      double d_last_x;
       std::vector<double> d_coeff;
+      boost::mutex d_mutex;
     };
 
   } // namespace satnogs

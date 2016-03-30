@@ -37,14 +37,19 @@ namespace gr
      * @param degree the degree of the polynomial
      */
     doppler_fit::doppler_fit (size_t degree) :
-	d_degree(degree)
+	d_degree(degree),
+	d_last_x(0.0)
     {
     }
 
-    doppler_fit::~doppler_fit ()
-    {
-    }
-
+    /**
+     * This method calculates the coefficients of the polynomial that will
+     * be used by the predict_freqs() method to produce simulated frequency
+     * differences
+     * @param drifts the queue containing the frequency differences and the
+     * corresponding timings that these frequencies diffrences occured. Time is
+     * measured in samples since the start of the flowgraph execution.
+     */
     void
     doppler_fit::fit (std::deque<freq_drift> drifts)
     {
@@ -85,8 +90,54 @@ namespace gr
       BOOST_ASSERT( singular == 0 );
 
       boost::numeric::ublas::lu_substitute(txx_matrix, perm, txy_matrix);
+
+      /*
+       * Lock the mutex to make sure that no one uses at the same time the
+       * coefficients
+       */
+      boost::mutex::scoped_lock lock(d_mutex);
       d_coeff = std::vector<double> (txy_matrix.data().begin(),
 				     txy_matrix.data().end());
+      d_last_x = drifts[s - 1].get_x();
+    }
+
+    /**
+     * Creates a number of frequency differences predictions using polynomial
+     * curve fitting.
+     * @param freqs buffer that will hold the predicted frequency differences.
+     * It is responsibility of the caller to provide enough memory for at most
+     * \p ncorrections double numbers.
+     * @param ncorrections the number predicted frequencies that the method
+     * will produce.
+     * @param samples_per_correction the number of samples elapsed between each
+     * correction.
+     */
+    void
+    doppler_fit::predict_freqs (double *freqs, size_t ncorrections,
+		     size_t samples_per_correction)
+    {
+      size_t i;
+      size_t j;
+      double predicted_freq_diff;
+      double x;
+      double xT;
+      boost::mutex::scoped_lock lock(d_mutex);
+      for(i = 0; i < ncorrections; i++){
+	predicted_freq_diff = 0.0;
+	xT = 1.0;
+	x = d_last_x + i * samples_per_correction;
+	for(j = 0; j < d_degree + 1; j++){
+	  predicted_freq_diff += d_coeff[j] * xT;
+	  xT *= x;
+	}
+	freqs[i] = predicted_freq_diff;
+      }
+
+      /*
+       * The predict method can be called multiple times without update the
+       * fitness of the polynomial. For this reason we alter the last x
+       */
+      d_last_x = d_last_x + (ncorrections + 1) * samples_per_correction;
     }
 
   } /* namespace satnogs */
