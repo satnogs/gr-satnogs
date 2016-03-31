@@ -1,38 +1,49 @@
 <?xml version="1.0"?>
 <block>
-  <name>doppler_correction_cc</name>
-  <key>satnogs_doppler_correction_cc</key>
-  <category>satnogs</category>
-  <import>import satnogs</import>
-  <make>satnogs.doppler_correction_cc($target_freq)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
-  <param>
-    <name>...</name>
-    <key>...</key>
-    <type>...</type>
-  </param>
+	<name>Doppler Correction</name>
+	<key>satnogs_doppler_correction_cc</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.doppler_correction_cc($target_freq, $sampling_rate, $corrections_per_sec)</make>
 
-  <!-- Make one 'sink' node per input. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
-  <sink>
-    <name>in</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
-  </sink>
+	<param>
+		<name>Target Frequency</name>
+		<key>target_freq</key>
+		<type>real</type>
+	</param>
+	
+	<param>
+		<name>Sample Rate</name>
+		<key>sampling_rate</key>
+		<value>samp_rate</value>
+		<type>real</type>
+	</param>
+	
+	<param>
+		<name>Corrections per Second</name>
+		<key>corrections_per_sec</key>
+		<value>1000</value>
+		<type>int</type>
+	</param>
 
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
-  <source>
-    <name>out</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
-  </source>
+	<sink>
+		<name>freq</name>
+		<type>message</type>
+	</sink>
+
+	<sink>
+		<name>reset</name>
+		<type>message</type>
+		<optional>1</optional>
+	</sink>
+
+	<sink>
+		<name>in</name>
+		<type>complex</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>complex</type>
+	</source>
 </block>

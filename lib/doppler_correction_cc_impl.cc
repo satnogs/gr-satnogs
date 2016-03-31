@@ -24,6 +24,7 @@
 
 #include <gnuradio/io_signature.h>
 #include "doppler_correction_cc_impl.h"
+#include <satnogs/log.h>
 #include <volk/volk.h>
 
 namespace gr
@@ -75,7 +76,7 @@ namespace gr
        * and the input message handler are NOT reentrant.
        */
       set_max_noutput_items (d_samp_rate / 2.0);
-      set_alignment(8);
+      set_alignment (8);
 
       set_msg_handler (
 	  pmt::mp ("freq"),
@@ -104,11 +105,15 @@ namespace gr
       d_freq_diff = d_target_freq - new_freq;
       if (!d_have_est) {
 	d_freq_est_num++;
-	if (d_freq_est_num > d_est_thrhld - 1) {
-	  d_have_est = true;
-	}
 	d_doppler_freqs.push_back (
 	    freq_drift (nitems_written (0), d_freq_diff));
+	if (d_freq_est_num > d_est_thrhld - 1) {
+	  d_doppler_fit_engine.fit (d_doppler_freqs);
+	  d_doppler_fit_engine.predict_freqs (d_predicted_freqs,
+					      d_corrections_per_sec,
+					      d_update_period);
+	  d_have_est = true;
+	}
       }
       else {
 	d_doppler_freqs.pop_front ();
@@ -121,6 +126,7 @@ namespace gr
 	d_doppler_fit_engine.predict_freqs (d_predicted_freqs,
 					    d_corrections_per_sec,
 					    d_update_period);
+	d_corrections = 0;
       }
     }
 
@@ -180,20 +186,20 @@ namespace gr
 						  d_update_period);
 	      d_corrections = 0;
 	    }
+	  }
 
-	    cnt = std::min(d_update_period - d_corrected_samples,
-			   (size_t) (noutput_items - produced));
-	    /* Perform the doppler shift correction */
-	    volk_32fc_x2_multiply_32fc (out + produced, in + produced,
-					d_nco_buff + d_corrected_samples, cnt);
+	  cnt = std::min (d_update_period - d_corrected_samples,
+			  (size_t) (noutput_items - produced));
+	  /* Perform the doppler shift correction */
+	  volk_32fc_x2_multiply_32fc (out + produced, in + produced,
+				      d_nco_buff + d_corrected_samples, cnt);
 
-	    /* Make the proper advances */
-	    produced += (int) cnt;
-	    d_corrected_samples += cnt;
+	  /* Make the proper advances */
+	  produced += (int) cnt;
+	  d_corrected_samples += cnt;
 
-	    if(d_corrected_samples == d_update_period) {
-	      d_corrected_samples = 0;
-	    }
+	  if (d_corrected_samples == d_update_period) {
+	    d_corrected_samples = 0;
 	  }
 	}
       }
