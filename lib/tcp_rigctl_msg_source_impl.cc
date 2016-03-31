@@ -34,6 +34,10 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include <stdlib.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netinet/tcp.h>
+
 
 namespace gr
 {
@@ -68,6 +72,22 @@ namespace gr
 			   this)));
     }
 
+    static inline void
+    send_freq(int sock, uint64_t freq)
+    {
+      static char buf[512];
+      snprintf(buf, 512, "%llu\n", freq);
+      send(sock, buf, strnlen(buf, 512), 0);
+    }
+
+    static inline void
+    send_report_code(int sock, int code)
+    {
+      static char buf[512];
+      snprintf(buf, 512, "RPRT %d\n", code);
+      send(sock, buf, strnlen(buf, 512), 0);
+    }
+
     void
     tcp_rigctl_msg_source_impl::tcp_msg_accepter ()
     {
@@ -78,7 +98,10 @@ namespace gr
       socklen_t client_addr_len;
       ssize_t ret;
       uint8_t *buf;
-      double freq;
+      double freq = 0.0;
+      uint64_t reported_freq = 0;
+      int error_code = 0;
+      int optval = 1;
 
       if ((listen_sock = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
 	perror ("opening UDP socket");
@@ -120,7 +143,13 @@ namespace gr
 	  exit (EXIT_FAILURE);
 	}
 
-	while ((ret = recv (sock, buf, d_mtu, 0)) > 0) {
+	/* Apply the TCP_NODELAY option at the accepted socket */
+	if (setsockopt(sock, IPPROTO_TCP, TCP_NODELAY, &optval, sizeof(int)) < 0){
+	  perror ("TCP setsockopt");
+	  exit (EXIT_FAILURE);
+	}
+
+	while ((ret = recv (sock, buf, d_mtu, 0)) > 0 && d_running) {
 	  switch (buf[0])
 	    {
 	    case 'F':
@@ -135,11 +164,27 @@ namespace gr
 	       * the in-equality agains 0.0.
 	       */
 	      if (freq != 0.0) {
+		reported_freq = freq;
 		message_port_pub (pmt::mp ("freq"), pmt::from_double (freq));
+		error_code = 0;
 	      }
+	      else{
+		error_code = -11;
+	      }
+	      /* Send the report code */
+	      send_report_code(sock, error_code);
+	      break;
+	    case 'f':
+	      send_freq(sock, reported_freq);
+	      break;
+	    /* Terminate the connection and exit */
+	    case 'q':
+	      send_report_code(sock, 0);
+	      d_running = false;
 	      break;
 	    default:
 	      LOG_WARN("Unsupported rigctl command");
+	      send_report_code(sock, -11);
 	    }
 	}
 	shutdown (sock, SHUT_RDWR);
