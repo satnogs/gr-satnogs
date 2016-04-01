@@ -1,4 +1,4 @@
-# Copyright 2011,2012 Free Software Foundation, Inc.
+# Copyright 2011 Free Software Foundation, Inc.
 #
 # This file is part of GNU Radio
 #
@@ -16,33 +16,24 @@
 # along with GNU Radio; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-
-########################################################################
-# Install public header files
-########################################################################
 install(FILES
-    api.h
-    ax25.h
-    config.h
-    cw_matched_filter_ff.h
-    log.h
-    morse_tree.h
-    morse.h
-    morse_decoder.h
-    morse_debug_source.h
-    clear_text_msg_sink.h
-    cw_to_symbol.h
-    afsk_decoder.h
-    sine_matched_filter_ff.h
-    utils.h
-    ax25_encoder_bf.h
-    ax25_decoder_b.h
-    udp_msg_source.h
-    debug_msg_source.h
-    json_to_ecss_src.h
-    tcp_rigctl_msg_source.h
-    frame_encoder.h
-    doppler_correction_cc.h
-    doppler_fit.h
-    freq_drift.h DESTINATION include/satnogs
+    satnogs_cw_matched_filter_ff.xml
+    satnogs_morse_decoder.xml
+    satnogs_morse_debug_source.xml
+    satnogs_clear_text_msg_sink.xml
+    satnogs_cw_to_symbol.xml
+    satnogs_afsk_decoder.xml
+    satnogs_sine_matched_filter_ff.xml
+    satnogs_ax25_encoder_bf.xml
+    satnogs_ax25_decoder_b.xml
+    satnogs_udp_msg_source.xml
+    satnogs_debug_msg_source.xml
+<<<<<<< HEAD
+    satnogs_json_to_ecss_src.xml
+    satnogs_tcp_rigctl_msg_source.xml DESTINATION share/gnuradio/grc/blocks
+=======
+    satnogs_tcp_rigctl_msg_source.xml
+    satnogs_frame_encoder.xml
+    satnogs_doppler_correction_cc.xml DESTINATION share/gnuradio/grc/blocks
+>>>>>>> 82c9ff2850235a69206a1fb2db3a9f039608a6f6
 )

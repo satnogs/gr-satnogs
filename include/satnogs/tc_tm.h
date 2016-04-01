@@ -179,17 +179,17 @@ namespace gr
       uint16_t crc; /* CRC or checksum, mission specific*/
     } tc_tm_pkt;
 
-    /*
-     extern const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
-     extern const uint8_t app_id_verification[MAX_APP_ID];
-     extern const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
+
+     const uint8_t services_verification_TC_TM[MAX_SERVICES][MAX_SUBTYPES][2];
+     const uint8_t app_id_verification[MAX_APP_ID];
+     const uint8_t services_verification_OBC_TC[MAX_SERVICES][MAX_SUBTYPES];
 
      extern OBC_ret_state_t
      verification_pack_pkt_api (uint8_t *buf, tc_tm_pkt *pkt,
      uint16_t *buf_pointer);
      extern OBC_ret_state_t
      hk_pack_pkt_api (uint8_t *buf, tc_tm_pkt *pkt, uint16_t *buf_pointer);
-     */
+
 
     static inline uint8_t
     ecss_tm_checksum (const uint8_t *data, uint16_t size)
@@ -211,7 +211,7 @@ namespace gr
       uint8_t ver, dfield_hdr, ccsds_sec_hdr, tc_pus;
 
       tmp_crc[0] = buf[size - 1];
-      tmp_crc[1] = checkSum (buf, size - 2);
+      tmp_crc[1] = ecss_tm_checksum (buf, size - 2);
 
       ver = buf[0] >> 5;
 
@@ -366,7 +366,7 @@ namespace gr
       buf[4] = cnv.cnv8[0];
       buf[5] = cnv.cnv8[1];
 
-      buf[buf_pointer] = checkSum (buf, buf_pointer - 1);
+      buf[buf_pointer] = ecss_tm_checksum (buf, buf_pointer - 1);
       *size = buf_pointer;
       return R_OBC_OK;
     }
