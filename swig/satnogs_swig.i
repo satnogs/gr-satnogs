@@ -22,6 +22,7 @@
 #include "satnogs/udp_msg_source.h"
 #include "satnogs/debug_msg_source.h"
 #include "satnogs/tcp_rigctl_msg_source.h"
+#include "satnogs/json_to_ecss_src.h"
 %}
 
 
@@ -50,3 +51,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_source);
 GR_SWIG_BLOCK_MAGIC2(satnogs, debug_msg_source);
 %include "satnogs/tcp_rigctl_msg_source.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, tcp_rigctl_msg_source);
+%include "satnogs/json_to_ecss_src.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, json_to_ecss_src);

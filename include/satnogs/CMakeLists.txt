@@ -39,6 +39,7 @@ install(FILES
     ax25_decoder_b.h
     udp_msg_source.h
     debug_msg_source.h
+    json_to_ecss_src.h
     tc_tm.h
     tcp_rigctl_msg_source.h DESTINATION include/satnogs
 )
