@@ -100,7 +100,7 @@ namespace gr
       }
 
       /* All good until now. Allocate buffer memory and proceed */
-      buf = new uint8_t(d_mtu);
+      buf = new uint8_t[d_mtu];
 
       while(d_running){
 	ret = recvfrom(sock, buf, d_mtu, 0, &client_addr, &client_addr_len);
@@ -115,7 +115,7 @@ namespace gr
 	}
       }
       close(sock);
-      delete buf;
+      delete[] buf;
       exit (EXIT_SUCCESS);
     }
 
