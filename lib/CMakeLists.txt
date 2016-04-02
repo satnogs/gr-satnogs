@@ -42,7 +42,8 @@ list(APPEND satnogs_sources
     doppler_correction_cc_impl.cc
     frame_encoder_impl.cc
     doppler_fit.cc
-    freq_drift.cc )
+    freq_drift.cc
+    upsat_fsk_frame_acquisition_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)
