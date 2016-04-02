@@ -100,7 +100,7 @@ namespace gr
       }
 
       /* All good until now. Allocate buffer memory and proceed */
-      buf = (uint8_t*)malloc(d_mtu*sizeof(uint8_t));
+      buf = (uint8_t*)malloc(d_mtu * sizeof(uint8_t));
 
       while(d_running){
 	ret = recvfrom(sock, buf, d_mtu, 0, &client_addr, &client_addr_len);
@@ -110,12 +110,12 @@ namespace gr
 	else{
 	  perror("UDP recvfrom");
 	  close(sock);
-	  delete buf;
+	  free(buf);
 	  exit(EXIT_FAILURE);
 	}
       }
       close(sock);
-      delete buf;
+      free(buf);
       exit (EXIT_SUCCESS);
     }
 
