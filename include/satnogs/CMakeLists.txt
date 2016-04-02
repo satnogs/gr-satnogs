@@ -39,6 +39,7 @@ install(FILES
     ax25_decoder_b.h
     udp_msg_source.h
     debug_msg_source.h
+    json_to_ecss_src.h
     tcp_rigctl_msg_source.h
     frame_encoder.h
     doppler_correction_cc.h

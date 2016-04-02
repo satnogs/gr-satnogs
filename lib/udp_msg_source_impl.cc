@@ -110,7 +110,7 @@ namespace gr
 	else{
 	  perror("UDP recvfrom");
 	  close(sock);
-	  delete buf;
+	  delete[] buf;
 	  exit(EXIT_FAILURE);
 	}
       }
