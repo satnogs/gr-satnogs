@@ -1,17 +1,19 @@
 <?xml version="1.0"?>
 <block>
-	<name>JSON to ECSS source</name>
+	<name>JSON to ECSS</name>
 	<key>satnogs_json_to_ecss_src</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.json_to_ecss()</make>
+	<make>satnogs.json_to_ecss_src()</make>
+	
 
-	<source>
-		<name>out</name>
-		<type>message</type>
-	</source>
 	<sink>
 		<name>in</name>
 		<type>message</type>
 	</sink>
+	
+	<source>
+        <name>out</name>
+        <type>message</type>
+    </source>
 </block>

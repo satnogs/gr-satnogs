@@ -679,7 +679,6 @@
 #define INCLUDED_SATNOGS_JSON_TO_ECSS_SRC_IMPL_H
 
 #include <satnogs/json_to_ecss_src.h>
-#include <satnogs/tc_tm.h>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
@@ -699,13 +698,12 @@ namespace gr {
     	pmt::pmt_t d_in_port;
     	pmt::pmt_t d_out_port;
 
+    	uint8_t*	d_buf;
+
     	void json_accepter();
-        void
-		print_ptree(ptree &pt, int level);
-        std::string indent(int level);
 
      public:
-      json_to_ecss_src_impl(const std::string& addr, uint16_t port, size_t mtu);
+      json_to_ecss_src_impl();
       ~json_to_ecss_src_impl();
 
       // Where all the action really happens

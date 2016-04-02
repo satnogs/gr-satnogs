@@ -690,7 +690,7 @@ namespace gr {
      * \ingroup satnogs
      *
      */
-    class SATNOGS_API json_to_ecss_src : virtual public gr::sync_block
+    class SATNOGS_API json_to_ecss_src : virtual public gr::block
     {
      public:
       typedef boost::shared_ptr<json_to_ecss_src> sptr;
@@ -703,7 +703,7 @@ namespace gr {
        * class. satnogs::json_to_ecss_src::make is the public interface for
        * creating new instances.
        */
-      static sptr make(const std::string& addr, uint16_t port, size_t mtu);
+      static sptr make();
 
     };
 

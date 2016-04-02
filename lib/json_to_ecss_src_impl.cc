@@ -685,22 +685,24 @@
 #include <sstream>
 #include <map>
 
+#define BUFFER_SIZE 2048
+
 
 namespace gr {
   namespace satnogs {
 
     json_to_ecss_src::sptr
-    json_to_ecss_src::make(const std::string& addr, uint16_t port, size_t mtu)
+    json_to_ecss_src::make()
     {
       return gnuradio::get_initial_sptr
-        (new json_to_ecss_src_impl(addr, port, mtu));
+        (new json_to_ecss_src_impl());
     }
 
     /*
      * The private constructor
      */
-    json_to_ecss_src_impl::json_to_ecss_src_impl(const std::string& addr, uint16_t port, size_t mtu)
-      : gr::sync_block("json_to_ecss_src",
+    json_to_ecss_src_impl::json_to_ecss_src_impl()
+      : gr::block("json_to_ecss_src",
 		       gr::io_signature::make (0, 0, 0),
 		       gr::io_signature::make (0, 0, 0)),
 			   is_running(true),
@@ -709,6 +711,8 @@ namespace gr {
     {
     	message_port_register_out(d_out_port);
     	message_port_register_in(d_in_port);
+
+    	d_buf = (uint8_t*)malloc(BUFFER_SIZE * sizeof(uint8_t));
 
     	new boost::thread (
     		      boost::bind (&json_to_ecss_src_impl::json_accepter, this));
@@ -724,50 +728,20 @@ namespace gr {
     void
 	json_to_ecss_src_impl::json_accepter(){
     	pmt::pmt_t message;
-    	uint8_t *buf;
     	size_t length;
 
     	while(is_running){
-    		tc_tm_pkt pkt;
     		message = delete_head_blocking(d_in_port,0);
     		length = blob_length(message);
-    		buf = uint8_t(length);
-    		buf = blob_data(message);
-    		std::istringstream ss(std::string(buf, buf + length));
+    		d_buf = (uint8_t*)blob_data(message);
+    		std::istringstream ss(std::string(d_buf, d_buf + length));
     		ptree tree;
     		read_json(ss,tree);
-    		print_ptree(tree,0);
-
+    		BOOST_FOREACH(const ptree::value_type &v, tree) {
+    			std::cout<<"First = "<<v.first << "Second = "<<v.second.data()<<std::endl ;
+    		}
     	}
     }
-    std::string
-    json_to_ecss_src_impl::indent(int level){
-    	  std::string s;
-    	  for (int i=0; i<level; i++) s += "  ";
-    	  return s;
-    }
-    void
-	json_to_ecss_src_impl::print_ptree(ptree &pt, int level){
-    	 if (pt.empty()) {
-    	    std::cout << "\""<< pt.data()<< "\"";
-    	  } else {
-    	    if (level) std::cout << std::endl;
-    	    std::cout << indent(level) << "{" << std::endl;
-    	    for (ptree::iterator pos = pt.begin(); pos != pt.end();) {
-    	      std::cout << indent(level+1) << "\"" << pos.first << "\": ";
-    	      print_ptree(pos.second, level + 1);
-    	      ++pos;
-    	      if (pos != pt.end()) {
-    	        std::cout << ",";
-    	      }
-    	      std::cout << std::endl;
-    	    }
-    	    std::cout << indent(level) << " }";
-    	  }
-    	  return;
-    }
-
-
 
   } /* namespace satnogs */
 } /* namespace gr */

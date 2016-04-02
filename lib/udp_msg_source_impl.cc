@@ -100,7 +100,7 @@ namespace gr
       }
 
       /* All good until now. Allocate buffer memory and proceed */
-      buf = new uint8_t(d_mtu);
+      buf = (uint8_t*)malloc(d_mtu*sizeof(uint8_t));
 
       while(d_running){
 	ret = recvfrom(sock, buf, d_mtu, 0, &client_addr, &client_addr_len);
