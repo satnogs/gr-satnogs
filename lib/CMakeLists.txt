@@ -38,6 +38,7 @@ list(APPEND satnogs_sources
     udp_msg_source_impl.cc
     debug_msg_source_impl.cc
     tcp_rigctl_msg_source_impl.cc
+    json_to_ecss_src_impl.cc 
     doppler_correction_cc_impl.cc
     frame_encoder_impl.cc
     doppler_fit.cc
