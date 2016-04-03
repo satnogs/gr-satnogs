@@ -1,38 +1,58 @@
 <?xml version="1.0"?>
 <block>
-  <name>upsat_fsk_frame_acquisition</name>
+  <name>UPSAT FSK Frame Acquisition</name>
   <key>satnogs_upsat_fsk_frame_acquisition</key>
   <category>satnogs</category>
   <import>import satnogs</import>
-  <make>satnogs.upsat_fsk_frame_acquisition($&preamble, $&sync_word, $whitening, $manchester)</make>
-  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
-       Sub-nodes:
-       * name
-       * key (makes the value accessible as $keyname, e.g. in the make node)
-       * type -->
+  <make>satnogs.upsat_fsk_frame_acquisition($preamble, $sync_word, $whitening, $manchester)</make>
+
   <param>
-    <name>...</name>
-    <key>...</key>
-    <type>...</type>
+    <name>Frame Preamble</name>
+    <key>preamble</key>
+    <type>raw</type>
   </param>
 
-  <!-- Make one 'sink' node per input. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
+  <param>
+    <name>Synchronization Word</name>
+    <key>sync_word</key>
+    <type>raw</type>
+  </param>
+  
+	<param>
+		<name>Whitening</name>
+		<key>whitening</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<param>
+		<name>Use Manchester Coding</name>
+		<key>manchester</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
   <sink>
     <name>in</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <type>float</type>
   </sink>
 
-  <!-- Make one 'source' node per output. Sub-nodes:
-       * name (an identifier for the GUI)
-       * type
-       * vlen
-       * optional (set to 1 for optional inputs) -->
   <source>
-    <name>out</name>
-    <type><!-- e.g. int, float, complex, byte, short, xxx_vector, ...--></type>
+    <name>pdu</name>
+    <type>message</type>
   </source>
 </block>
