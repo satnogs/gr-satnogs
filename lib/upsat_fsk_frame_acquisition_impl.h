@@ -52,6 +52,7 @@ namespace gr
       decoding_state_t d_state;
       uint8_t d_shifting_byte;
       size_t d_decoded_bytes;
+      size_t d_decoded_bits;
       size_t d_frame_len;
       uint8_t *d_pdu;
 

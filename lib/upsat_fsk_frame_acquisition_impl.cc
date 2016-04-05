@@ -95,6 +95,7 @@ namespace gr
     {
       d_state = SEARCHING;
       d_decoded_bytes = 0;
+      d_decoded_bits = 0;
       d_shifting_byte = 0;
     }
 
@@ -109,18 +110,24 @@ namespace gr
     upsat_fsk_frame_acquisition_impl::have_sync ()
     {
       d_state = HAVE_SYNC_WORD;
+      d_decoded_bytes = 0;
+      d_decoded_bits = 0;
     }
 
     inline void
     upsat_fsk_frame_acquisition_impl::have_frame_len ()
     {
       d_state = HAVE_FRAME_LEN;
+      d_decoded_bytes = 0;
+      d_decoded_bits = 0;
     }
 
     inline void
     upsat_fsk_frame_acquisition_impl::have_payload ()
     {
       d_state = HAVE_PAYLOAD;
+      d_decoded_bytes = 0;
+      d_decoded_bits = 0;
     }
 
     int
@@ -132,6 +139,7 @@ namespace gr
       const float *in = (const float *) input_items[0];
       for (i = 0; i < noutput_items; i++) {
 	slice_and_shift (in[i]);
+
 	switch (d_state)
 	  {
 	  case SEARCHING:
@@ -140,13 +148,55 @@ namespace gr
 	    }
 	    break;
 	  case HAVE_PREAMBLE:
+	    d_decoded_bits++;
+
+	    if(d_decoded_bits == 8) {
+	      d_decoded_bits = 0;
+	      if(d_shifting_byte == d_preamble[d_decoded_bytes]){
+		d_decoded_bytes++;
+		if(d_decoded_bytes == d_preamble_len){
+		  /* End of the preamble. It's time for the sync word */
+		  have_sync();
+		}
+	      }
+	      else{
+		/* Reset the preamble detection */
+		reset_state();
+	      }
+	    }
 	    break;
 	  case HAVE_SYNC_WORD:
+	    d_decoded_bits++;
+	    if(d_decoded_bits == 8) {
+	      d_decoded_bits = 0;
+	      if(d_shifting_byte == d_sync_word[d_decoded_bytes]) {
+		d_decoded_bytes++;
+		if(d_decoded_bytes == d_sync_word_len){
+		  have_frame_len();
+		}
+	      }
+	      else{
+		reset_state();
+	      }
+	    }
+	    break;
+	  case HAVE_FRAME_LEN:
+	    d_decoded_bits++;
+	    if(d_decoded_bits == 8) {
+	      d_frame_len = d_decoded_bytes;
+	      have_payload();
+	    }
 	    break;
 	  case HAVE_PAYLOAD:
-	    if (d_decoded_bytes == d_frame_len) {
-	      message_port_pub (pmt::mp ("pdu"),
-				pmt::make_blob (d_pdu, d_frame_len));
+	    d_decoded_bits++;
+	    if (d_decoded_bits == 8) {
+	      d_decoded_bits = 0;
+	      d_pdu[d_decoded_bytes] = d_shifting_byte;
+	      if (d_decoded_bytes == d_frame_len) {
+		message_port_pub (pmt::mp ("pdu"),
+				  pmt::make_blob (d_pdu, d_frame_len));
+		reset_state ();
+	      }
 	    }
 	    break;
 	  default:
