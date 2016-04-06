@@ -45,5 +45,6 @@ install(FILES
     doppler_correction_cc.h
     doppler_fit.h
     freq_drift.h
-    upsat_fsk_frame_acquisition.h DESTINATION include/satnogs
+    upsat_fsk_frame_acquisition.h
+    upsat_fsk_frame_encoder.h DESTINATION include/satnogs
 )

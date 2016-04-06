@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-	<name>UPSAT FSK Frame Acquisition</name>
-	<key>satnogs_upsat_fsk_frame_acquisition</key>
+	<name>UPSAT FSK Frame Encoder</name>
+	<key>satnogs_upsat_fsk_frame_encoder</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.upsat_fsk_frame_acquisition($preamble, $sync_word, $whitening, $manchester)</make>
+	<make>satnogs.upsat_fsk_frame_encoder($preamble, $sync_word, $append_crc, $whitening, $manchester)</make>
 
 	<param>
 		<name>Frame Preamble</name>
@@ -16,6 +16,20 @@
 		<name>Synchronization Word</name>
 		<key>sync_word</key>
 		<type>raw</type>
+	</param>
+	
+	<param>
+		<name>Append CRC</name>
+		<key>append_crc</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
 	</param>
 
 	<param>
@@ -47,12 +61,12 @@
 	</param>
 
 	<sink>
-		<name>in</name>
-		<type>float</type>
+		<name>pdu</name>
+		<type>message</type>
 	</sink>
 
 	<source>
-		<name>pdu</name>
-		<type>message</type>
+		<name>out</name>
+		<type>float</type>
 	</source>
 </block>

@@ -26,6 +26,7 @@
 #include "satnogs/doppler_correction_cc.h"
 #include "satnogs/frame_encoder.h"
 #include "satnogs/upsat_fsk_frame_acquisition.h"
+#include "satnogs/upsat_fsk_frame_encoder.h"
 %}
 
 
@@ -62,3 +63,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, frame_encoder);
 GR_SWIG_BLOCK_MAGIC2(satnogs, doppler_correction_cc);
 %include "satnogs/upsat_fsk_frame_acquisition.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, upsat_fsk_frame_acquisition);
+%include "satnogs/upsat_fsk_frame_encoder.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, upsat_fsk_frame_encoder);

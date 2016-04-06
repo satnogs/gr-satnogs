@@ -57,6 +57,7 @@ namespace gr
 	    d_state (SEARCHING),
 	    d_shifting_byte (0x0),
 	    d_decoded_bytes (0),
+	    d_decoded_bits (0),
 	    d_frame_len (0)
     {
       message_port_register_out (pmt::mp ("pdu"));
@@ -195,6 +196,7 @@ namespace gr
 	      if (d_decoded_bytes == d_frame_len) {
 		message_port_pub (pmt::mp ("pdu"),
 				  pmt::make_blob (d_pdu, d_frame_len));
+		LOG_WARN("Packet of %u", d_frame_len);
 		reset_state ();
 	      }
 	    }
