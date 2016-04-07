@@ -27,6 +27,7 @@ enable_testing()
 # Enable C++11 support
 set (CMAKE_CXX_STANDARD 11)
 add_definitions(-std=c++11)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
 
 #select the release build type by default to get optimization flags
 if(NOT CMAKE_BUILD_TYPE)

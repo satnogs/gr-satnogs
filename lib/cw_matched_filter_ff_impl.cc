@@ -50,6 +50,7 @@ namespace gr {
 	gr::sync_block ("cw_matched_filter_ff",
 			gr::io_signature::make (1, 1, sizeof(float)),
 			gr::io_signature::make (1, 1, sizeof(float))),
+			d_samp_rate(sampling_rate),
 			d_dot_duration(1.2/wpm),
 			d_produce_enrg(energy_out),
 			d_dot_samples(d_dot_duration / (1.0 / sampling_rate))
@@ -62,6 +63,12 @@ namespace gr {
       if(!d_sin_wave){
 	  throw std::runtime_error("Could not allocate sine wave buffer");
       }
+
+      /* Register the input port for frequency change messages */
+      message_port_register_in(pmt::mp("freq"));
+      set_msg_handler(pmt::mp("freq"),
+		      boost::bind(&cw_matched_filter_ff_impl::new_freq_msg_handler,
+				  this, _1));
 
       /* Now fill the buffer with the appropriate sine wave */
       gr::fxpt_nco nco;
@@ -77,23 +84,46 @@ namespace gr {
       volk_free(d_sin_wave);
     }
 
-    int
-    cw_matched_filter_ff_impl::work(int noutput_items,
-			  gr_vector_const_void_star &input_items,
-			  gr_vector_void_star &output_items)
+    void
+    cw_matched_filter_ff_impl::new_freq_msg_handler (pmt::pmt_t msg)
     {
-        const float *in = (const float *) input_items[0];
-        float *out = (float *) output_items[0];
+      if(pmt::is_pair(msg)){
+	set_new_freq(pmt::to_double(pmt::cdr(msg)));
+      }
+    }
 
-        for(int i = 0; i < noutput_items; i++ ){
-            volk_32f_x2_dot_prod_32f(out + i, in + i, d_sin_wave,
-				     d_dot_samples);
-        }
-        if(d_produce_enrg){
-          volk_32f_s32f_power_32f(out, out, 2, noutput_items);
-        }
+    int
+    cw_matched_filter_ff_impl::work (int noutput_items,
+				     gr_vector_const_void_star &input_items,
+				     gr_vector_void_star &output_items)
+    {
+      boost::mutex::scoped_lock lock (d_mutex);
+      const float *in = (const float *) input_items[0];
+      float *out = (float *) output_items[0];
 
-        return noutput_items;
+      for (int i = 0; i < noutput_items; i++) {
+	volk_32f_x2_dot_prod_32f (out + i, in + i, d_sin_wave, d_dot_samples);
+      }
+      if (d_produce_enrg) {
+	volk_32f_s32f_power_32f (out, out, 2, noutput_items);
+      }
+
+      return noutput_items;
+    }
+
+    void
+    cw_matched_filter_ff_impl::set_new_freq (double freq)
+    {
+      gr::fxpt_nco nco;
+      nco.set_freq(2 * M_PI * freq / d_samp_rate);
+      nco.sin(d_sin_wave, d_dot_samples, 1.0);
+    }
+
+    void
+    cw_matched_filter_ff_impl::set_new_freq_locked(double freq)
+    {
+      boost::mutex::scoped_lock lock(d_mutex);
+      set_new_freq(freq);
     }
 
   } /* namespace satnogs */

@@ -21,5 +21,17 @@ install(FILES
     satnogs_morse_decoder.xml
     satnogs_morse_debug_source.xml
     satnogs_clear_text_msg_sink.xml
-    satnogs_cw_to_symbol.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_cw_to_symbol.xml
+    satnogs_afsk_decoder.xml
+    satnogs_sine_matched_filter_ff.xml
+    satnogs_ax25_encoder_bf.xml
+    satnogs_ax25_decoder_b.xml
+    satnogs_udp_msg_source.xml
+    satnogs_debug_msg_source.xml
+    satnogs_json_to_ecss_src.xml
+    satnogs_tcp_rigctl_msg_source.xml
+    satnogs_frame_encoder.xml
+    satnogs_doppler_correction_cc.xml
+    satnogs_upsat_fsk_frame_acquisition.xml
+    satnogs_upsat_fsk_frame_encoder.xml DESTINATION share/gnuradio/grc/blocks
 )

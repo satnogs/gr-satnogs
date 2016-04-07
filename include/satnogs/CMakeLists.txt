@@ -22,6 +22,7 @@
 ########################################################################
 install(FILES
     api.h
+    ax25.h
     config.h
     cw_matched_filter_ff.h
     log.h
@@ -30,5 +31,20 @@ install(FILES
     morse_decoder.h
     morse_debug_source.h
     clear_text_msg_sink.h
-    cw_to_symbol.h DESTINATION include/satnogs
+    cw_to_symbol.h
+    afsk_decoder.h
+    sine_matched_filter_ff.h
+    utils.h
+    ax25_encoder_bf.h
+    ax25_decoder_b.h
+    udp_msg_source.h
+    debug_msg_source.h
+    json_to_ecss_src.h
+    tcp_rigctl_msg_source.h
+    frame_encoder.h
+    doppler_correction_cc.h
+    doppler_fit.h
+    freq_drift.h
+    upsat_fsk_frame_acquisition.h
+    upsat_fsk_frame_encoder.h DESTINATION include/satnogs
 )

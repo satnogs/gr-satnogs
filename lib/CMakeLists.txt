@@ -30,7 +30,21 @@ list(APPEND satnogs_sources
     morse_decoder_impl.cc
     morse_debug_source_impl.cc
     clear_text_msg_sink_impl.cc
-    cw_to_symbol_impl.cc )
+    cw_to_symbol_impl.cc
+    afsk_decoder_impl.cc
+    sine_matched_filter_ff_impl.cc
+    ax25_encoder_bf_impl.cc
+    ax25_decoder_b_impl.cc
+    udp_msg_source_impl.cc
+    debug_msg_source_impl.cc
+    tcp_rigctl_msg_source_impl.cc
+    json_to_ecss_src_impl.cc 
+    doppler_correction_cc_impl.cc
+    frame_encoder_impl.cc
+    doppler_fit.cc
+    freq_drift.cc
+    upsat_fsk_frame_acquisition_impl.cc
+    upsat_fsk_frame_encoder_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)

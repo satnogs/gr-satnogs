@@ -53,6 +53,9 @@ namespace gr {
       static sptr make(double sampling_rate, double carrier_freq = 500,
 		       size_t wpm = 20,
 		       bool energy_out = false);
+
+      virtual void set_new_freq_locked(double freq) = 0;
+      virtual void set_new_freq(double freq) = 0;
     };
 
   } // namespace satnogs

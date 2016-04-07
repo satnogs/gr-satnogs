@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<block>
+	<name>AX.25 Encoder</name>
+	<key>satnogs_ax25_encoder_bf</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.ax25_encoder_bf($dest_addr, $dest_ssid, $src_addr, $src_ssid)</make>
+	<callback>set_address_field($dest_addr, $dest_ssid, $src_addr, $src_ssid)</callback>
+
+	<param>
+		<name>Destination Callsign</name>
+		<key>dest_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Destination SSID</name>
+		<key>dest_ssid</key>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>Source Callsign</name>
+		<key>src_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Source SSID</name>
+		<key>src_ssid</key>
+		<type>int</type>
+	</param>
+
+	<sink>
+		<name>info</name>
+		<type>message</type>
+	</sink>
+	
+	<source>
+		<name>out</name>
+		<type>float</type>
+	</source>
+</block>

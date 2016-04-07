@@ -320,7 +320,7 @@ of a full period of the CW signal with frequency freq.</value>
     <key>analog_agc2_xx</key>
     <param>
       <key>attack_rate</key>
-      <value>6.25e-4</value>
+      <value>6.25e-3</value>
     </param>
     <param>
       <key>alias</key>
@@ -336,7 +336,7 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
     <param>
       <key>decay_rate</key>
-      <value>6.25e-4</value>
+      <value>6.25e-3</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -436,6 +436,53 @@ of a full period of the CW signal with frequency freq.</value>
     <param>
       <key>samples</key>
       <value>8192</value>
+    </param>
+  </block>
+  <block>
+    <key>audio_sink</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>device_name</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(960, 188)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>audio_sink_0</value>
+    </param>
+    <param>
+      <key>num_inputs</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>ok_to_block</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate</value>
     </param>
   </block>
   <block>
@@ -1594,6 +1641,10 @@ of a full period of the CW signal with frequency freq.</value>
       <value>20e3</value>
     </param>
     <param>
+      <key>auto_config</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>alias</key>
       <value></value>
     </param>
@@ -1718,6 +1769,12 @@ of a full period of the CW signal with frequency freq.</value>
   <connection>
     <source_block_id>blocks_moving_average_xx_0</source_block_id>
     <sink_block_id>satnogs_cw_to_symbol_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
+    <sink_block_id>audio_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

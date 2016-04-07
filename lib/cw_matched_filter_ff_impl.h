@@ -22,39 +22,57 @@
 #define INCLUDED_SATNOGS_CW_MATCHED_FILTER_FF_IMPL_H
 
 #include <satnogs/cw_matched_filter_ff.h>
+#include <boost/thread/mutex.hpp>
 
-
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
     class cw_matched_filter_ff_impl : public cw_matched_filter_ff
     {
-     private:
-	    /**
-	     * The duration of the dot in seconds
-	     */
-	    const double d_dot_duration;
-	    /**
-	     * If set to true, this block produces the energy of the filtered
-	     * samples, rather the samples themselves
-	     */
-	    const bool d_produce_enrg;
-	    /**
-	     * The duration of the dot in number of samples
-	     */
-	    const size_t d_dot_samples;
+    private:
+      /**
+       * The sampling rate of the signal
+       */
+      const double d_samp_rate;
 
-	    float *d_sin_wave;
+      /**
+       * The duration of the dot in seconds
+       */
+      const double d_dot_duration;
+      /**
+       * If set to true, this block produces the energy of the filtered
+       * samples, rather the samples themselves
+       */
+      const bool d_produce_enrg;
+      /**
+       * The duration of the dot in number of samples
+       */
+      const size_t d_dot_samples;
 
-     public:
-      cw_matched_filter_ff_impl(double sampling_rate, double carrier_freq,
-                                size_t wpm, bool energy_out);
-      ~cw_matched_filter_ff_impl();
+      float *d_sin_wave;
+
+      boost::mutex d_mutex;
+
+      void
+      new_freq_msg_handler(pmt::pmt_t msg);
+
+    public:
+      cw_matched_filter_ff_impl (double sampling_rate, double carrier_freq,
+				 size_t wpm, bool energy_out);
+      ~cw_matched_filter_ff_impl ();
 
       // Where all the action really happens
-      int work(int noutput_items,
-	       gr_vector_const_void_star &input_items,
-	       gr_vector_void_star &output_items);
+      int
+      work (int noutput_items, gr_vector_const_void_star &input_items,
+	    gr_vector_void_star &output_items);
+
+      void
+      set_new_freq(double freq);
+
+      void
+      set_new_freq_locked(double freq);
     };
 
   } // namespace satnogs

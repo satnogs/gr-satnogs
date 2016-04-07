@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<block>
+	<name>UPSAT FSK Frame Encoder</name>
+	<key>satnogs_upsat_fsk_frame_encoder</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.upsat_fsk_frame_encoder($preamble, $sync_word, $append_crc, $whitening, $manchester)</make>
+
+	<param>
+		<name>Frame Preamble</name>
+		<key>preamble</key>
+		<type>raw</type>
+	</param>
+
+	<param>
+		<name>Synchronization Word</name>
+		<key>sync_word</key>
+		<type>raw</type>
+	</param>
+	
+	<param>
+		<name>Append CRC</name>
+		<key>append_crc</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+
+	<param>
+		<name>Whitening</name>
+		<key>whitening</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<param>
+		<name>Use Manchester Coding</name>
+		<key>manchester</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<sink>
+		<name>pdu</name>
+		<type>message</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>float</type>
+	</source>
+</block>

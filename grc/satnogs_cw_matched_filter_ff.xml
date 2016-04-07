@@ -4,9 +4,9 @@
 	<key>satnogs_cw_matched_filter_ff</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.cw_matched_filter_ff($sampling_rate, $carrier_freq, $wpm, $energy)
-	</make>
-
+	<make>satnogs.cw_matched_filter_ff($sampling_rate, $carrier_freq, $wpm, $energy)</make>
+	<callback>set_new_freq_locked($carrier_freq)</callback>
+	
 	<param>
 		<name>Sampling Rate</name>
 		<key>sampling_rate</key>
@@ -39,6 +39,12 @@
 			<key>True</key>
 		</option>
 	</param>
+	
+	<sink>
+		<name>freq</name>
+		<type>message</type>
+		<optional>1</optional>
+	</sink>
 
 	<sink>
 		<name>in</name>

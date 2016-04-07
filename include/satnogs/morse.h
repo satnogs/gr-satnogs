@@ -21,6 +21,8 @@
 #ifndef INCLUDE_SATNOGS_MORSE_H_
 #define INCLUDE_SATNOGS_MORSE_H_
 
+#define MIN_WPM 5
+#define MAX_WPM 30
 /**
  * The different Morse symbols
  */

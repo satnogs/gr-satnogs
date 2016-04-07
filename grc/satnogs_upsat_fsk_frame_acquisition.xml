@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<block>
+	<name>UPSAT FSK Frame Acquisition</name>
+	<key>satnogs_upsat_fsk_frame_acquisition</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.upsat_fsk_frame_acquisition($preamble, $sync_word, $whitening, $manchester)</make>
+
+	<param>
+		<name>Frame Preamble</name>
+		<key>preamble</key>
+		<type>raw</type>
+	</param>
+
+	<param>
+		<name>Synchronization Word</name>
+		<key>sync_word</key>
+		<type>raw</type>
+	</param>
+
+	<param>
+		<name>Whitening</name>
+		<key>whitening</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<param>
+		<name>Use Manchester Coding</name>
+		<key>manchester</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>float</type>
+	</sink>
+
+	<source>
+		<name>pdu</name>
+		<type>message</type>
+	</source>
+</block>

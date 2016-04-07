@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<block>
+	<name>Debug Message Source</name>
+	<key>satnogs_debug_msg_source</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.debug_msg_source($msg, $delay, $repeat)</make>
+
+	<param>
+		<name>Message</name>
+		<key>msg</key>
+		<value>"HELLO WORLD"</value>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Delay (seconds)</name>
+		<key>delay</key>
+		<value>0.01</value>
+		<type>real</type>
+	</param>
+
+	<param>
+		<name>Repeat</name>
+		<key>repeat</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+
+	<source>
+		<name>msg</name>
+		<type>message</type>
+	</source>
+</block>

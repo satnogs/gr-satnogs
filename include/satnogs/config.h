@@ -31,6 +31,9 @@
  */
 #define CW_DEBUG 1
 
-
+/*!
+ * The maximum allowed frame length of the UPSAT satellite
+ */
+#define UPSAT_MAX_FRAME_LEN 255
 
 #endif /* INCLUDE_SATNOGS_CONFIG_H_ */
