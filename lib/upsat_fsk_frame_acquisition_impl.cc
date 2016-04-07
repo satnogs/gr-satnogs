@@ -54,20 +54,35 @@ namespace gr
 	    d_preamble_len (preamble.size ()),
 	    d_sync_word (sync_word),
 	    d_sync_word_len (sync_word.size ()),
+	    /*
+	     * Preamble is used only for AGC. The true synchronization is
+	     * performed using the SYNC word. For this reason if some preamble
+	     * symbols are retrieved, the algorithm should immediately start
+	     * searching for the SYNC word.
+	     */
+	    d_search_for_sync_thrhld(d_preamble_len / 3),
 	    d_state (SEARCHING),
 	    d_shifting_byte (0x0),
 	    d_decoded_bytes (0),
 	    d_decoded_bits (0),
 	    d_frame_len (0)
     {
+      size_t i;
       message_port_register_out (pmt::mp ("pdu"));
-      if (d_preamble_len < 2) {
+      if (d_preamble_len < 3) {
 	throw std::invalid_argument ("Preamble must be at least 2 bytes long");
       }
 
       if (d_sync_word_len < 1) {
 	throw std::invalid_argument (
 	    "Synchronization word must be at least 1 byte long");
+      }
+
+      for(i = 1; i < d_preamble_len; i++){
+	if(d_preamble[i] != d_preamble[0]) {
+	  throw std::invalid_argument (
+	      "The preamble should contain the same bytes");
+	}
       }
 
       d_pdu = new uint8_t[UPSAT_MAX_FRAME_LEN];
@@ -94,6 +109,7 @@ namespace gr
     inline void
     upsat_fsk_frame_acquisition_impl::reset_state ()
     {
+      LOG_DEBUG("Enter reset");
       d_state = SEARCHING;
       d_decoded_bytes = 0;
       d_decoded_bits = 0;
@@ -103,21 +119,34 @@ namespace gr
     inline void
     upsat_fsk_frame_acquisition_impl::have_preamble ()
     {
+      LOG_DEBUG("Enter have preamble");
       d_state = HAVE_PREAMBLE;
       d_decoded_bytes = 1;
     }
 
     inline void
+    upsat_fsk_frame_acquisition_impl::searching_sync_word ()
+    {
+      LOG_DEBUG("Enter searching sync");
+      d_state = SEARCHING_SYNC_WORD;
+      d_decoded_bytes = 0;
+      d_decoded_bits = 0;
+    }
+
+    inline void
     upsat_fsk_frame_acquisition_impl::have_sync ()
     {
+      LOG_DEBUG("Enter have sync");
       d_state = HAVE_SYNC_WORD;
-      d_decoded_bytes = 0;
+      /* The first SYNC byte have already been found */
+      d_decoded_bytes = 1;
       d_decoded_bits = 0;
     }
 
     inline void
     upsat_fsk_frame_acquisition_impl::have_frame_len ()
     {
+      LOG_DEBUG("Enter frame len");
       d_state = HAVE_FRAME_LEN;
       d_decoded_bytes = 0;
       d_decoded_bits = 0;
@@ -126,6 +155,7 @@ namespace gr
     inline void
     upsat_fsk_frame_acquisition_impl::have_payload ()
     {
+      LOG_DEBUG("Enter have payload");
       d_state = HAVE_PAYLOAD;
       d_decoded_bytes = 0;
       d_decoded_bits = 0;
@@ -155,14 +185,34 @@ namespace gr
 	      d_decoded_bits = 0;
 	      if(d_shifting_byte == d_preamble[d_decoded_bytes]){
 		d_decoded_bytes++;
-		if(d_decoded_bytes == d_preamble_len){
+		if(d_decoded_bytes == d_search_for_sync_thrhld){
 		  /* End of the preamble. It's time for the sync word */
-		  have_sync();
+		  searching_sync_word();
 		}
 	      }
 	      else{
 		/* Reset the preamble detection */
 		reset_state();
+	      }
+	    }
+	    break;
+	  case SEARCHING_SYNC_WORD:
+	    d_decoded_bits++;
+	    if(d_shifting_byte == d_sync_word[0]){
+	      have_sync();
+	      break;
+	    }
+
+	    if(d_decoded_bits == 8) {
+	      d_decoded_bits = 0;
+	      d_decoded_bytes++;
+	      /*
+	       * If we decoded bytes have length greater than the preamble and
+	       * the SYNC word, we lost the frame...
+	       */
+	      if (d_decoded_bytes > d_preamble_len
+		  - d_search_for_sync_thrhld + d_sync_word_len) {
+		reset_state ();
 	      }
 	    }
 	    break;
@@ -184,7 +234,7 @@ namespace gr
 	  case HAVE_FRAME_LEN:
 	    d_decoded_bits++;
 	    if(d_decoded_bits == 8) {
-	      d_frame_len = d_decoded_bytes;
+	      d_frame_len = d_shifting_byte;
 	      have_payload();
 	    }
 	    break;
@@ -193,10 +243,11 @@ namespace gr
 	    if (d_decoded_bits == 8) {
 	      d_decoded_bits = 0;
 	      d_pdu[d_decoded_bytes] = d_shifting_byte;
+	      d_decoded_bytes++;
+
 	      if (d_decoded_bytes == d_frame_len) {
 		message_port_pub (pmt::mp ("pdu"),
 				  pmt::make_blob (d_pdu, d_frame_len));
-		LOG_WARN("Packet of %u", d_frame_len);
 		reset_state ();
 	      }
 	    }

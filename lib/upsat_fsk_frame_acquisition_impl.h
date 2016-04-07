@@ -40,6 +40,7 @@ namespace gr
       {
 	SEARCHING,   //!< SEARCHING when searching for the start of the preamble
 	HAVE_PREAMBLE, //!< HAVE_PREAMBLE when the decoder is inside the preamble
+	SEARCHING_SYNC_WORD,
 	HAVE_SYNC_WORD, //!< HAVE_SYNC_WORD when the decoder is inside the sync word
 	HAVE_FRAME_LEN, //!< HAVE_FRAME_LEN when the decoder is inside the frame length field
 	HAVE_PAYLOAD //!< HAVE_PAYLOAD when the decoder process the palyload of the frame
@@ -49,6 +50,7 @@ namespace gr
       const size_t d_preamble_len;
       const std::vector<uint8_t> d_sync_word;
       const size_t d_sync_word_len;
+      const size_t d_search_for_sync_thrhld;
       decoding_state_t d_state;
       uint8_t d_shifting_byte;
       size_t d_decoded_bytes;
@@ -63,6 +65,8 @@ namespace gr
       reset_state ();
       inline void
       have_preamble ();
+      inline void
+      searching_sync_word ();
       inline void
       have_sync ();
       inline void
