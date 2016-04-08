@@ -61,11 +61,15 @@ namespace gr
        *
        * @param manchester true if the transmitted data have been processed by
        * the Manchester algorithm of the CC1120 chip. False otherwise.
+       *
+       * @param msb_first if set to true, the the treansmission starts from the
+       * MSB of each byte.
        */
       static sptr
       make (const std::vector<uint8_t>& preamble,
 	    const std::vector<uint8_t>& sync_word, bool append_crc = true,
-	    bool whitening = false, bool manchester = false);
+	    bool whitening = false, bool manchester = false,
+	    bool msb_first = true);
     };
 
   } // namespace satnogs

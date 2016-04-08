@@ -76,6 +76,22 @@ namespace gr
 	  0xE606, 0xD49D, 0xC514, 0xB1AB, 0xA022, 0x92B9, 0x8330, 0x7BC7,
 	  0x6A4E, 0x58D5, 0x495C, 0x3DE3, 0x2C6A, 0x1EF1, 0x0F78 };
 
+    static inline uint16_t
+    update_crc16_ccitt(uint16_t crc, const uint8_t *data, size_t len)
+    {
+      	register size_t i;
+	for (i = 0; i < len; i++) {
+		crc = (crc >> 8) ^ crc16_ccitt_table_reverse[(crc ^ data[i]) & 0xff];
+	}
+	return crc;
+    }
+
+    static inline uint16_t
+    crc16_ccitt(const uint8_t *data, size_t len)
+    {
+      return update_crc16_ccitt(0xFFFF, data, len) ^ 0xFFFF;
+    }
+
     /**
      * Counts the number of active bits in x
      */

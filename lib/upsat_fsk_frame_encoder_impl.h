@@ -38,15 +38,24 @@ namespace gr
       const bool d_append_crc;
       const bool d_whitening;
       const bool d_manchester;
+      const bool d_msb_first;
+      const size_t d_max_pdu_len;
       size_t d_encoded;
       size_t d_pdu_len;
       uint8_t *d_pdu;
+
+      inline void
+      map_msb_first (float *out, size_t nsamples_out);
+
+      inline void
+      map_lsb_first (float *out, size_t nsamples_out);
 
     public:
       upsat_fsk_frame_encoder_impl (const std::vector<uint8_t>& preamble,
 				    const std::vector<uint8_t>& sync_word,
 				    bool append_crc, bool whitening,
-				    bool manchester);
+				    bool manchester,
+				    bool msb_first);
       ~upsat_fsk_frame_encoder_impl ();
 
       // Where all the action really happens

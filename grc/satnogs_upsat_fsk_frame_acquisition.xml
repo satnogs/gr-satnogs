@@ -4,7 +4,7 @@
 	<key>satnogs_upsat_fsk_frame_acquisition</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.upsat_fsk_frame_acquisition($preamble, $sync_word, $whitening, $manchester)</make>
+	<make>satnogs.upsat_fsk_frame_acquisition($preamble, $sync_word, $whitening, $manchester, $check_crc)</make>
 
 	<param>
 		<name>Frame Preamble</name>
@@ -43,6 +43,20 @@
 		<option>
 			<name>Yes</name>
 			<key>True</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Check CRC</name>
+		<key>check_crc</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
 		</option>
 	</param>
 
