@@ -26,6 +26,7 @@
 #include "upsat_fsk_frame_encoder_impl.h"
 #include <satnogs/log.h>
 #include <satnogs/utils.h>
+#include <arpa/inet.h>
 
 namespace gr
 {
@@ -173,6 +174,8 @@ namespace gr
 	if(d_append_crc) {
 	  crc = crc16_ccitt(d_pdu + d_preamble_len + d_sync_word_len,
 			    d_pdu_len + 1);
+	  /* CRC must be transmitted MSB first */
+	  crc = htons(crc);
 	  memcpy(d_pdu + d_preamble_len + d_sync_word_len + 1 + d_pdu_len,
 		 &crc, sizeof(uint16_t));
 	  d_pdu_len += sizeof(uint16_t);

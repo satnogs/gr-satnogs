@@ -26,6 +26,7 @@
 #include "upsat_fsk_frame_acquisition_impl.h"
 #include <satnogs/log.h>
 #include <satnogs/utils.h>
+#include <arpa/inet.h>
 
 namespace gr
 {
@@ -269,6 +270,8 @@ namespace gr
 		/* Retrieve and check the CRC */
 		memcpy(&crc_received, d_pdu + d_frame_len - sizeof(uint16_t),
 		       sizeof(uint16_t));
+		/* The CRC is transmitted in network byte order */
+		crc_received = ntohs(crc_received);
 		crc_calc = crc16_ccitt(d_pdu, d_frame_len - sizeof(uint16_t));
 		if(crc_calc == crc_received) {
 		  message_port_pub (
@@ -277,7 +280,8 @@ namespace gr
 				      d_frame_len - 1 - sizeof(uint16_t)));
 		}
 		else{
-		  LOG_WARN("Frame with wrong CRC");
+		  LOG_WARN("Frame with wrong CRC got 0x%x calc 0x%x",
+			   crc_received, crc_calc);
 		}
 		reset_state ();
 	      }
