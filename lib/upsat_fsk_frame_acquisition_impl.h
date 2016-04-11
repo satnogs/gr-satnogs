@@ -23,6 +23,7 @@
 
 #include <satnogs/config.h>
 #include <satnogs/upsat_fsk_frame_acquisition.h>
+#include <satnogs/whitening.h>
 
 namespace gr
 {
@@ -59,6 +60,7 @@ namespace gr
       size_t d_decoded_bytes;
       size_t d_decoded_bits;
       size_t d_frame_len;
+      whitening d_descrambler;
       uint8_t *d_pdu;
 
       inline void

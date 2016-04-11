@@ -72,7 +72,8 @@ namespace gr
 	    d_shifting_byte (0x0),
 	    d_decoded_bytes (0),
 	    d_decoded_bits (0),
-	    d_frame_len (0)
+	    d_frame_len (0),
+	    d_descrambler(0x21, 0x1FF, 9)
     {
       size_t i;
       message_port_register_out (pmt::mp ("pdu"));
@@ -154,6 +155,7 @@ namespace gr
     upsat_fsk_frame_acquisition_impl::have_frame_len ()
     {
       LOG_DEBUG("Enter frame len");
+      d_descrambler.reset();
       d_state = HAVE_FRAME_LEN;
       d_decoded_bytes = 0;
       d_decoded_bits = 0;
@@ -243,10 +245,20 @@ namespace gr
 	  case HAVE_FRAME_LEN:
 	    d_decoded_bits++;
 	    if(d_decoded_bits == 8) {
-	      /* Frame length field is needed for the CRC calculation */
-	      d_pdu[0] = d_shifting_byte;
-	      /* CRC is not included in the frame length field, but we want it */
-	      d_frame_len = 1 + d_shifting_byte + sizeof(uint16_t);
+
+	      /* Length field has been whitened if the option is enabled */
+	      if(d_whitening){
+		/* Frame length field is needed for the CRC calculation */
+		d_descrambler.descramble(d_pdu, &d_shifting_byte, 1);
+		/* CRC is not included in the frame length field, but we want it */
+		d_frame_len = 1 + d_pdu[0] + sizeof(uint16_t);
+	      }
+	      else{
+		/* Frame length field is needed for the CRC calculation */
+		d_pdu[0] = d_shifting_byte;
+		/* CRC is not included in the frame length field, but we want it */
+		d_frame_len = 1 + d_shifting_byte + sizeof(uint16_t);
+	      }
 	      have_payload();
 	    }
 	    break;
@@ -258,6 +270,9 @@ namespace gr
 	      d_decoded_bytes++;
 
 	      if (d_decoded_bytes == d_frame_len) {
+		if(d_whitening){
+		  d_descrambler.descramble(d_pdu+1, d_pdu+1, d_frame_len - 1);
+		}
 		if(!d_check_crc){
 		  message_port_pub (
 		      pmt::mp ("pdu"),

@@ -22,6 +22,7 @@
 #define INCLUDED_SATNOGS_UPSAT_FSK_FRAME_ENCODER_IMPL_H
 
 #include <satnogs/upsat_fsk_frame_encoder.h>
+#include <satnogs/whitening.h>
 
 namespace gr
 {
@@ -42,6 +43,7 @@ namespace gr
       const size_t d_max_pdu_len;
       size_t d_encoded;
       size_t d_pdu_len;
+      whitening d_scrambler;
       uint8_t *d_pdu;
 
       inline void

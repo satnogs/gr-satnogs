@@ -66,7 +66,8 @@ namespace gr
 	    d_max_pdu_len(d_preamble_len + d_sync_word_len + sizeof(uint8_t)
 	      + UPSAT_MAX_FRAME_LEN + sizeof(uint16_t)),
 	    d_encoded(0),
-	    d_pdu_len(0)
+	    d_pdu_len(0),
+	    d_scrambler(0x21, 0x1FF, 9)
     {
       /* Simplify the logic of the output samples handling */
       set_output_multiple(8);
@@ -179,6 +180,16 @@ namespace gr
 	  memcpy(d_pdu + d_preamble_len + d_sync_word_len + 1 + d_pdu_len,
 		 &crc, sizeof(uint16_t));
 	  d_pdu_len += sizeof(uint16_t);
+	}
+
+	/*
+	 * Whitening is performed on all byes except preamble and SYNC fields
+	 */
+	if(d_whitening){
+	  d_scrambler.reset();
+	  d_scrambler.scramble (d_pdu + d_preamble_len + d_sync_word_len,
+				d_pdu + d_preamble_len + d_sync_word_len,
+				d_pdu_len + 1);
 	}
 
 	d_pdu_len += d_preamble_len + d_sync_word_len + 1;
