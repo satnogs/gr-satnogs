@@ -38,11 +38,14 @@ namespace gr
 				   const std::vector<uint8_t>& sync_word,
 				   bool append_crc, bool whitening,
 				   bool manchester,
-				   bool msb_first)
+				   bool msb_first,
+				   size_t settling_samples)
     {
       return gnuradio::get_initial_sptr (
-	  new upsat_fsk_frame_encoder_impl (preamble, sync_word, append_crc,
-					    whitening, manchester, msb_first));
+	  new upsat_fsk_frame_encoder_impl (preamble, sync_word,
+					    append_crc,
+					    whitening, manchester, msb_first,
+					    settling_samples));
     }
 
     /*
@@ -50,8 +53,10 @@ namespace gr
      */
     upsat_fsk_frame_encoder_impl::upsat_fsk_frame_encoder_impl (
 	const std::vector<uint8_t>& preamble,
-	const std::vector<uint8_t>& sync_word, bool append_crc, bool whitening,
-	bool manchester, bool msb_first) :
+	const std::vector<uint8_t>& sync_word,
+	bool append_crc, bool whitening,
+	bool manchester, bool msb_first,
+	size_t settling_samples) :
 	    gr::sync_block ("upsat_fsk_frame_encoder",
 			    gr::io_signature::make (0, 0, 0),
 			    gr::io_signature::make (1, 1, sizeof(float))),
@@ -65,6 +70,7 @@ namespace gr
 	    d_msb_first(msb_first),
 	    d_max_pdu_len(d_preamble_len + d_sync_word_len + sizeof(uint8_t)
 	      + UPSAT_MAX_FRAME_LEN + sizeof(uint16_t)),
+	    d_settling_samples(settling_samples),
 	    d_encoded(0),
 	    d_pdu_len(0),
 	    d_scrambler(0x21, 0x1FF, 9)
@@ -81,10 +87,7 @@ namespace gr
        *   User def.     User def.   1B         1-255 B                  2 B
        */
       d_pdu = new uint8_t[d_max_pdu_len];
-
-      if(!d_pdu) {
-	throw std::runtime_error("Could not allocate memory");
-      }
+      d_pdu_encoded = new float[d_max_pdu_len*8 + d_settling_samples];
 
       /* Copy the preamble at the start of the pdu */
       memcpy(d_pdu, d_preamble.data(), d_preamble_len);
@@ -97,6 +100,7 @@ namespace gr
     upsat_fsk_frame_encoder_impl::~upsat_fsk_frame_encoder_impl ()
     {
       delete [] d_pdu;
+      delete [] d_pdu_encoded;
     }
 
     inline void
@@ -135,6 +139,24 @@ namespace gr
 	out[i + 1] = (( (b >> 1 ) & 0x1) * 2.0f) - 1.0f;
 	out[i] = ((b & 0x1) * 2.0f) - 1.0f;
       }
+    }
+
+    inline void
+    upsat_fsk_frame_encoder_impl::add_sob (uint64_t item)
+    {
+      static const pmt::pmt_t sob_key = pmt::string_to_symbol ("tx_sob");
+      static const pmt::pmt_t value = pmt::PMT_T;
+      static const pmt::pmt_t srcid = pmt::string_to_symbol (alias ());
+      add_item_tag (0, item, sob_key, value, srcid);
+    }
+
+    inline void
+    upsat_fsk_frame_encoder_impl::add_eob (uint64_t item)
+    {
+      static const pmt::pmt_t eob_key = pmt::string_to_symbol ("tx_eob");
+      static const pmt::pmt_t value = pmt::PMT_T;
+      static const pmt::pmt_t srcid = pmt::string_to_symbol (alias ());
+      add_item_tag (0, item, eob_key, value, srcid);
     }
 
     int
@@ -183,7 +205,7 @@ namespace gr
 	}
 
 	/*
-	 * Whitening is performed on all byes except preamble and SYNC fields
+	 * Whitening is performed on all bytes except preamble and SYNC fields
 	 */
 	if(d_whitening){
 	  d_scrambler.reset();
@@ -193,22 +215,38 @@ namespace gr
 	}
 
 	d_pdu_len += d_preamble_len + d_sync_word_len + 1;
+
+	/*
+	 * NRZ Encode the whole frame
+	 */
+	if (d_msb_first) {
+	  map_msb_first (d_pdu_encoded, d_pdu_len * 8);
+	}
+	else {
+	  map_lsb_first (d_pdu_encoded, d_pdu_len * 8);
+	}
+
+	/* Reset the settling trailing samples */
+	memset (d_pdu_encoded + d_pdu_len * 8, 0,
+		d_settling_samples * sizeof(float));
+
+	/* The new frame now has a bigger size of course*/
+	d_pdu_len += d_settling_samples/8;
+
+	/* Start of burst */
+	add_sob(nitems_written(0));
       }
 
       noutput_items = std::max (0, noutput_items);
       min_available = std::min ((size_t) noutput_items,
 				(d_pdu_len - d_encoded) * 8);
 
-      if(d_msb_first){
-	map_msb_first(out, min_available*8);
-      }
-      else{
-	map_lsb_first(out, min_available*8);
-      }
+      memcpy(out, d_pdu_encoded + d_encoded*8, min_available * sizeof(float));
       d_encoded += min_available/8;
 
       /* End of the frame reached */
       if(d_encoded == d_pdu_len){
+	add_eob(nitems_written(0) + min_available - 1);
 	d_encoded = 0;
       }
 
