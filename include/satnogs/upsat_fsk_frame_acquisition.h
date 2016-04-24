@@ -52,11 +52,13 @@ namespace gr
        * the whitening algorithm of the CC1120 chip. False otherwise.
        * @param manchester true if the transmitted data have been processed by
        * the Manchester algorithm of the CC1120 chip. False otherwise.
+       * @param check_crc if set to true the decoder will push frames only if
+       * their CRC field in correct.
        */
       static sptr
       make (const std::vector<uint8_t> &preamble,
 	    const std::vector<uint8_t> &sync_word, bool whitening = false,
-	    bool manchester = false);
+	    bool manchester = false, bool check_crc = true);
     };
 
   } // namespace satnogs

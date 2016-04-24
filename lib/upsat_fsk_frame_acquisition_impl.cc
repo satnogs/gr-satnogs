@@ -25,6 +25,8 @@
 #include <gnuradio/io_signature.h>
 #include "upsat_fsk_frame_acquisition_impl.h"
 #include <satnogs/log.h>
+#include <satnogs/utils.h>
+#include <arpa/inet.h>
 
 namespace gr
 {
@@ -34,11 +36,12 @@ namespace gr
     upsat_fsk_frame_acquisition::sptr
     upsat_fsk_frame_acquisition::make (const std::vector<uint8_t> &preamble,
 				       const std::vector<uint8_t> &sync_word,
-				       bool whitening, bool manchester)
+				       bool whitening, bool manchester,
+				       bool check_crc)
     {
       return gnuradio::get_initial_sptr (
 	  new upsat_fsk_frame_acquisition_impl (preamble, sync_word, whitening,
-						manchester));
+						manchester, check_crc));
     }
 
     /*
@@ -46,7 +49,8 @@ namespace gr
      */
     upsat_fsk_frame_acquisition_impl::upsat_fsk_frame_acquisition_impl (
 	const std::vector<uint8_t> &preamble,
-	const std::vector<uint8_t> &sync_word, bool whitening, bool manchester) :
+	const std::vector<uint8_t> &sync_word, bool whitening, bool manchester,
+	bool check_crc) :
 	    gr::sync_block ("upsat_fsk_frame_acquisition",
 			    gr::io_signature::make (1, 1, sizeof(float)),
 			    gr::io_signature::make (0, 0, 0)),
@@ -61,11 +65,15 @@ namespace gr
 	     * searching for the SYNC word.
 	     */
 	    d_search_for_sync_thrhld(d_preamble_len / 3),
+	    d_whitening(whitening),
+	    d_manchester(manchester),
+	    d_check_crc(check_crc),
 	    d_state (SEARCHING),
 	    d_shifting_byte (0x0),
 	    d_decoded_bytes (0),
 	    d_decoded_bits (0),
-	    d_frame_len (0)
+	    d_frame_len (0),
+	    d_descrambler(0x21, 0x1FF, 9)
     {
       size_t i;
       message_port_register_out (pmt::mp ("pdu"));
@@ -147,6 +155,7 @@ namespace gr
     upsat_fsk_frame_acquisition_impl::have_frame_len ()
     {
       LOG_DEBUG("Enter frame len");
+      d_descrambler.reset();
       d_state = HAVE_FRAME_LEN;
       d_decoded_bytes = 0;
       d_decoded_bits = 0;
@@ -157,7 +166,7 @@ namespace gr
     {
       LOG_DEBUG("Enter have payload");
       d_state = HAVE_PAYLOAD;
-      d_decoded_bytes = 0;
+      d_decoded_bytes = 1;
       d_decoded_bits = 0;
     }
 
@@ -167,6 +176,8 @@ namespace gr
 	gr_vector_void_star &output_items)
     {
       int i;
+      uint16_t crc_received;
+      uint16_t crc_calc;
       const float *in = (const float *) input_items[0];
       for (i = 0; i < noutput_items; i++) {
 	slice_and_shift (in[i]);
@@ -234,7 +245,20 @@ namespace gr
 	  case HAVE_FRAME_LEN:
 	    d_decoded_bits++;
 	    if(d_decoded_bits == 8) {
-	      d_frame_len = d_shifting_byte;
+
+	      /* Length field has been whitened if the option is enabled */
+	      if(d_whitening){
+		/* Frame length field is needed for the CRC calculation */
+		d_descrambler.descramble(d_pdu, &d_shifting_byte, 1);
+		/* CRC is not included in the frame length field, but we want it */
+		d_frame_len = 1 + d_pdu[0] + sizeof(uint16_t);
+	      }
+	      else{
+		/* Frame length field is needed for the CRC calculation */
+		d_pdu[0] = d_shifting_byte;
+		/* CRC is not included in the frame length field, but we want it */
+		d_frame_len = 1 + d_shifting_byte + sizeof(uint16_t);
+	      }
 	      have_payload();
 	    }
 	    break;
@@ -246,8 +270,34 @@ namespace gr
 	      d_decoded_bytes++;
 
 	      if (d_decoded_bytes == d_frame_len) {
-		message_port_pub (pmt::mp ("pdu"),
-				  pmt::make_blob (d_pdu, d_frame_len));
+		if(d_whitening){
+		  d_descrambler.descramble(d_pdu+1, d_pdu+1, d_frame_len - 1);
+		}
+		if(!d_check_crc){
+		  message_port_pub (
+		      pmt::mp ("pdu"),
+		      pmt::make_blob (d_pdu + 1,
+				      d_frame_len - 1 - sizeof(uint16_t)));
+		  reset_state ();
+		  break;
+		}
+
+		/* Retrieve and check the CRC */
+		memcpy(&crc_received, d_pdu + d_frame_len - sizeof(uint16_t),
+		       sizeof(uint16_t));
+		/* The CRC is transmitted in network byte order */
+		crc_received = ntohs(crc_received);
+		crc_calc = crc16_ccitt(d_pdu, d_frame_len - sizeof(uint16_t));
+		if(crc_calc == crc_received) {
+		  message_port_pub (
+		      pmt::mp ("pdu"),
+		      pmt::make_blob (d_pdu + 1,
+				      d_frame_len - 1 - sizeof(uint16_t)));
+		}
+		else{
+		  LOG_WARN("Frame with wrong CRC got 0x%x calc 0x%x",
+			   crc_received, crc_calc);
+		}
 		reset_state ();
 	      }
 	    }

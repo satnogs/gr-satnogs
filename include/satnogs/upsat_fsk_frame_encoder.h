@@ -61,11 +61,24 @@ namespace gr
        *
        * @param manchester true if the transmitted data have been processed by
        * the Manchester algorithm of the CC1120 chip. False otherwise.
+       *
+       * @param msb_first if set to true, the the treansmission starts from the
+       * MSB of each byte.
+       *
+       * @param settling_samples the number of zero samples that the encoder
+       * should append after the end of the FSK frame. This is especially
+       * important when an arbitrary in-out ratio resampler is used. The
+       * arbitrary in-out ratio of samples will cause the stream tags to be
+       * delivered at the sink block out-of-sync causing the frame transmission
+       * to terminate sooner.
        */
       static sptr
       make (const std::vector<uint8_t>& preamble,
-	    const std::vector<uint8_t>& sync_word, bool append_crc = true,
-	    bool whitening = false, bool manchester = false);
+	    const std::vector<uint8_t>& sync_word,
+	    bool append_crc = true,
+	    bool whitening = false, bool manchester = false,
+	    bool msb_first = true,
+	    size_t settling_samples = 64);
     };
 
   } // namespace satnogs

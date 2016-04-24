@@ -23,6 +23,7 @@
 
 #include <satnogs/config.h>
 #include <satnogs/upsat_fsk_frame_acquisition.h>
+#include <satnogs/whitening.h>
 
 namespace gr
 {
@@ -51,11 +52,15 @@ namespace gr
       const std::vector<uint8_t> d_sync_word;
       const size_t d_sync_word_len;
       const size_t d_search_for_sync_thrhld;
+      const bool d_whitening;
+      const bool d_manchester;
+      const bool d_check_crc;
       decoding_state_t d_state;
       uint8_t d_shifting_byte;
       size_t d_decoded_bytes;
       size_t d_decoded_bits;
       size_t d_frame_len;
+      whitening d_descrambler;
       uint8_t *d_pdu;
 
       inline void
@@ -77,7 +82,8 @@ namespace gr
     public:
       upsat_fsk_frame_acquisition_impl (const std::vector<uint8_t> &preamble,
 					const std::vector<uint8_t> &sync_word,
-					bool whitening, bool manchester);
+					bool whitening, bool manchester,
+					bool check_crc);
       ~upsat_fsk_frame_acquisition_impl ();
 
       // Where all the action really happens

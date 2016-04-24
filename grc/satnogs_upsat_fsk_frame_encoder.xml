@@ -4,7 +4,7 @@
 	<key>satnogs_upsat_fsk_frame_encoder</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.upsat_fsk_frame_encoder($preamble, $sync_word, $append_crc, $whitening, $manchester)</make>
+	<make>satnogs.upsat_fsk_frame_encoder($preamble, $sync_word, $append_crc, $whitening, $manchester, $msb_first, $settling_samples)</make>
 
 	<param>
 		<name>Frame Preamble</name>
@@ -58,6 +58,27 @@
 			<name>Yes</name>
 			<key>True</key>
 		</option>
+	</param>
+	
+	<param>
+		<name>Send MS bit first</name>
+		<key>msb_first</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Number of zero settling samples</name>
+		<key>settling_samples</key>
+		<value>64</value>
+		<type>int</type>
 	</param>
 
 	<sink>
