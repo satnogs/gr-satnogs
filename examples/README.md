@@ -33,3 +33,20 @@ Words per Minute (WPM) is about 20.
  do not expect any correction at all. However you will be able to see how smoothly
  the sine peak is drifting. This drift in normal situations will be the correction offset.
  
+ * `debug_fsk_transceiver_uhd.grc`: This flowgraph provides an FSK transceiver.
+ It was designed having as reference the CC1120 chip, but using properly 
+ the parameters of the FSK encoder/decoder, it can be used as a generic FSK modem.
+ However the FSK framing format should follow the format:
+ | Preamble          | SYNC Word  | Payload length | Payload  | CRC           |
+ |:-----------------:|:----------:|:--------------:|:--------:|:-------------:|
+ | x repeating bytes | x bytes    | 1 B, 0-255     | variable | 2 B, optional |
+ The flowgraph transmits messages that are produced from the `Debug Message Source`
+ block. Furthermore, frame payloads can be derived from a `UDP` message source
+ block. Just use a tool like `netcat` to deliver arbitrary payloads through
+ `UDP` messages.
+ 
+ * `debug_fsk_transceiver_uhd.grc`: This flowgraph provides exactly the same
+  functionality as `debug_fsk_transceiver_uhd.grc` does. 
+  However, it uses the `Osmocom` SDR source and sink blocks for non UHD based 
+  SDR hardware (e.g BladeRF, HackRF, etc).
+   

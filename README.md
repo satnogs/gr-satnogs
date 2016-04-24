@@ -10,6 +10,7 @@ for decoding signals from various scientific and academic sattelites.
 3. G++ (with C++11 support)
 4. VOLK
 5. git
+6. gr-osmocom (optional, for using the flowgraphs)
 
 ### Installation
 
