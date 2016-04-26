@@ -37,11 +37,13 @@ namespace gr
     upsat_fsk_frame_acquisition::make (const std::vector<uint8_t> &preamble,
 				       const std::vector<uint8_t> &sync_word,
 				       bool whitening, bool manchester,
-				       bool check_crc)
+				       bool check_crc,
+				       bool ax25_format)
     {
       return gnuradio::get_initial_sptr (
 	  new upsat_fsk_frame_acquisition_impl (preamble, sync_word, whitening,
-						manchester, check_crc));
+						manchester, check_crc,
+						ax25_format));
     }
 
     /*
@@ -50,7 +52,7 @@ namespace gr
     upsat_fsk_frame_acquisition_impl::upsat_fsk_frame_acquisition_impl (
 	const std::vector<uint8_t> &preamble,
 	const std::vector<uint8_t> &sync_word, bool whitening, bool manchester,
-	bool check_crc) :
+	bool check_crc, bool ax25_format) :
 	    gr::sync_block ("upsat_fsk_frame_acquisition",
 			    gr::io_signature::make (1, 1, sizeof(float)),
 			    gr::io_signature::make (0, 0, 0)),
@@ -68,6 +70,7 @@ namespace gr
 	    d_whitening(whitening),
 	    d_manchester(manchester),
 	    d_check_crc(check_crc),
+	    d_is_ax25(ax25_format),
 	    d_state (SEARCHING),
 	    d_shifting_byte (0x0),
 	    d_decoded_bytes (0),

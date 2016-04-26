@@ -55,6 +55,7 @@ namespace gr
       const bool d_whitening;
       const bool d_manchester;
       const bool d_check_crc;
+      const bool d_is_ax25;
       decoding_state_t d_state;
       uint8_t d_shifting_byte;
       size_t d_decoded_bytes;
@@ -83,7 +84,8 @@ namespace gr
       upsat_fsk_frame_acquisition_impl (const std::vector<uint8_t> &preamble,
 					const std::vector<uint8_t> &sync_word,
 					bool whitening, bool manchester,
-					bool check_crc);
+					bool check_crc,
+					bool ax25_format);
       ~upsat_fsk_frame_acquisition_impl ();
 
       // Where all the action really happens

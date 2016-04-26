@@ -40,6 +40,7 @@ namespace gr
       const bool d_whitening;
       const bool d_manchester;
       const bool d_msb_first;
+      const bool d_is_ax25;
       const size_t d_max_pdu_len;
       const size_t d_settling_samples;
       size_t d_encoded;
@@ -63,6 +64,7 @@ namespace gr
 				    bool append_crc, bool whitening,
 				    bool manchester,
 				    bool msb_first,
+				    bool ax25_format,
 				    size_t settling_samples);
       ~upsat_fsk_frame_encoder_impl ();
 

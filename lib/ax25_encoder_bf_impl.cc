@@ -104,7 +104,7 @@ namespace gr
 	/* Prepare and encode the AX.25 frame */
 	len = ax25_prepare_frame (d_tmp_buf, info, info_len, AX25_I_FRAME,
 				  d_addr_field, d_addr_len, 0, 1);
-	status = ax25_nrz_encode(d_endoded_frame, &d_remaining, d_tmp_buf,
+	status = ax25_nrz_bit_stuffing(d_endoded_frame, &d_remaining, d_tmp_buf,
 				 len);
 	if(status != AX25_ENC_OK){
 	  LOG_ERROR("NRZ Encoding failed");

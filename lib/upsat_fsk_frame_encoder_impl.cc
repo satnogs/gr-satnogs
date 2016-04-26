@@ -39,12 +39,14 @@ namespace gr
 				   bool append_crc, bool whitening,
 				   bool manchester,
 				   bool msb_first,
+				   bool ax25_format,
 				   size_t settling_samples)
     {
       return gnuradio::get_initial_sptr (
 	  new upsat_fsk_frame_encoder_impl (preamble, sync_word,
 					    append_crc,
-					    whitening, manchester, msb_first,
+					    whitening, manchester,
+					    msb_first, ax25_format,
 					    settling_samples));
     }
 
@@ -56,6 +58,7 @@ namespace gr
 	const std::vector<uint8_t>& sync_word,
 	bool append_crc, bool whitening,
 	bool manchester, bool msb_first,
+	bool ax25_format,
 	size_t settling_samples) :
 	    gr::sync_block ("upsat_fsk_frame_encoder",
 			    gr::io_signature::make (0, 0, 0),
@@ -68,6 +71,7 @@ namespace gr
 	    d_whitening(whitening),
 	    d_manchester(manchester),
 	    d_msb_first(msb_first),
+	    d_is_ax25(ax25_format),
 	    d_max_pdu_len(d_preamble_len + d_sync_word_len + sizeof(uint8_t)
 	      + UPSAT_MAX_FRAME_LEN + sizeof(uint16_t)),
 	    d_settling_samples(settling_samples),

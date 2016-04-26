@@ -64,6 +64,8 @@ namespace gr
        *
        * @param msb_first if set to true, the the treansmission starts from the
        * MSB of each byte.
+       * @param ax25_format if set to true the frame payload will be encoded
+       * using AX.25 encapsulation.
        *
        * @param settling_samples the number of zero samples that the encoder
        * should append after the end of the FSK frame. This is especially
@@ -71,6 +73,7 @@ namespace gr
        * arbitrary in-out ratio of samples will cause the stream tags to be
        * delivered at the sink block out-of-sync causing the frame transmission
        * to terminate sooner.
+       *
        */
       static sptr
       make (const std::vector<uint8_t>& preamble,
@@ -78,6 +81,7 @@ namespace gr
 	    bool append_crc = true,
 	    bool whitening = false, bool manchester = false,
 	    bool msb_first = true,
+	    bool ax25_format = false,
 	    size_t settling_samples = 64);
     };
 
