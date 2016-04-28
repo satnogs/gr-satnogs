@@ -47,5 +47,6 @@ install(FILES
     freq_drift.h
     upsat_fsk_frame_acquisition.h
     upsat_fsk_frame_encoder.h
-    whitening.h DESTINATION include/satnogs
+    whitening.h
+    udp_msg_sink.h DESTINATION include/satnogs
 )
