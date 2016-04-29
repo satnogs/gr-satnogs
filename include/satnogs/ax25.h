@@ -364,7 +364,7 @@ namespace gr
       }
 
       for(i = frame_start + sizeof(AX25_SYNC_FLAG_MAP_BIN);
-	  i < len - sizeof(AX25_SYNC_FLAG_MAP_BIN); i++) {
+	  i < len - sizeof(AX25_SYNC_FLAG_MAP_BIN) + 1; i++) {
 	/* Check if we reached the frame end */
 	res = (AX25_SYNC_FLAG_MAP_BIN[0] ^ ax25_frame[i]) |
 	    (AX25_SYNC_FLAG_MAP_BIN[1] ^ ax25_frame[i + 1]) |
