@@ -63,6 +63,8 @@ namespace gr
       size_t d_frame_len;
       whitening d_descrambler;
       uint8_t *d_pdu;
+      uint8_t *d_ax25_tmp_buf;
+      uint8_t *d_ax25_buf;
 
       inline void
       slice_and_shift (float in);
@@ -79,6 +81,8 @@ namespace gr
       have_frame_len ();
       inline void
       have_payload ();
+      inline void
+      unpack_ax25_bytes(size_t len_bytes);
 
     public:
       upsat_fsk_frame_acquisition_impl (const std::vector<uint8_t> &preamble,

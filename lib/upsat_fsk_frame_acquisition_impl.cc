@@ -25,6 +25,7 @@
 #include <gnuradio/io_signature.h>
 #include "upsat_fsk_frame_acquisition_impl.h"
 #include <satnogs/log.h>
+#include <satnogs/ax25.h>
 #include <satnogs/utils.h>
 #include <arpa/inet.h>
 
@@ -97,6 +98,8 @@ namespace gr
       }
 
       d_pdu = new uint8_t[UPSAT_MAX_FRAME_LEN];
+      d_ax25_tmp_buf = new uint8_t[2 * UPSAT_MAX_FRAME_LEN * 8];
+      d_ax25_buf = new uint8_t[2 * UPSAT_MAX_FRAME_LEN];
     }
 
     /*
@@ -105,6 +108,8 @@ namespace gr
     upsat_fsk_frame_acquisition_impl::~upsat_fsk_frame_acquisition_impl ()
     {
       delete[] d_pdu;
+      delete[] d_ax25_tmp_buf;
+      delete[] d_ax25_buf;
     }
 
     inline void
@@ -173,6 +178,23 @@ namespace gr
       d_decoded_bits = 0;
     }
 
+    inline void
+    upsat_fsk_frame_acquisition_impl::unpack_ax25_bytes (size_t len_bytes)
+    {
+      size_t i;
+      uint8_t *in = d_pdu + 1;
+      for(i = 0; i < len_bytes; i++){
+	d_ax25_tmp_buf[8*i] = (in[i] >> 7) & 0x1;
+	d_ax25_tmp_buf[8*i + 1] = (in[i] >> 6) & 0x1;
+	d_ax25_tmp_buf[8*i + 2] = (in[i] >> 5) & 0x1;
+	d_ax25_tmp_buf[8*i + 3] = (in[i] >> 4) & 0x1;
+	d_ax25_tmp_buf[8*i + 4] = (in[i] >> 3) & 0x1;
+	d_ax25_tmp_buf[8*i + 5] = (in[i] >> 2) & 0x1;
+	d_ax25_tmp_buf[8*i + 6] = (in[i] >> 1) & 0x1;
+	d_ax25_tmp_buf[8*i + 7] = in[i]  & 0x1;
+      }
+    }
+
     int
     upsat_fsk_frame_acquisition_impl::work (
 	int noutput_items, gr_vector_const_void_star &input_items,
@@ -181,6 +203,8 @@ namespace gr
       int i;
       uint16_t crc_received;
       uint16_t crc_calc;
+      size_t ax25_frame_len = 0;
+      ax25_decode_status_t status;
       const float *in = (const float *) input_items[0];
       for (i = 0; i < noutput_items; i++) {
 	slice_and_shift (in[i]);
@@ -273,9 +297,30 @@ namespace gr
 	      d_decoded_bytes++;
 
 	      if (d_decoded_bytes == d_frame_len) {
+		if(d_is_ax25) {
+		  unpack_ax25_bytes(d_frame_len - 1);
+		  status = ax25_decode(d_ax25_buf, &ax25_frame_len,
+				       d_ax25_tmp_buf, (d_frame_len - 1)*8);
+		  if(status == AX25_DEC_OK){
+		    message_port_pub (pmt::mp ("pdu"),
+		    		      pmt::make_blob(d_ax25_buf, ax25_frame_len));
+		  }
+		  else{
+		    LOG_WARN("AX.25 decoding failed.");
+		  }
+
+		  /*
+		   * We are done here. Whitening and FSK CRC is not supported
+		   * when transmitting/receiving AX.25 frames
+		   */
+		  reset_state ();
+		  break;
+		}
+
 		if(d_whitening){
 		  d_descrambler.descramble(d_pdu+1, d_pdu+1, d_frame_len - 1);
 		}
+
 		if(!d_check_crc){
 		  message_port_pub (
 		      pmt::mp ("pdu"),

@@ -22,6 +22,8 @@
 #define INCLUDE_SATNOGS_AX25_H_
 
 #include <satnogs/utils.h>
+#include <satnogs/log.h>
+#include <limits.h>
 
 namespace gr
 {
@@ -44,7 +46,8 @@ namespace gr
     {
       AX25_I_FRAME, //!< AX25_I_FRAME Information frame
       AX25_S_FRAME, //!< AX25_S_FRAME Supervisory frame
-      AX25_U_FRAME //!< AX25_U_FRAME Unnumbered frame
+      AX25_U_FRAME, //!< AX25_U_FRAME Unnumbered frame
+      AX25_UI_FRAME /**!< AX25_UI_FRAME Unnumbered information frame */
     } ax25_frame_type_t;
 
     typedef enum
@@ -53,6 +56,12 @@ namespace gr
       AX25_ENC_OK
     } ax25_encode_status_t;
 
+    typedef enum
+    {
+      AX25_DEC_FAIL,
+      AX25_DEC_OK
+    } ax25_decode_status_t;
+
     typedef struct
     {
       uint8_t address[AX25_MAX_ADDR_LEN];
@@ -60,7 +69,8 @@ namespace gr
       uint16_t ctrl;
       size_t ctrl_len;
       uint8_t pid;
-      uint8_t info[AX25_MAX_FRAME_LEN];
+      uint8_t *info;
+      size_t info_len;
       ax25_frame_type_t type;
     } ax25_frame_t;
 
@@ -75,7 +85,7 @@ namespace gr
     {
       uint16_t fcs = 0xFFFF;
       while (len--) {
-	fcs = (fcs >> 8) ^ crc16_ccitt_table_reverse[(fcs ^ *buffer++) & 0XFF];
+	fcs = (fcs >> 8) ^ crc16_ccitt_table_reverse[(fcs ^ *buffer++) & 0xFF];
       }
       return fcs ^ 0xFFFF;
     }
@@ -146,7 +156,7 @@ namespace gr
 
       if( ctrl_len == AX25_MIN_CTRL_LEN || ctrl_len == AX25_MAX_CTRL_LEN){
 	memcpy(out + i, &ctrl, ctrl_len);
-	i += addr_len;
+	i += ctrl_len;
       }
       else{
 	return 0;
@@ -157,7 +167,7 @@ namespace gr
        * FIXME: For now, only the "No layer 3 is implemented" information is
        * inserted
        */
-      if(type == AX25_I_FRAME){
+      if (type == AX25_I_FRAME || type == AX25_UI_FRAME) {
 	out[i++] = 0xF0;
       }
       memcpy(out + i, info, info_len);
@@ -313,6 +323,104 @@ namespace gr
 
       *out_len = out_idx;
       return AX25_ENC_OK;
+    }
+
+    static inline ax25_decode_status_t
+    ax25_decode (uint8_t *out, size_t *out_len,
+		 const uint8_t *ax25_frame, size_t len)
+    {
+      size_t i;
+      size_t frame_start = UINT_MAX;
+      size_t frame_stop = UINT_MAX;
+      uint8_t res;
+      size_t cont_1 = 0;
+      size_t received_bytes = 0;
+      size_t bit_cnt = 0;
+      uint8_t decoded_byte = 0x0;
+      uint16_t fcs;
+      uint16_t recv_fcs;
+
+
+      /* Start searching for the SYNC flag */
+      for(i = 0; i < len - sizeof(AX25_SYNC_FLAG_MAP_BIN); i++) {
+	res = (AX25_SYNC_FLAG_MAP_BIN[0] ^ ax25_frame[i]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[1] ^ ax25_frame[i + 1]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[2] ^ ax25_frame[i + 2]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[3] ^ ax25_frame[i + 3]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[4] ^ ax25_frame[i + 4]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[5] ^ ax25_frame[i + 5]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[6] ^ ax25_frame[i + 6]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[7] ^ ax25_frame[i + 7]);
+	/* Found it! */
+	if(res == 0){
+	  frame_start = i;
+	  break;
+	}
+      }
+
+      /* We failed to find the SYNC flag */
+      if(frame_start == UINT_MAX){
+	return AX25_DEC_FAIL;
+      }
+
+      for(i = frame_start + sizeof(AX25_SYNC_FLAG_MAP_BIN);
+	  i < len - sizeof(AX25_SYNC_FLAG_MAP_BIN); i++) {
+	/* Check if we reached the frame end */
+	res = (AX25_SYNC_FLAG_MAP_BIN[0] ^ ax25_frame[i]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[1] ^ ax25_frame[i + 1]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[2] ^ ax25_frame[i + 2]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[3] ^ ax25_frame[i + 3]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[4] ^ ax25_frame[i + 4]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[5] ^ ax25_frame[i + 5]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[6] ^ ax25_frame[i + 6]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[7] ^ ax25_frame[i + 7]);
+	/* Found it! */
+	if(res == 0){
+	  frame_stop = i;
+	  break;
+	}
+
+	if (ax25_frame[i]) {
+	  cont_1++;
+	  decoded_byte |= 1 << bit_cnt;
+	  bit_cnt++;
+	}
+	else {
+	  /* If 5 consecutive 1's drop the extra zero*/
+	  if (cont_1 >= 5) {
+	    cont_1 = 0;
+	  }
+	  else{
+	    bit_cnt++;
+	    cont_1 = 0;
+	  }
+	}
+
+	/* Fill the fully constructed byte */
+	if(bit_cnt == 8){
+	  out[received_bytes++] = decoded_byte;
+	  bit_cnt = 0;
+	  decoded_byte = 0x0;
+	}
+      }
+
+      if(frame_stop == UINT_MAX || received_bytes < AX25_MIN_ADDR_LEN){
+	return AX25_DEC_FAIL;
+      }
+
+      /* Now check the CRC */
+      fcs = ax25_fcs (out, received_bytes - sizeof(uint16_t));
+      recv_fcs = (((uint16_t) out[received_bytes - 2]) << 8)
+      	    | out[received_bytes - 1];
+
+      if(fcs != recv_fcs) {
+	LOG_WARN("AX.25 CRC-16 failed");
+	return AX25_DEC_FAIL;
+      }
+
+      *out_len = received_bytes - sizeof(uint16_t);
+      return AX25_DEC_OK;
+
     }
 
   }  // namespace satnogs

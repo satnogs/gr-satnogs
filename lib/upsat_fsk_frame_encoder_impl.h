@@ -23,6 +23,7 @@
 
 #include <satnogs/upsat_fsk_frame_encoder.h>
 #include <satnogs/whitening.h>
+#include <satnogs/ax25.h>
 
 namespace gr
 {
@@ -47,6 +48,10 @@ namespace gr
       size_t d_pdu_len;
       whitening d_scrambler;
       uint8_t *d_pdu;
+      uint8_t *d_ax25_pdu;
+      uint8_t *d_ax25_tmp_buf;
+      uint8_t *d_ax25_addr;
+      size_t d_ax25_addr_len;
       float *d_pdu_encoded;
 
       inline void
@@ -58,6 +63,11 @@ namespace gr
       inline void
       add_eob (uint64_t item);
 
+      inline int
+      raw_frame_handling(float *out, int noutput_items);
+      inline int
+      ax25_frame_handling(float *out, int noutput_items);
+
     public:
       upsat_fsk_frame_encoder_impl (const std::vector<uint8_t>& preamble,
 				    const std::vector<uint8_t>& sync_word,
@@ -65,6 +75,10 @@ namespace gr
 				    bool manchester,
 				    bool msb_first,
 				    bool ax25_format,
+				    const std::string& ax25_dest_addr,
+				    uint8_t ax25_dest_ssid,
+				    const std::string& ax25_src_addr,
+				    uint8_t ax25_src_ssid,
 				    size_t settling_samples);
       ~upsat_fsk_frame_encoder_impl ();
 
