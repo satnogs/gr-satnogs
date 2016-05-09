@@ -134,7 +134,7 @@ namespace gr
       }
 
       /* All good until now. Allocate buffer memory and proceed */
-      buf = new uint8_t (d_mtu);
+      buf = new uint8_t[d_mtu];
 
       while (d_running) {
 	sock = accept (listen_sock, &client_addr, &client_addr_len);
