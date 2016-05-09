@@ -191,7 +191,7 @@ namespace gr
 	close (sock);
       }
       close (listen_sock);
-      delete buf;
+      delete [] buf;
       exit (EXIT_SUCCESS);
     }
 
