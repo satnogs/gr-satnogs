@@ -97,7 +97,7 @@ namespace gr
 	d_produced = 0;
 
 	/* Block waiting from a new message from users */
-	msg = delete_head_blocking (pmt::mp ("info"), 0);
+	msg = delete_head_blocking (pmt::mp ("info"));
 	info = (const uint8_t *)pmt::blob_data(msg);
 	info_len = pmt::blob_length(msg);
 
