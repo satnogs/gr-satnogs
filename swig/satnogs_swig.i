@@ -29,6 +29,7 @@
 #include "satnogs/upsat_fsk_frame_encoder.h"
 #include "satnogs/whitening.h"
 #include "satnogs/udp_msg_sink.h"
+#include "satnogs/coarse_doppler_correction_cc.h"
 %}
 
 
@@ -70,3 +71,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, upsat_fsk_frame_encoder);
 %include "satnogs/whitening.h"
 %include "satnogs/udp_msg_sink.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_sink);
+%include "satnogs/coarse_doppler_correction_cc.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, coarse_doppler_correction_cc);

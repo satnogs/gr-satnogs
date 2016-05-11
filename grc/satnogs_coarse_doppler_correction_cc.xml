@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<block>
+	<name>Coarse Doppler Correction</name>
+	<key>satnogs_coarse_doppler_correction_cc</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.coarse_doppler_correction_cc($target_freq, $sampling_rate)</make>
+	<callback>set_new_freq_locked($target_freq)</callback>
+
+	<param>
+		<name>Target Frequency</name>
+		<key>target_freq</key>
+		<type>real</type>
+	</param>
+	
+	<param>
+		<name>Sample Rate</name>
+		<key>sampling_rate</key>
+		<value>samp_rate</value>
+		<type>real</type>
+	</param>
+
+	<sink>
+		<name>freq</name>
+		<type>message</type>
+	</sink>
+
+	<sink>
+		<name>in</name>
+		<type>complex</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>complex</type>
+	</source>
+</block>
