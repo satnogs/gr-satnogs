@@ -27,6 +27,7 @@ description here (python/__init__.py).
 try:
 	# this might fail if the module is python-only
 	from satnogs_swig import *
+	from satnogs_transmitter import *
 except ImportError:
 	pass
 
