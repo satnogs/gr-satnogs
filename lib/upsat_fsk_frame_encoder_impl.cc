@@ -334,7 +334,7 @@ namespace gr
 	 * the address field (if exists) and the payload. Length and CRC fields
 	 * are NOT included.
 	 */
-	d_pdu[d_preamble_len + d_sync_word_len] = (uint8_t) encoded_len;
+	d_pdu[d_preamble_len + d_sync_word_len] = (uint8_t) encoded_len/8;
 
 	/* If it is necessary calculate and append the CRC */
 	if (d_append_crc) {
