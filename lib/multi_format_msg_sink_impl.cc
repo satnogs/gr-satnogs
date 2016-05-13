@@ -46,7 +46,7 @@ namespace gr {
         case 1:
           //for(size_t i=0; i< pmt::blob_length(msg); i++)
           for (size_t i = 0; i < s.length(); ++i)
-            std::cout << std::hex << std::setfill('0') << std::setw(2) <<(int)s[i];
+            std::cout << "0x" << std::hex<< std::setfill('0') << std::setw(2)<< std::dec <<(int)s[i] << " ";
           std::cout<<std::endl;
           break;
         case 2:
