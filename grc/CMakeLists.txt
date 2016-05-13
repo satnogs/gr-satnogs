@@ -36,6 +36,6 @@ install(FILES
     satnogs_upsat_fsk_frame_encoder.xml
     satnogs_whitening.xml
     satnogs_udp_msg_sink.xml
-    satnogs_transmitter.xml
+    satnogs_upsat_transmitter.xml
     satnogs_coarse_doppler_correction_cc.xml DESTINATION share/gnuradio/grc/blocks
 )

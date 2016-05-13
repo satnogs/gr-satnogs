@@ -31,7 +31,7 @@ endif()
 GR_PYTHON_INSTALL(
     FILES
     __init__.py
-    satnogs_transmitter.py
+    satnogs_upsat_transmitter.py
     DESTINATION ${GR_PYTHON_DIR}/satnogs
 )
 

@@ -11,7 +11,7 @@ from gnuradio.filter import firdes
 from gnuradio.gr.runtime_swig import sizeof_gr_complex
 
 
-class satnogs_transmitter(gr.hier_block2):
+class satnogs_upsat_transmitter(gr.hier_block2):
     
     def __init__(self,
                  frame_preamble,
@@ -32,7 +32,7 @@ class satnogs_transmitter(gr.hier_block2):
                  lo_offset,
                  deviation,
                  baud_rate):
-        gr.hier_block2.__init__(self, "satnogs_transmitter",
+        gr.hier_block2.__init__(self, "satnogs_upsat_transmitter",
                                 gr.io_signature(0 , 0 , 0),
                                 # Output 0: The complex TX signal for the SDR device
                                 # Output 1: The constellation output for the vector analyzer
