@@ -1,0 +1,135 @@
+<?xml version="1.0"?>
+<block>
+  <name>Satnogs Receiver</name>
+  <key>satnogs_receiver</key>
+  <category>satnogs</category>
+  <import>import satnogs</import>
+  
+  <make>satnogs.satnogs_receiver(decimation_rx = $decimation_rx,
+				                 taps = $taps,
+				                 lo_offset = $lo_offset,
+				                 samp_rate_rx = $samp_rate_rx,
+				                 baud_rate = $baud_rate,
+				                 deviation = $deviation,
+				                 frame_preamble = $frame_preamble,
+				                 sync_word = $sync_word,
+				                 use_whitening = $use_whitening,
+				                 use_manchester_coding = $use_manchester_coding,
+				                 use_crc = $use_crc,
+				                 use_ax25 = $use_ax25)</make>
+
+  <param>
+	<name>Decimation</name>
+	<key>decimation_rx</key>
+	<type>int</type>
+  </param>
+	
+  <param>
+	<name>Taps</name>
+	<key>taps</key>
+	<type>complex_vector</type>
+  </param>
+	
+  <param>
+	<name>Center Frequency</name>
+	<key>lo_offset</key>
+	<type>real</type>
+  </param>
+	
+  <param>
+	<name>Sample Rate</name>
+	<key>samp_rate_rx</key>
+	<type>real</type>
+  </param>
+	
+  <param>
+	<name>Baud Rate</name>
+	<key>baud_rate</key>
+	<type>real</type>
+  </param>
+ 
+  <param>
+	<name>Deviation</name>
+	<key>deviation</key>
+	<type>real</type>
+  </param>
+ 
+  <param>
+	<name>Frame Preamble</name>
+	<key>frame_preamble</key>
+	<type>raw</type>
+  </param>
+
+  <param>
+	<name>Synchronization Word</name>
+	<key>sync_word</key>
+	<type>raw</type>
+  </param>
+
+  <param>
+	<name>Whitening</name>
+	<key>use_whitening</key>
+	<type>enum</type>
+	<option>
+		<name>No</name>
+		<key>False</key>
+	</option>
+	<option>
+		<name>Yes</name>
+		<key>True</key>
+	</option>
+  </param>
+
+  <param>
+	<name>Use Manchester Coding</name>
+	<key>use_manchester_coding</key>
+	<type>enum</type>
+	<option>
+		<name>No</name>
+		<key>False</key>
+	</option>
+	<option>
+		<name>Yes</name>
+		<key>True</key>
+	</option>
+  </param>
+	
+  <param>
+	<name>Check CRC</name>
+	<key>use_crc</key>
+	<type>enum</type>
+	<option>
+		<name>Yes</name>
+		<key>True</key>
+	</option>
+	<option>
+		<name>No</name>
+		<key>False</key>
+	</option>
+  </param>
+
+  <param>
+	<name>Use AX.25 encapsulation</name>
+	<key>use_ax25</key>
+	<type>enum</type>
+	<option>
+		<name>No</name>
+		<key>False</key>
+	</option>
+	<option>
+		<name>Yes</name>
+		<key>True</key>
+	</option>
+  </param>
+
+  <sink>
+	<name>in</name>
+	<type>complex</type>
+  </sink>
+
+  <source>
+	<name>hier_out</name>
+	<type>message</type>
+  </source>
+  
+</block>
