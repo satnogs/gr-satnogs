@@ -9,9 +9,9 @@ import satnogs
 from gtk.keysyms import mu
 from gnuradio.gr.runtime_swig import sizeof_gr_complex
 
-class satnogs_receiver(gr.hier_block2):
+class satnogs_upsat_receiver(gr.hier_block2):
     """
-    docstring for block satnogs_receiver
+    docstring for block satnogs_upsat_receiver
     """
     def __init__(self,
                  decimation_rx,
@@ -27,7 +27,7 @@ class satnogs_receiver(gr.hier_block2):
                  use_crc,
                  use_ax25):
         gr.hier_block2.__init__(self,
-            "satnogs_receiver",
+            "satnogs_upsat_receiver",
             gr.io_signature(1 , 1 , sizeof_gr_complex),
             gr.io_signature(0, 0, 0))
         

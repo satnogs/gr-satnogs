@@ -31,5 +31,5 @@ except ImportError:
 	pass
 
 # import any pure python here
-from satnogs_receiver import satnogs_receiver
+from satnogs_upsat_receiver import satnogs_upsat_receiver
 #

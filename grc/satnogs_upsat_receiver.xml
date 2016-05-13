@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
 <block>
-  <name>Satnogs Receiver</name>
-  <key>satnogs_receiver</key>
+  <name>Satnogs UPSAT Receiver</name>
+  <key>satnogs_upsat_receiver</key>
   <category>satnogs</category>
   <import>import satnogs</import>
   
-  <make>satnogs.satnogs_receiver(decimation_rx = $decimation_rx,
+  <make>satnogs.satnogs_upsat_receiver(decimation_rx = $decimation_rx,
 				                 taps = $taps,
 				                 lo_offset = $lo_offset,
 				                 samp_rate_rx = $samp_rate_rx,
