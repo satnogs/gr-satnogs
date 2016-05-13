@@ -30,7 +30,7 @@ install(FILES
     morse.h
     morse_decoder.h
     morse_debug_source.h
-    clear_text_msg_sink.h
+    multi_format_msg_sink.h
     cw_to_symbol.h
     afsk_decoder.h
     sine_matched_filter_ff.h

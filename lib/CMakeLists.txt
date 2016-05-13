@@ -29,7 +29,7 @@ list(APPEND satnogs_sources
     morse_tree.cc
     morse_decoder_impl.cc
     morse_debug_source_impl.cc
-    clear_text_msg_sink_impl.cc
+    multi_format_msg_sink_impl.cc
     cw_to_symbol_impl.cc
     afsk_decoder_impl.cc
     sine_matched_filter_ff_impl.cc

@@ -20,7 +20,7 @@ install(FILES
     satnogs_cw_matched_filter_ff.xml
     satnogs_morse_decoder.xml
     satnogs_morse_debug_source.xml
-    satnogs_clear_text_msg_sink.xml
+    satnogs_multi_format_msg_sink.xml
     satnogs_cw_to_symbol.xml
     satnogs_afsk_decoder.xml
     satnogs_sine_matched_filter_ff.xml

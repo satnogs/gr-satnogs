@@ -18,8 +18,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H
-#define INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H
+#ifndef INCLUDED_SATNOGS_MULTI_FORMAT_MSG_SINK_H
+#define INCLUDED_SATNOGS_MULTI_FORMAT_MSG_SINK_H
 
 #include <satnogs/api.h>
 #include <gnuradio/block.h>
@@ -37,10 +37,10 @@ namespace gr
      * \ingroup satnogs
      *
      */
-    class SATNOGS_API clear_text_msg_sink : virtual public gr::block
+    class SATNOGS_API multi_format_msg_sink : virtual public gr::block
     {
     public:
-      typedef boost::shared_ptr<clear_text_msg_sink> sptr;
+      typedef boost::shared_ptr<multi_format_msg_sink> sptr;
 
       /*!
        * \brief Block accepting clear text messages from various decoders.
@@ -49,11 +49,11 @@ namespace gr
        *
        */
       static sptr
-      make ();
+      make (size_t format);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H */
+#endif /* INCLUDED_SATNOGS_multi_format_MSG_SINK_H */
 
