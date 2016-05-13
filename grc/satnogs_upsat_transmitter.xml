@@ -1,10 +1,10 @@
 <block>
-   <name>Satnogs Transmitter</name>
-   <key>satnogs_transmitter</key>
+   <name>Satnogs UPSat Transmitter</name>
+   <key>satnogs_upsat_transmitter</key>
    <category>satnogs</category>
    <import>import satnogs</import>
    
-   <make>satnogs.satnogs_transmitter(frame_preamble=$frame_preamble,
+   <make>satnogs.satnogs_upsat_transmitter(frame_preamble=$frame_preamble,
                                       sync_word=$sync_word,
                                       append_crc=$append_crc,
                                       whitening=$whitening,
