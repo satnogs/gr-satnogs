@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<block>
+	<name>Multi Format Message Sink</name>
+	<key>satnogs_multi_format_msg_sink</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.multi_format_msg_sink($format)</make>
+
+	<param>
+		<name>Output format</name>
+		<key>format</key>
+		<type>enum</type>
+		<option>
+			<name>Clear Text</name>
+			<key>0</key>
+		</option>
+		<option>
+			<name>Hex</name>
+			<key>1</key>
+		</option>
+		<option>
+			<name>Binary</name>
+			<key>2</key>
+		</option>
+		
+	</param>
+	<sink>
+		<name>in</name>
+		<type>message</type>
+	</sink>
+</block>

@@ -20,7 +20,7 @@ install(FILES
     satnogs_cw_matched_filter_ff.xml
     satnogs_morse_decoder.xml
     satnogs_morse_debug_source.xml
-    satnogs_clear_text_msg_sink.xml
+    satnogs_multi_format_msg_sink.xml
     satnogs_cw_to_symbol.xml
     satnogs_afsk_decoder.xml
     satnogs_sine_matched_filter_ff.xml
@@ -36,5 +36,6 @@ install(FILES
     satnogs_upsat_fsk_frame_encoder.xml
     satnogs_whitening.xml
     satnogs_udp_msg_sink.xml
+    satnogs_transmitter.xml
     satnogs_coarse_doppler_correction_cc.xml DESTINATION share/gnuradio/grc/blocks
 )

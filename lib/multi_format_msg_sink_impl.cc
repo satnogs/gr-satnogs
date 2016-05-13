@@ -23,37 +23,55 @@
 #endif
 
 #include <gnuradio/io_signature.h>
-#include "clear_text_msg_sink_impl.h"
+#include "multi_format_msg_sink_impl.h"
 
 namespace gr {
   namespace satnogs {
 
-    clear_text_msg_sink::sptr
-    clear_text_msg_sink::make()
+    multi_format_msg_sink::sptr
+    multi_format_msg_sink::make(size_t format)
     {
       return gnuradio::get_initial_sptr
-        (new clear_text_msg_sink_impl());
+        (new multi_format_msg_sink_impl(format));
     }
 
     void
-    clear_text_msg_sink_impl::msg_handler (pmt::pmt_t msg)
+    multi_format_msg_sink_impl::msg_handler (pmt::pmt_t msg)
     {
       std::string s((const char *)pmt::blob_data(msg), pmt::blob_length(msg));
-      std::cout << "Received text sequence:" << s << " " << std::endl;
+      switch(d_format){
+        case 0:
+          std::cout << "Received text sequence:" << s << " " << std::endl;
+          break;
+        case 1:
+          //for(size_t i=0; i< pmt::blob_length(msg); i++)
+          for (size_t i = 0; i < s.length(); ++i)
+            std::cout << "0x" << std::hex<< std::setfill('0') << std::setw(2)<< std::dec <<(int)s[i] << " ";
+          std::cout<<std::endl;
+          break;
+        case 2:
+          for(size_t i=0; i< pmt::blob_length(msg); i++)
+        	  std::cout<< std::bitset<8>(((uint8_t*)pmt::blob_data(msg))[i]);
+          std::cout<<std::endl;
+          break;
+        default:
+          printf("Invalid format");
+      }
     }
 
     /*
      * The private constructor
      */
-    clear_text_msg_sink_impl::clear_text_msg_sink_impl()
-      : gr::block("clear_text_msg_sink",
+    multi_format_msg_sink_impl::multi_format_msg_sink_impl(size_t format)
+      : gr::block("multi_format_msg_sink",
               gr::io_signature::make(0, 0, 0),
-              gr::io_signature::make(0, 0, 0))
+              gr::io_signature::make(0, 0, 0)),
+			  d_format(format)
     {
       message_port_register_in(pmt::mp("in"));
       set_msg_handler (
 	  pmt::mp ("in"),
-	  boost::bind (&clear_text_msg_sink_impl::msg_handler, this, _1));
+	  boost::bind (&multi_format_msg_sink_impl::msg_handler, this, _1));
     }
 
   } /* namespace satnogs */

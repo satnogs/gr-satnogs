@@ -18,29 +18,31 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H
-#define INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H
+#ifndef INCLUDED_SATNOGS_MULTI_FORMAT_MSG_SINK_IMPL_H
+#define INCLUDED_SATNOGS_MULTI_FORMAT_MSG_SINK_IMPL_H
 
-#include <satnogs/clear_text_msg_sink.h>
+#include <satnogs/multi_format_msg_sink.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class clear_text_msg_sink_impl : public clear_text_msg_sink
+    class multi_format_msg_sink_impl : public multi_format_msg_sink
     {
     private:
       void
       msg_handler(pmt::pmt_t msg);
 
+      size_t d_format;
+
     public:
-      clear_text_msg_sink_impl ();
+      multi_format_msg_sink_impl (size_t format);
 
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H */
+#endif /* INCLUDED_SATNOGS_multi_format_MSG_SINK_IMPL_H */
 
