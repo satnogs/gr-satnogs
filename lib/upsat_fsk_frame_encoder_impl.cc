@@ -302,6 +302,7 @@ namespace gr
       if (d_encoded == 0) {
 	/* Reset the buffer */
 	memset(d_ax25_pdu, 0, 2 * d_max_pdu_len * 8);
+	memset(d_pdu_encoded, 0, d_max_pdu_len * 8 * sizeof(float));
 	pdu = delete_head_blocking (pmt::mp ("pdu"));
 	d_pdu_len = pmt::blob_length (pdu);
 
@@ -334,7 +335,7 @@ namespace gr
 	 * the address field (if exists) and the payload. Length and CRC fields
 	 * are NOT included.
 	 */
-	d_pdu[d_preamble_len + d_sync_word_len] = (uint8_t) encoded_len/8;
+	d_pdu[d_preamble_len + d_sync_word_len] = (uint8_t) (encoded_len/8);
 
 	/* If it is necessary calculate and append the CRC */
 	if (d_append_crc) {
@@ -356,17 +357,17 @@ namespace gr
 	map_msb_first (d_pdu_encoded, (d_preamble_len + d_sync_word_len + 1) * 8);
 
 	/* NRZ encode the AX.25 part of the FSK frame */
-	for(i = 0; i < encoded_len; i++){
+	for(i = 0; i < encoded_len - extra_bits; i++){
 	  d_pdu_encoded[i + (d_preamble_len + d_sync_word_len + 1)*8]
 			= (d_ax25_pdu[i] * 2.0f) - 1.0f;
 	}
 
 	/* Reset the settling trailing samples */
-	memset (d_pdu_encoded + d_pdu_len * 8, 0,
+	memset (&d_pdu_encoded[d_pdu_len * 8], 0,
 		d_settling_samples * sizeof(float));
 
 	/* The new frame now has a bigger size of course*/
-	d_pdu_len += d_settling_samples / 8;
+	d_pdu_len += d_settling_samples/8;
 
 	/* Start of burst */
 	add_sob (nitems_written (0));
