@@ -305,9 +305,6 @@ namespace gr
 		    message_port_pub (pmt::mp ("pdu"),
 		    		      pmt::make_blob(d_ax25_buf, ax25_frame_len));
 		  }
-		  else{
-		    LOG_WARN("AX.25 decoding failed.");
-		  }
 
 		  /*
 		   * We are done here. Whitening and FSK CRC is not supported

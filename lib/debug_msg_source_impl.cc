@@ -50,7 +50,7 @@ namespace gr
 	    d_repeat (repeat),
 	    d_running (true)
     {
-      d_buf = new uint8_t (msg.length ());
+      d_buf = new uint8_t[msg.length ()];
       memcpy (d_buf, msg.c_str (), msg.length ());
       message_port_register_out (pmt::mp ("msg"));
       boost::shared_ptr<boost::thread> (
