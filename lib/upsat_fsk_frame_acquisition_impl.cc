@@ -302,8 +302,11 @@ namespace gr
 		  status = ax25_decode(d_ax25_buf, &ax25_frame_len,
 				       d_ax25_tmp_buf, (d_frame_len - 1)*8);
 		  if(status == AX25_DEC_OK){
-		    message_port_pub (pmt::mp ("pdu"),
-		    		      pmt::make_blob(d_ax25_buf, ax25_frame_len));
+		    /* Skip the AX.25 header */
+		    message_port_pub (
+			pmt::mp ("pdu"),
+			pmt::make_blob (d_ax25_buf + AX25_MIN_ADDR_LEN + 2,
+					ax25_frame_len - AX25_MIN_ADDR_LEN - 2));
 		  }
 
 		  /*
