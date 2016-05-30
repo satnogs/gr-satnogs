@@ -18,29 +18,42 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H
-#define INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H
+#ifndef INCLUDED_SATNOGS_UDP_MSG_SINK_IMPL_H
+#define INCLUDED_SATNOGS_UDP_MSG_SINK_IMPL_H
 
-#include <satnogs/clear_text_msg_sink.h>
+#include <satnogs/udp_msg_sink.h>
+#include <satnogs/log.h>
+#include <ifaddrs.h>
+#include <errno.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class clear_text_msg_sink_impl : public clear_text_msg_sink
+    class udp_msg_sink_impl : public udp_msg_sink
     {
     private:
-      void
-      msg_handler(pmt::pmt_t msg);
+      const std::string d_iface_addr;
+      const uint16_t d_udp_port;
+      const size_t d_mtu;
+      int d_sock;
+      struct sockaddr_in d_sin;
+
+      void msg_handler(pmt::pmt_t msg);
 
     public:
-      clear_text_msg_sink_impl ();
-
+      udp_msg_sink_impl (const std::string& addr, uint16_t port, size_t mtu);
+      ~udp_msg_sink_impl ();
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_IMPL_H */
+#endif /* INCLUDED_SATNOGS_UDP_MSG_SINK_IMPL_H */
 

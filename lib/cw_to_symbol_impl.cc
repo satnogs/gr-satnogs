@@ -139,7 +139,7 @@ namespace gr
     cw_to_symbol_impl::set_act_threshold_msg_handler (pmt::pmt_t msg)
     {
       if(pmt::is_pair(msg)){
-	set_act_threshold(pmt::to_float(pmt::cdr(msg)));
+	set_act_threshold(pmt::to_double(pmt::cdr(msg)));
       }
     }
 

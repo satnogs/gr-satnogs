@@ -18,42 +18,37 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H
-#define INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H
+#ifndef INCLUDED_SATNOGS_UDP_MSG_SINK_H
+#define INCLUDED_SATNOGS_UDP_MSG_SINK_H
 
 #include <satnogs/api.h>
 #include <gnuradio/block.h>
 
-namespace gr
-{
-  namespace satnogs
-  {
+namespace gr {
+  namespace satnogs {
 
     /*!
-     * \brief Block accepting clear text messages from various decoders.
-     * Its purpose is to forward these messages at other services, programs,
-     * stdout, etc,
-     *
+     * \brief <+description of block+>
      * \ingroup satnogs
      *
      */
-    class SATNOGS_API clear_text_msg_sink : virtual public gr::block
+    class SATNOGS_API udp_msg_sink : virtual public gr::block
     {
-    public:
-      typedef boost::shared_ptr<clear_text_msg_sink> sptr;
+     public:
+      typedef boost::shared_ptr<udp_msg_sink> sptr;
 
-      /*!
-       * \brief Block accepting clear text messages from various decoders.
-       * Its purpose is to forward these messages at other services, programs,
-       * stdout, etc,
-       *
+
+      /**
+       * UDP sink that accepts PMT messages
+       * @param addr the address of the destination host
+       * @param port the destination UDP port
+       * @param mtu the maximum MTU
        */
-      static sptr
-      make ();
+      static sptr make(const std::string& addr, uint16_t port, size_t mtu);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_CLEAR_TEXT_MSG_SINK_H */
+#endif /* INCLUDED_SATNOGS_UDP_MSG_SINK_H */
 

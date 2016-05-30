@@ -63,7 +63,12 @@ namespace gr
        * the Manchester algorithm of the CC1120 chip. False otherwise.
        *
        * @param msb_first if set to true, the the treansmission starts from the
-       * MSB of each byte.
+       * MSB of each byte. In case the AX.25 encapuslation is selected, this
+       * parameter is NOT taken into consideration for the AX.25 part,
+       * as the AX.25 dictates that the LS bit should be sent first.
+       *
+       * @param ax25_format if set to true the frame payload will be encoded
+       * using AX.25 encapsulation.
        *
        * @param settling_samples the number of zero samples that the encoder
        * should append after the end of the FSK frame. This is especially
@@ -71,14 +76,21 @@ namespace gr
        * arbitrary in-out ratio of samples will cause the stream tags to be
        * delivered at the sink block out-of-sync causing the frame transmission
        * to terminate sooner.
+       *
        */
       static sptr
       make (const std::vector<uint8_t>& preamble,
 	    const std::vector<uint8_t>& sync_word,
-	    bool append_crc = true,
-	    bool whitening = false, bool manchester = false,
-	    bool msb_first = true,
-	    size_t settling_samples = 64);
+	    bool append_crc,
+	    bool whitening,
+	    bool manchester,
+	    bool msb_first,
+	    bool ax25_format,
+	    const std::string& ax25_dest_addr,
+	    uint8_t ax25_dest_ssid,
+	    const std::string& ax25_src_addr,
+	    uint8_t ax25_src_ssid,
+	    size_t settling_samples);
     };
 
   } // namespace satnogs

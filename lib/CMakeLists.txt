@@ -29,7 +29,7 @@ list(APPEND satnogs_sources
     morse_tree.cc
     morse_decoder_impl.cc
     morse_debug_source_impl.cc
-    clear_text_msg_sink_impl.cc
+    multi_format_msg_sink_impl.cc
     cw_to_symbol_impl.cc
     afsk_decoder_impl.cc
     sine_matched_filter_ff_impl.cc
@@ -45,7 +45,9 @@ list(APPEND satnogs_sources
     freq_drift.cc
     upsat_fsk_frame_acquisition_impl.cc
     upsat_fsk_frame_encoder_impl.cc
-    whitening.cc )
+    whitening.cc
+    udp_msg_sink_impl.cc
+    coarse_doppler_correction_cc_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)

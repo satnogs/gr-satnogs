@@ -55,6 +55,7 @@ namespace gr
       const bool d_whitening;
       const bool d_manchester;
       const bool d_check_crc;
+      const bool d_is_ax25;
       decoding_state_t d_state;
       uint8_t d_shifting_byte;
       size_t d_decoded_bytes;
@@ -62,6 +63,8 @@ namespace gr
       size_t d_frame_len;
       whitening d_descrambler;
       uint8_t *d_pdu;
+      uint8_t *d_ax25_tmp_buf;
+      uint8_t *d_ax25_buf;
 
       inline void
       slice_and_shift (float in);
@@ -78,12 +81,15 @@ namespace gr
       have_frame_len ();
       inline void
       have_payload ();
+      inline void
+      unpack_ax25_bytes(size_t len_bytes);
 
     public:
       upsat_fsk_frame_acquisition_impl (const std::vector<uint8_t> &preamble,
 					const std::vector<uint8_t> &sync_word,
 					bool whitening, bool manchester,
-					bool check_crc);
+					bool check_crc,
+					bool ax25_format);
       ~upsat_fsk_frame_acquisition_impl ();
 
       // Where all the action really happens

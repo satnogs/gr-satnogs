@@ -1,0 +1,181 @@
+<block>
+   <name>Satnogs UPSat Transmitter</name>
+   <key>satnogs_upsat_transmitter</key>
+   <category>satnogs</category>
+   <import>import satnogs</import>
+   
+   <make>satnogs.satnogs_upsat_transmitter(frame_preamble=$frame_preamble,
+                                      sync_word=$sync_word,
+                                      append_crc=$append_crc,
+                                      whitening=$whitening,
+                                      manchester=$manchester,
+                                      msb_first=$msb_first,
+                                      ax25_format=$ax25_format,
+                                      dest_addr=$dest_addr,
+                                      dest_ssid=$dest_ssid,
+                                      src_addr=$src_addr,
+                                      src_ssid=$src_ssid,
+                                      settling_samples=$settling_samples,
+                                      samps_per_symbol=$interp,
+                                      interpolation_taps=$taps,
+                                      samp_rate=$samp_rate,
+                                      lo_offset=$lo_offset,
+                                      deviation=$deviation,
+                                      baud_rate=$baud_rate)</make>
+                                      
+	<param>
+		<name>Frame Preamble</name>
+		<key>frame_preamble</key>
+		<type>raw</type>
+	</param>
+	<param>
+		<name>Synchronization Word</name>
+		<key>sync_word</key>
+		<type>raw</type>
+	</param>
+	<param>
+		<name>Append CRC</name>
+		<key>append_crc</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+
+	<param>
+		<name>Whitening</name>
+		<key>whitening</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+
+	<param>
+		<name>Use Manchester Coding</name>
+		<key>manchester</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Send MS bit first</name>
+		<key>msb_first</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Use AX.25 encapsulation</name>
+		<key>ax25_format</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Destination Callsign</name>
+		<key>dest_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Destination SSID</name>
+		<key>dest_ssid</key>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>Source Callsign</name>
+		<key>src_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Source SSID</name>
+		<key>src_ssid</key>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Number of zero settling samples</name>
+		<key>settling_samples</key>
+		<value>64</value>
+		<type>int</type>
+	</param>
+	
+ 	<param>
+		<name>FIR filter Interpolation</name>
+		<key>interp</key>
+		<value>1</value>
+		<type>int</type>
+	</param>
+	<param>
+		<name>Interpolation Taps</name>
+		<key>taps</key>
+		<type>real_vector</type>
+	</param>
+	<param>
+		<name>Sampling rate</name>
+		<key>samp_rate</key>
+		<type>real</type>
+	</param>
+	<param>
+		<name>LO offset</name>
+		<key>lo_offset</key>
+		<type>real</type>
+	</param>
+	<param>
+		<name>baud rate</name>
+		<key>baud_rate</key>
+		<type>real</type>
+	</param>
+	<param>
+		<name>Deviation</name>
+		<key>deviation</key>
+		<type>real</type>
+	</param>
+	
+	
+	<sink>
+		<name>in</name>
+		<type>message</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>complex</type>
+	</source>
+   
+   
+</block>

@@ -4,7 +4,7 @@
 	<key>satnogs_upsat_fsk_frame_encoder</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.upsat_fsk_frame_encoder($preamble, $sync_word, $append_crc, $whitening, $manchester, $msb_first, $settling_samples)</make>
+	<make>satnogs.upsat_fsk_frame_encoder($preamble, $sync_word, $append_crc, $whitening, $manchester, $msb_first, $ax_25, $src_addr, $src_ssid, $dest_addr, $dest_ssid, $settling_samples)</make>
 
 	<param>
 		<name>Frame Preamble</name>
@@ -72,6 +72,44 @@
 			<name>No</name>
 			<key>False</key>
 		</option>
+	</param>
+	
+	<param>
+		<name>Use AX.25 encapsulation</name>
+		<key>ax_25</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Destination Callsign</name>
+		<key>dest_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Destination SSID</name>
+		<key>dest_ssid</key>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>Source Callsign</name>
+		<key>src_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Source SSID</name>
+		<key>src_ssid</key>
+		<type>int</type>
 	</param>
 	
 	<param>

@@ -22,6 +22,8 @@
 #define INCLUDE_SATNOGS_AX25_H_
 
 #include <satnogs/utils.h>
+#include <satnogs/log.h>
+#include <limits.h>
 
 namespace gr
 {
@@ -36,6 +38,7 @@ namespace gr
     const uint8_t AX25_SYNC_FLAG = 0x7E;
     const uint8_t AX25_CALLSIGN_MAX_LEN = 6;
     const float AX25_SYNC_FLAG_MAP[8] = {-1, 1, 1, 1, 1, 1, 1, -1};
+    const uint8_t AX25_SYNC_FLAG_MAP_BIN[8] = {0, 1, 1, 1, 1, 1, 1, 0};
     /**
      * AX.25 Frame types
      */
@@ -43,7 +46,8 @@ namespace gr
     {
       AX25_I_FRAME, //!< AX25_I_FRAME Information frame
       AX25_S_FRAME, //!< AX25_S_FRAME Supervisory frame
-      AX25_U_FRAME //!< AX25_U_FRAME Unnumbered frame
+      AX25_U_FRAME, //!< AX25_U_FRAME Unnumbered frame
+      AX25_UI_FRAME /**!< AX25_UI_FRAME Unnumbered information frame */
     } ax25_frame_type_t;
 
     typedef enum
@@ -52,6 +56,12 @@ namespace gr
       AX25_ENC_OK
     } ax25_encode_status_t;
 
+    typedef enum
+    {
+      AX25_DEC_FAIL,
+      AX25_DEC_OK
+    } ax25_decode_status_t;
+
     typedef struct
     {
       uint8_t address[AX25_MAX_ADDR_LEN];
@@ -59,7 +69,8 @@ namespace gr
       uint16_t ctrl;
       size_t ctrl_len;
       uint8_t pid;
-      uint8_t info[AX25_MAX_FRAME_LEN];
+      uint8_t *info;
+      size_t info_len;
       ax25_frame_type_t type;
     } ax25_frame_t;
 
@@ -74,13 +85,13 @@ namespace gr
     {
       uint16_t fcs = 0xFFFF;
       while (len--) {
-	fcs = (fcs >> 8) ^ crc16_ccitt_table_reverse[(fcs ^ *buffer++) & 0XFF];
+	fcs = (fcs >> 8) ^ crc16_ccitt_table_reverse[(fcs ^ *buffer++) & 0xFF];
       }
       return fcs ^ 0xFFFF;
     }
 
     /**
-     * Createst the header field of the AX.25 frame
+     * Creates the header field of the AX.25 frame
      * @param out the output buffer with enough memory to hold the address field
      * @param dest_addr the destination callsign address
      * @param dest_ssid the destination SSID
@@ -145,7 +156,7 @@ namespace gr
 
       if( ctrl_len == AX25_MIN_CTRL_LEN || ctrl_len == AX25_MAX_CTRL_LEN){
 	memcpy(out + i, &ctrl, ctrl_len);
-	i += addr_len;
+	i += ctrl_len;
       }
       else{
 	return 0;
@@ -156,7 +167,7 @@ namespace gr
        * FIXME: For now, only the "No layer 3 is implemented" information is
        * inserted
        */
-      if(type == AX25_I_FRAME){
+      if (type == AX25_I_FRAME || type == AX25_UI_FRAME) {
 	out[i++] = 0xF0;
       }
       memcpy(out + i, info, info_len);
@@ -172,9 +183,27 @@ namespace gr
       return i;
     }
 
+    /**
+     * Constructs an AX.25 by performing NRZ encoding and bit stuffing
+     * @param out the output buffer to hold the frame. Note that due to
+     * the NRZ encoding the output would be [-1, 1]. Also the size of the
+     * buffer should be enough, such that the extra stuffed bits are fitting
+     * on the allocated space.
+     *
+     * @param out_len due to bit stuffing the output size can vary. This
+     * pointer will hold the resulting frame size after bit stuffing.
+     *
+     * @param buffer buffer holding the data that should be encoded.
+     * Note that this buffer SHOULD contain the leading and trailing
+     * synchronization flag, all necessary headers and the CRC.
+     *
+     * @param buffer_len the length of the input buffer.
+     *
+     * @return the resulting status of the encoding
+     */
     static inline ax25_encode_status_t
-    ax25_nrz_encode(float *out, size_t *out_len,
-		    const uint8_t *buffer, const size_t buffer_len)
+    ax25_nrz_bit_stuffing (float *out, size_t *out_len, const uint8_t *buffer,
+			   const size_t buffer_len)
     {
       uint8_t bit;
       uint8_t prev_bit = 0;
@@ -223,6 +252,175 @@ namespace gr
 
       *out_len = out_idx;
       return AX25_ENC_OK;
+    }
+
+    /**
+     * Constructs an AX.25 by performing bit stuffing.
+     * @param out the output buffer to hold the frame. To keep it simple,
+     * each byte of the buffer holds only one bit. Also the size of the
+     * buffer should be enough, such that the extra stuffed bits are fitting
+     * on the allocated space.
+     *
+     * @param out_len due to bit stuffing the output size can vary. This
+     * pointer will hold the resulting frame size after bit stuffing.
+     *
+     * @param buffer buffer holding the data that should be encoded.
+     * Note that this buffer SHOULD contain the leading and trailing
+     * synchronization flag, all necessary headers and the CRC.
+     *
+     * @param buffer_len the length of the input buffer.
+     *
+     * @return the resulting status of the encoding
+     */
+    static inline ax25_encode_status_t
+    ax25_bit_stuffing (uint8_t *out, size_t *out_len, const uint8_t *buffer,
+		       const size_t buffer_len)
+    {
+      uint8_t bit;
+      uint8_t prev_bit = 0;
+      size_t out_idx = 0;
+      size_t bit_idx;
+      size_t cont_1 = 0;
+      size_t total_cont_1 = 0;
+      size_t i;
+
+      /* Leading FLAG field does not need bit stuffing */
+      memcpy(out, AX25_SYNC_FLAG_MAP_BIN, 8 * sizeof(uint8_t));
+      out_idx = 8;
+
+      /* Skip the leading and trailing FLAG field */
+      buffer++;
+      for(i = 0; i < 8 * (buffer_len - 2); i++){
+	bit = (buffer[i / 8] >> ( i % 8)) & 0x1;
+	out[out_idx++] = bit;
+
+	/* Check if bit stuffing should be applied */
+	if(bit & prev_bit){
+	  cont_1++;
+	  total_cont_1++;
+	  if(cont_1 == 4){
+	    out[out_idx++] = 0;
+	    cont_1 = 0;
+	  }
+	}
+	else{
+	  cont_1 = total_cont_1 = 0;
+	}
+	prev_bit = bit;
+
+	/*
+	 * If the total number of continuous 1's is 15 the the frame should be
+	 * dropped
+	 */
+	if(total_cont_1 >= 14) {
+	  return AX25_ENC_FAIL;
+	}
+      }
+
+      /* Trailing FLAG field does not need bit stuffing */
+      memcpy(out + out_idx, AX25_SYNC_FLAG_MAP_BIN, 8 * sizeof(uint8_t));
+      out_idx += 8;
+
+      *out_len = out_idx;
+      return AX25_ENC_OK;
+    }
+
+    static inline ax25_decode_status_t
+    ax25_decode (uint8_t *out, size_t *out_len,
+		 const uint8_t *ax25_frame, size_t len)
+    {
+      size_t i;
+      size_t frame_start = UINT_MAX;
+      size_t frame_stop = UINT_MAX;
+      uint8_t res;
+      size_t cont_1 = 0;
+      size_t received_bytes = 0;
+      size_t bit_cnt = 0;
+      uint8_t decoded_byte = 0x0;
+      uint16_t fcs;
+      uint16_t recv_fcs;
+
+
+      /* Start searching for the SYNC flag */
+      for(i = 0; i < len - sizeof(AX25_SYNC_FLAG_MAP_BIN); i++) {
+	res = (AX25_SYNC_FLAG_MAP_BIN[0] ^ ax25_frame[i]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[1] ^ ax25_frame[i + 1]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[2] ^ ax25_frame[i + 2]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[3] ^ ax25_frame[i + 3]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[4] ^ ax25_frame[i + 4]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[5] ^ ax25_frame[i + 5]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[6] ^ ax25_frame[i + 6]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[7] ^ ax25_frame[i + 7]);
+	/* Found it! */
+	if(res == 0){
+	  frame_start = i;
+	  break;
+	}
+      }
+
+      /* We failed to find the SYNC flag */
+      if(frame_start == UINT_MAX){
+	return AX25_DEC_FAIL;
+      }
+
+      for(i = frame_start + sizeof(AX25_SYNC_FLAG_MAP_BIN);
+	  i < len - sizeof(AX25_SYNC_FLAG_MAP_BIN) + 1; i++) {
+	/* Check if we reached the frame end */
+	res = (AX25_SYNC_FLAG_MAP_BIN[0] ^ ax25_frame[i]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[1] ^ ax25_frame[i + 1]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[2] ^ ax25_frame[i + 2]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[3] ^ ax25_frame[i + 3]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[4] ^ ax25_frame[i + 4]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[5] ^ ax25_frame[i + 5]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[6] ^ ax25_frame[i + 6]) |
+	    (AX25_SYNC_FLAG_MAP_BIN[7] ^ ax25_frame[i + 7]);
+	/* Found it! */
+	if(res == 0){
+	  frame_stop = i;
+	  break;
+	}
+
+	if (ax25_frame[i]) {
+	  cont_1++;
+	  decoded_byte |= 1 << bit_cnt;
+	  bit_cnt++;
+	}
+	else {
+	  /* If 5 consecutive 1's drop the extra zero*/
+	  if (cont_1 >= 5) {
+	    cont_1 = 0;
+	  }
+	  else{
+	    bit_cnt++;
+	    cont_1 = 0;
+	  }
+	}
+
+	/* Fill the fully constructed byte */
+	if(bit_cnt == 8){
+	  out[received_bytes++] = decoded_byte;
+	  bit_cnt = 0;
+	  decoded_byte = 0x0;
+	}
+      }
+
+      if(frame_stop == UINT_MAX || received_bytes < AX25_MIN_ADDR_LEN){
+	return AX25_DEC_FAIL;
+      }
+
+      /* Now check the CRC */
+      fcs = ax25_fcs (out, received_bytes - sizeof(uint16_t));
+      recv_fcs = (((uint16_t) out[received_bytes - 2]) << 8)
+      	    | out[received_bytes - 1];
+
+      if(fcs != recv_fcs) {
+	LOG_WARN("AX.25 CRC-16 failed");
+	return AX25_DEC_FAIL;
+      }
+
+      *out_len = received_bytes - sizeof(uint16_t);
+      return AX25_DEC_OK;
+
     }
 
   }  // namespace satnogs

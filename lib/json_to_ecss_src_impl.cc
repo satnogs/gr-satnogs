@@ -74,7 +74,7 @@ namespace gr {
     	size_t length;
 
     	while(is_running){
-    		message = delete_head_blocking(d_in_port,0);
+    		message = delete_head_blocking(d_in_port);
     		length = blob_length(message);
     		d_buf = (uint8_t*)blob_data(message);
     		std::istringstream ss(std::string(d_buf, d_buf + length));

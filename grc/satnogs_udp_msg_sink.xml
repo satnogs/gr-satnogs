@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<block>
+  <name>UDP Message Sink</name>
+  <key>satnogs_udp_msg_sink</key>
+  <category>satnogs</category>
+  <import>import satnogs</import>
+  <make>satnogs.udp_msg_sink($addr, $port, $mtu)</make>
+  	<param>
+		<name>IP Address</name>
+		<key>addr</key>
+		<value>"127.0.0.1"</value>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>UDP port</name>
+		<key>port</key>
+		<value>16886</value>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>MTU</name>
+		<key>mtu</key>
+		<value>1500</value>
+		<type>int</type>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>message</type>
+	</sink>
+</block>

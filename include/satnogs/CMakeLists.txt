@@ -30,7 +30,7 @@ install(FILES
     morse.h
     morse_decoder.h
     morse_debug_source.h
-    clear_text_msg_sink.h
+    multi_format_msg_sink.h
     cw_to_symbol.h
     afsk_decoder.h
     sine_matched_filter_ff.h
@@ -47,5 +47,7 @@ install(FILES
     freq_drift.h
     upsat_fsk_frame_acquisition.h
     upsat_fsk_frame_encoder.h
-    whitening.h DESTINATION include/satnogs
+    whitening.h
+    udp_msg_sink.h
+    coarse_doppler_correction_cc.h DESTINATION include/satnogs
 )

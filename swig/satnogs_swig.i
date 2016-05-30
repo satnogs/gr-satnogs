@@ -13,7 +13,7 @@
 #include "satnogs/morse_tree.h"
 #include "satnogs/morse_decoder.h"
 #include "satnogs/morse_debug_source.h"
-#include "satnogs/clear_text_msg_sink.h"
+#include "satnogs/multi_format_msg_sink.h"
 #include "satnogs/cw_to_symbol.h"
 #include "satnogs/afsk_decoder.h"
 #include "satnogs/sine_matched_filter_ff.h"
@@ -28,6 +28,8 @@
 #include "satnogs/upsat_fsk_frame_acquisition.h"
 #include "satnogs/upsat_fsk_frame_encoder.h"
 #include "satnogs/whitening.h"
+#include "satnogs/udp_msg_sink.h"
+#include "satnogs/coarse_doppler_correction_cc.h"
 %}
 
 
@@ -38,8 +40,8 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, cw_matched_filter_ff);
 GR_SWIG_BLOCK_MAGIC2(satnogs, morse_decoder);
 %include "satnogs/morse_debug_source.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, morse_debug_source);
-%include "satnogs/clear_text_msg_sink.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, clear_text_msg_sink);
+%include "satnogs/multi_format_msg_sink.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, multi_format_msg_sink);
 %include "satnogs/cw_to_symbol.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, cw_to_symbol);
 %include "satnogs/afsk_decoder.h"
@@ -67,3 +69,7 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, upsat_fsk_frame_acquisition);
 %include "satnogs/upsat_fsk_frame_encoder.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, upsat_fsk_frame_encoder);
 %include "satnogs/whitening.h"
+%include "satnogs/udp_msg_sink.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_sink);
+%include "satnogs/coarse_doppler_correction_cc.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, coarse_doppler_correction_cc);

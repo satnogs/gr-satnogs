@@ -47,18 +47,28 @@ namespace gr
       /*!
        * Creates the FSK frame acquisition block for the UPSAT satellite.
        * @param preamble the bytes that consist the preamble of the frame
+       *
        * @param sync_word the byte synchronization word
+       *
        * @param whitening true if the transmitted data have been processed by
        * the whitening algorithm of the CC1120 chip. False otherwise.
+       *
        * @param manchester true if the transmitted data have been processed by
        * the Manchester algorithm of the CC1120 chip. False otherwise.
+       *
        * @param check_crc if set to true the decoder will push frames only if
        * their CRC field in correct.
+       *
+       * @param ax25_format if set to true the frame contains an AX.25
+       * encoded payload. Prior producing the payload, AX.25 decoding
+       * will be performed. If set to false, the payload will be pushed
+       * as it is.
        */
       static sptr
       make (const std::vector<uint8_t> &preamble,
 	    const std::vector<uint8_t> &sync_word, bool whitening = false,
-	    bool manchester = false, bool check_crc = true);
+	    bool manchester = false, bool check_crc = true,
+	    bool ax25_format = false);
     };
 
   } // namespace satnogs
