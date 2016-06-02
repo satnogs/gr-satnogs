@@ -47,7 +47,8 @@ list(APPEND satnogs_sources
     upsat_fsk_frame_encoder_impl.cc
     whitening.cc
     udp_msg_sink_impl.cc
-    coarse_doppler_correction_cc_impl.cc )
+    coarse_doppler_correction_cc_impl.cc
+    debug_msg_source_raw_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)
