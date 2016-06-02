@@ -49,5 +49,6 @@ install(FILES
     upsat_fsk_frame_encoder.h
     whitening.h
     udp_msg_sink.h
-    coarse_doppler_correction_cc.h DESTINATION include/satnogs
+    coarse_doppler_correction_cc.h
+    debug_msg_source_raw.h DESTINATION include/satnogs
 )

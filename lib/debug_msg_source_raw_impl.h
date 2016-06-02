@@ -18,40 +18,38 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_H
-#define INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_H
+#ifndef INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_RAW_IMPL_H
+#define INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_RAW_IMPL_H
 
-#include <satnogs/api.h>
-#include <gnuradio/block.h>
+#include <satnogs/debug_msg_source_raw.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    /*!
-     * \brief A block for debug reasons producing specific messages
-     * \ingroup satnogs
-     *
-     */
-    class SATNOGS_API debug_msg_source : virtual public gr::block
+    class debug_msg_source_raw_impl : public debug_msg_source_raw
     {
-    public:
-      typedef boost::shared_ptr<debug_msg_source> sptr;
+    private:
+      const size_t d_buf_len;
+      const double d_delay;
+      const bool d_repeat;
+      bool d_running;
+      boost::shared_ptr<boost::thread> d_thread;
+      uint8_t *d_buf;
 
-      /**
-       * Debug message source block.
-       * @param msg the message
-       * @param delay delay in seconds between consecutive messages
-       * @param repeat if set to yes the block will produce a message every
-       * \p delay seconds
-       */
-      static sptr
-      make (const std::string &msg, double delay, bool repeat = true);
+      void
+      msg_sender ();
+
+
+    public:
+      debug_msg_source_raw_impl (const std::vector<uint8_t> &msg, double delay,
+				 bool repeat);
+      ~debug_msg_source_raw_impl ();
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_H */
+#endif /* INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_RAW_IMPL_H */
 

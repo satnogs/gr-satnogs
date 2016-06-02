@@ -23,43 +23,43 @@
 #endif
 
 #include <gnuradio/io_signature.h>
-#include "debug_msg_source_impl.h"
-#include <boost/chrono.hpp>
+#include "debug_msg_source_raw_impl.h"
 
 namespace gr
 {
   namespace satnogs
   {
 
-    debug_msg_source::sptr
-    debug_msg_source::make (const std::string &msg, double delay, bool repeat)
+    debug_msg_source_raw::sptr
+    debug_msg_source_raw::make (const std::vector<uint8_t> &msg, double delay,
+				bool repeat)
     {
       return gnuradio::get_initial_sptr (
-	  new debug_msg_source_impl (msg, delay, repeat));
+	  new debug_msg_source_raw_impl (msg, delay, repeat));
     }
 
     /*
      * The private constructor
      */
-    debug_msg_source_impl::debug_msg_source_impl (const std::string &msg,
-						  double delay, bool repeat) :
-	    gr::block ("debug_msg_source", gr::io_signature::make (0, 0, 0),
+    debug_msg_source_raw_impl::debug_msg_source_raw_impl (
+	const std::vector<uint8_t> &msg, double delay, bool repeat) :
+	    gr::block ("debug_msg_source_raw", gr::io_signature::make (0, 0, 0),
 		       gr::io_signature::make (0, 0, 0)),
-	    d_buf_len (msg.length ()),
+	    d_buf_len (msg.size ()),
 	    d_delay (delay),
 	    d_repeat (repeat),
 	    d_running (true)
     {
-      d_buf = new uint8_t[msg.length ()];
-      memcpy (d_buf, msg.c_str (), msg.length ());
+      d_buf = new uint8_t[msg.size()];
+      memcpy (d_buf, msg.data(), msg.size());
       message_port_register_out (pmt::mp ("msg"));
       boost::shared_ptr<boost::thread> (
 	  new boost::thread (
-	      boost::bind (&debug_msg_source_impl::msg_sender, this)));
+	      boost::bind (&debug_msg_source_raw_impl::msg_sender, this)));
     }
 
     void
-    debug_msg_source_impl::msg_sender ()
+    debug_msg_source_raw_impl::msg_sender ()
     {
       pmt::pmt_t msg = pmt::make_blob (d_buf, d_buf_len);
       if (d_repeat) {
@@ -79,7 +79,7 @@ namespace gr
     /*
      * Our virtual destructor.
      */
-    debug_msg_source_impl::~debug_msg_source_impl ()
+    debug_msg_source_raw_impl::~debug_msg_source_raw_impl ()
     {
       d_running = false;
       d_thread->join ();

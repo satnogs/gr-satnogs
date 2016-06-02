@@ -18,8 +18,8 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_H
-#define INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_H
+#ifndef INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_RAW_H
+#define INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_RAW_H
 
 #include <satnogs/api.h>
 #include <gnuradio/block.h>
@@ -30,14 +30,16 @@ namespace gr
   {
 
     /*!
-     * \brief A block for debug reasons producing specific messages
+     * \brief A block for debug reasons producing specific messages.
+     * The input message can be anything, opposed to the \p debug_msg_source()
+     * block that can accept only string messages.
      * \ingroup satnogs
      *
      */
-    class SATNOGS_API debug_msg_source : virtual public gr::block
+    class SATNOGS_API debug_msg_source_raw : virtual public gr::block
     {
     public:
-      typedef boost::shared_ptr<debug_msg_source> sptr;
+      typedef boost::shared_ptr<debug_msg_source_raw> sptr;
 
       /**
        * Debug message source block.
@@ -47,11 +49,11 @@ namespace gr
        * \p delay seconds
        */
       static sptr
-      make (const std::string &msg, double delay, bool repeat = true);
+      make (const std::vector<uint8_t> &msg, double delay, bool repeat);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_H */
+#endif /* INCLUDED_SATNOGS_DEBUG_MSG_SOURCE_RAW_H */
 
