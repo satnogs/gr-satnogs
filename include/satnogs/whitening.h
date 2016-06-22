@@ -22,6 +22,7 @@
 #define INCLUDED_SATNOGS_WHITENING_H
 
 #include <satnogs/api.h>
+#include <gnuradio/digital/lfsr.h>
 
 namespace gr
 {
@@ -36,7 +37,6 @@ namespace gr
     {
     public:
       whitening (uint32_t mask, uint32_t seed, uint32_t order);
-      ~whitening ();
 
       void
       reset();
@@ -44,10 +44,15 @@ namespace gr
       void scramble(uint8_t *out, const uint8_t *in, size_t len);
       void descramble(uint8_t *out, const uint8_t *in, size_t len);
 
+      void
+      scramble_one_bit_per_byte (uint8_t *out, const uint8_t *in,
+				 size_t bits_num);
+      void
+      descramble_one_bit_per_byte (uint8_t *out, const uint8_t *in,
+				   size_t bits_num);
+
     private:
-      const size_t d_lut_len;
-      size_t d_lut_idx;
-      uint8_t *d_lut;
+      digital::lfsr d_lfsr;
     };
 
   } // namespace satnogs
