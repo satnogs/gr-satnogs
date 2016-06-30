@@ -77,7 +77,7 @@ namespace gr
 	    d_decoded_bytes (0),
 	    d_decoded_bits (0),
 	    d_frame_len (0),
-	    d_descrambler(0x21, 0x1FF, 9)
+	    d_descrambler(0x1001, 0x1FF, 17)
     {
       size_t i;
       message_port_register_out (pmt::mp ("pdu"));
@@ -183,6 +183,7 @@ namespace gr
     {
       size_t i;
       uint8_t *in = d_pdu + 1;
+
       for(i = 0; i < len_bytes; i++){
 	d_ax25_tmp_buf[8*i] = (in[i] >> 7) & 0x1;
 	d_ax25_tmp_buf[8*i + 1] = (in[i] >> 6) & 0x1;
@@ -192,6 +193,13 @@ namespace gr
 	d_ax25_tmp_buf[8*i + 5] = (in[i] >> 2) & 0x1;
 	d_ax25_tmp_buf[8*i + 6] = (in[i] >> 1) & 0x1;
 	d_ax25_tmp_buf[8*i + 7] = in[i]  & 0x1;
+      }
+
+      /* De-white the data if necessary */
+      if (d_whitening) {
+	d_descrambler.descramble_one_bit_per_byte (d_ax25_tmp_buf,
+						   d_ax25_tmp_buf,
+						   len_bytes * 8);
       }
     }
 
@@ -298,6 +306,7 @@ namespace gr
 
 	      if (d_decoded_bytes == d_frame_len) {
 		if(d_is_ax25) {
+
 		  unpack_ax25_bytes(d_frame_len - 1);
 		  status = ax25_decode(d_ax25_buf, &ax25_frame_len,
 				       d_ax25_tmp_buf, (d_frame_len - 1)*8);

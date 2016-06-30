@@ -86,7 +86,7 @@ namespace gr
 	    d_settling_samples(settling_samples),
 	    d_encoded(0),
 	    d_pdu_len(0),
-	    d_scrambler(0x21, 0x1FF, 9)
+	    d_scrambler(0x1001, 0x1FF, 17)
     {
       /* Simplify the logic of the output samples handling */
       set_output_multiple(8);
@@ -294,6 +294,7 @@ namespace gr
       ax25_encode_status_t status;
       size_t extra_bits;
       size_t i;
+      uint8_t len_field;
 
       /*
        * If the whole previous frame has been successfully sent, block waiting
@@ -314,6 +315,7 @@ namespace gr
 	len = ax25_prepare_frame(d_ax25_tmp_buf, (uint8_t *) pmt::blob_data (pdu),
 				 d_pdu_len, AX25_UI_FRAME, d_ax25_addr,
 				 d_ax25_addr_len, 0x03, 1, 1, 1);
+
 	status = ax25_bit_stuffing(d_ax25_pdu, &encoded_len,
 				   d_ax25_tmp_buf, len, 1, 1);
 	if(status != AX25_ENC_OK) {
@@ -335,20 +337,21 @@ namespace gr
 	 * the address field (if exists) and the payload. Length and CRC fields
 	 * are NOT included.
 	 */
-	d_pdu[d_preamble_len + d_sync_word_len] = (uint8_t) (encoded_len/8);
+	len_field = (uint8_t) (encoded_len/8);
+
+	/* Apply whitening */
+	if (d_whitening) {
+	  d_scrambler.reset ();
+	  d_scrambler.scramble(&len_field, &len_field, 1);
+	  d_scrambler.scramble_one_bit_per_byte (d_ax25_pdu, d_ax25_pdu,
+						 encoded_len);
+	}
+
+	d_pdu[d_preamble_len + d_sync_word_len] = len_field;
 
 	/* If it is necessary calculate and append the CRC */
 	if (d_append_crc) {
 	  LOG_WARN("AX.25 has its own CRC-16 field. Skipping...");
-	}
-
-	/*
-	 * Whitening can not be applied in the AX.25 because it will alter
-	 * the SYNC flag of the stack
-	 */
-	if (d_whitening) {
-	  LOG_WARN("AX.25 and whitening are not compatible."
-	      " No whitening will be performed");
 	}
 
 	d_pdu_len = d_preamble_len + d_sync_word_len + 1 + encoded_len/8;
