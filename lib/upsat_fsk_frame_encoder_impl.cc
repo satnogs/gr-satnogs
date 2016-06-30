@@ -313,9 +313,9 @@ namespace gr
 
 	len = ax25_prepare_frame(d_ax25_tmp_buf, (uint8_t *) pmt::blob_data (pdu),
 				 d_pdu_len, AX25_UI_FRAME, d_ax25_addr,
-				 d_ax25_addr_len, 0x03, 1);
+				 d_ax25_addr_len, 0x03, 1, 1, 1);
 	status = ax25_bit_stuffing(d_ax25_pdu, &encoded_len,
-				   d_ax25_tmp_buf, len);
+				   d_ax25_tmp_buf, len, 1, 1);
 	if(status != AX25_ENC_OK) {
 	  LOG_WARN("Failed to properly encode into AX.25 frame");
 	  return 0;
