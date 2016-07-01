@@ -45,8 +45,10 @@ namespace gr
       digital::lfsr d_lfsr;
       boost::mutex d_mutex;
 
-      void add_sob(uint64_t item);
-      void add_eob(uint64_t item);
+      void
+      add_sob (uint64_t item);
+      void
+      add_eob (uint64_t item);
 
     public:
       ax25_encoder_mb_impl (const std::string& dest_addr, uint8_t dest_ssid,

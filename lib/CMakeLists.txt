@@ -32,7 +32,6 @@ list(APPEND satnogs_sources
     multi_format_msg_sink_impl.cc
     cw_to_symbol_impl.cc
     sine_matched_filter_ff_impl.cc
-    ax25_decoder_b_impl.cc
     udp_msg_source_impl.cc
     debug_msg_source_impl.cc
     tcp_rigctl_msg_source_impl.cc
@@ -47,7 +46,8 @@ list(APPEND satnogs_sources
     udp_msg_sink_impl.cc
     coarse_doppler_correction_cc_impl.cc
     debug_msg_source_raw_impl.cc
-    ax25_encoder_mb_impl.cc )
+    ax25_encoder_mb_impl.cc
+    ax25_decoder_bm_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)
