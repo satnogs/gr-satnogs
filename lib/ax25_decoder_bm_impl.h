@@ -18,23 +18,23 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_AX25_DECODER_B_IMPL_H
-#define INCLUDED_SATNOGS_AX25_DECODER_B_IMPL_H
+#ifndef INCLUDED_SATNOGS_AX25_DECODER_BM_IMPL_H
+#define INCLUDED_SATNOGS_AX25_DECODER_BM_IMPL_H
 
-#include <satnogs/ax25_decoder_b.h>
-#include <satnogs/ax25.h>
+#include <satnogs/ax25_decoder_bm.h>
+#include <gnuradio/digital/lfsr.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class ax25_decoder_b_impl : public ax25_decoder_b
+    class ax25_decoder_bm_impl : public ax25_decoder_bm
     {
     private:
-      typedef enum {
-	NO_SYNC,
-	IN_SYNC
+      typedef enum
+      {
+	NO_SYNC, IN_SYNC, FRAME_END
       } decoding_state_t;
 
       /**
@@ -42,22 +42,32 @@ namespace gr
        * forwards all successfully decoded frames
        */
       const bool d_promisc;
+      const bool d_descramble;
+      const size_t d_max_frame_len;
       decoding_state_t d_state;
       uint8_t d_dec_b;
-      uint8_t d_prev_bit;
+      uint8_t d_prev_bit_nrzi;
       size_t d_received_bytes;
       size_t d_decoded_bits;
-      size_t d_cont_1;
-
+      digital::lfsr d_lfsr;
       uint8_t *d_frame_buffer;
 
-      void reset_state();
-      void enter_sync_state();
-      void update_recv_frame(uint8_t byte);
+      void
+      reset_state ();
+      void
+      enter_sync_state ();
+      void
+      enter_frame_end ();
+
+      void
+      descramble_and_decode (const uint8_t *in, size_t nitems);
+      void
+      decode (const uint8_t *in, size_t nitems);
 
     public:
-      ax25_decoder_b_impl (std::string addr, uint8_t ssid, bool promisc);
-      ~ax25_decoder_b_impl ();
+      ax25_decoder_bm_impl (const std::string& addr, uint8_t ssid, bool promisc,
+			    bool descramble, size_t max_frame_len);
+      ~ax25_decoder_bm_impl ();
 
       // Where all the action really happens
       int
@@ -68,5 +78,5 @@ namespace gr
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_AX25_DECODER_B_IMPL_H */
+#endif /* INCLUDED_SATNOGS_AX25_DECODER_BM_IMPL_H */
 

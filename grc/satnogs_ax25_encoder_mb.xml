@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<block>
+	<name>AX.25 Encoder</name>
+	<key>satnogs_ax25_encoder_mb</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.ax25_encoder_mb($dest_addr, $dest_ssid, $src_addr, $src_ssid, $preamble_len, $postamble_len, $scramble)</make>
+	
+	<param>
+		<name>Destination Callsign</name>
+		<key>dest_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Destination SSID</name>
+		<key>dest_ssid</key>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>Source Callsign</name>
+		<key>src_addr</key>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Source SSID</name>
+		<key>src_ssid</key>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Preamble Length</name>
+		<key>preamble_len</key>
+		<value>16</value>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Postamble Length</name>
+		<key>postamble_len</key>
+		<value>16</value>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>G3RUH Scrambling</name>
+		<key>scramble</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+
+	<sink>
+		<name>info</name>
+		<type>message</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>byte</type>
+	</source>
+</block>

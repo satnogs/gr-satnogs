@@ -32,11 +32,8 @@ install(FILES
     morse_debug_source.h
     multi_format_msg_sink.h
     cw_to_symbol.h
-    afsk_decoder.h
     sine_matched_filter_ff.h
     utils.h
-    ax25_encoder_bf.h
-    ax25_decoder_b.h
     udp_msg_source.h
     debug_msg_source.h
     json_to_ecss_src.h
@@ -50,5 +47,7 @@ install(FILES
     whitening.h
     udp_msg_sink.h
     coarse_doppler_correction_cc.h
-    debug_msg_source_raw.h DESTINATION include/satnogs
+    debug_msg_source_raw.h
+    ax25_encoder_mb.h
+    ax25_decoder_bm.h DESTINATION include/satnogs
 )

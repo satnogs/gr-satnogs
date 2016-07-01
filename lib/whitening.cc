@@ -37,33 +37,11 @@ namespace gr {
      * number of memory stages.
      */
     whitening::whitening (uint32_t mask, uint32_t seed, uint32_t order) :
-	    d_lut_len (std::pow (2, order)),
-	    d_lut_idx (0)
+	    d_lfsr(mask, seed, order)
     {
-      size_t i;
-      size_t j;
-      uint32_t cnt;
-      uint32_t shift_reg = seed;
-
       if (order > 32) {
 	throw std::invalid_argument ("The maximum allowed order is 32");
       }
-
-      d_lut = new uint8_t[d_lut_len];
-
-      for (i = 0; i < d_lut_len; i++) {
-	d_lut[i] = shift_reg & 0xFF;
-	for (j = 0; j < 8; j++) {
-	  cnt = bit_count (shift_reg & mask) % 2;
-	  shift_reg = shift_reg >> 1;
-	  shift_reg |= cnt << (order - 1);
-	}
-      }
-    }
-
-    whitening::~whitening()
-    {
-      delete [] d_lut;
     }
 
     /**
@@ -73,7 +51,7 @@ namespace gr {
     void
     whitening::reset ()
     {
-      d_lut_idx = 0;
+      d_lfsr.reset();
     }
 
     /**
@@ -86,10 +64,18 @@ namespace gr {
     whitening::scramble (uint8_t* out, const uint8_t* in, size_t len)
     {
       size_t i;
+      uint8_t b;
       for(i = 0; i < len; i++){
-	out[i] = in[i] ^ d_lut[ (d_lut_idx + i ) % d_lut_len];
+	b = d_lfsr.next_bit();
+	b |= d_lfsr.next_bit() << 1;
+	b |= d_lfsr.next_bit() << 2;
+	b |= d_lfsr.next_bit() << 3;
+	b |= d_lfsr.next_bit() << 4;
+	b |= d_lfsr.next_bit() << 5;
+	b |= d_lfsr.next_bit() << 6;
+	b |= d_lfsr.next_bit() << 7;
+	out[i] = in[i] ^ b;
       }
-      d_lut_idx = (d_lut_idx + len ) % d_lut_len;
     }
 
     /**
@@ -104,6 +90,36 @@ namespace gr {
       scramble(out, in, len);
     }
 
+    /**
+     * Performs data scrambling. The input and output buffer
+     * contain one bit per byte
+     * @param out the output buffer
+     * @param in the input buffer
+     * @param bits_num the number of bits to be scrambled
+     */
+    void
+    whitening::scramble_one_bit_per_byte (uint8_t* out, const uint8_t* in,
+					  size_t bits_num)
+    {
+      size_t i;
+      for(i = 0; i < bits_num; i++){
+	out[i] = in[i] ^ d_lfsr.next_bit();
+      }
+    }
+
+    /**
+     * Performs data descrambling. The input and output buffer
+     * contain one bit per byte
+     * @param out the output buffer
+     * @param in the input buffer
+     * @param bits_num the number of bits to be descrambled
+     */
+    void
+    whitening::descramble_one_bit_per_byte (uint8_t* out, const uint8_t* in,
+					    size_t bits_num)
+    {
+      scramble_one_bit_per_byte(out, in, bits_num);
+    }
+
   } /* namespace satnogs */
 } /* namespace gr */
-

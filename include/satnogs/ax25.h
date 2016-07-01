@@ -136,15 +136,18 @@ namespace gr
     static inline size_t
     ax25_prepare_frame (uint8_t *out, const uint8_t *info, size_t info_len,
 			ax25_frame_type_t type, uint8_t *addr, size_t addr_len,
-			uint16_t ctrl, size_t ctrl_len)
+			uint16_t ctrl, size_t ctrl_len, size_t preamble_len,
+			size_t postamble_len)
     {
       uint16_t fcs;
-      size_t i = 1;
+      size_t i;
       if(info_len > AX25_MAX_FRAME_LEN) {
 	return 0;
       }
 
-      out[0] = AX25_SYNC_FLAG;
+      memset(out, AX25_SYNC_FLAG, preamble_len);
+      i = preamble_len;
+
       /* Insert address and control fields */
       if( addr_len == AX25_MIN_ADDR_LEN || addr_len == AX25_MAX_ADDR_LEN){
 	memcpy(out + i, addr, addr_len);
@@ -174,13 +177,13 @@ namespace gr
       i += info_len;
 
       /* Compute the FCS. Ignore the first flag byte */
-      fcs = ax25_fcs(out + 1, i - 1);
+      fcs = ax25_fcs(out + preamble_len, i - preamble_len);
       /* The MS bits are sent first ONLY at the FCS field */
-      out[i++] = (fcs >> 8) & 0xFF;
       out[i++] = fcs & 0xFF;
-      out[i++] = AX25_SYNC_FLAG;
+      out[i++] = (fcs >> 8) & 0xFF;
+      memset(out + i, AX25_SYNC_FLAG, postamble_len);
 
-      return i;
+      return i + postamble_len;
     }
 
     /**
@@ -203,7 +206,8 @@ namespace gr
      */
     static inline ax25_encode_status_t
     ax25_nrz_bit_stuffing (float *out, size_t *out_len, const uint8_t *buffer,
-			   const size_t buffer_len)
+			   size_t buffer_len, size_t preamble_len,
+			   size_t postamble_len)
     {
       uint8_t bit;
       uint8_t prev_bit = 0;
@@ -214,12 +218,14 @@ namespace gr
       size_t i;
 
       /* Leading FLAG field does not need bit stuffing */
-      memcpy(out, AX25_SYNC_FLAG_MAP, 8 * sizeof(float));
-      out_idx = 8;
+      for(i = 0; i < preamble_len; i++) {
+	memcpy(out + out_idx, AX25_SYNC_FLAG_MAP, 8 * sizeof(float));
+	out_idx += 8;
+      }
 
       /* Skip the leading and trailing FLAG field */
-      buffer++;
-      for(i = 0; i < 8 * (buffer_len - 2); i++){
+      buffer += preamble_len;
+      for(i = 0; i < 8 * (buffer_len - preamble_len - postamble_len); i++){
 	bit = (buffer[i / 8] >> ( i % 8)) & 0x1;
 	out[out_idx++] = bit ? 1.0 : -1.0;
 
@@ -247,8 +253,10 @@ namespace gr
       }
 
       /* Trailing FLAG field does not need bit stuffing */
-      memcpy(out + out_idx, AX25_SYNC_FLAG_MAP, 8 * sizeof(float));
-      out_idx += 8;
+      for(i = 0; i < postamble_len; i++) {
+	memcpy(out + out_idx, AX25_SYNC_FLAG_MAP, 8 * sizeof(float));
+	out_idx += 8;
+      }
 
       *out_len = out_idx;
       return AX25_ENC_OK;
@@ -274,7 +282,8 @@ namespace gr
      */
     static inline ax25_encode_status_t
     ax25_bit_stuffing (uint8_t *out, size_t *out_len, const uint8_t *buffer,
-		       const size_t buffer_len)
+		       const size_t buffer_len, size_t preamble_len,
+		       size_t postamble_len)
     {
       uint8_t bit;
       uint8_t prev_bit = 0;
@@ -285,12 +294,14 @@ namespace gr
       size_t i;
 
       /* Leading FLAG field does not need bit stuffing */
-      memcpy(out, AX25_SYNC_FLAG_MAP_BIN, 8 * sizeof(uint8_t));
-      out_idx = 8;
+      for(i = 0; i < preamble_len; i++) {
+	memcpy(out + out_idx, AX25_SYNC_FLAG_MAP_BIN, 8 * sizeof(uint8_t));
+	out_idx += 8;
+      }
 
       /* Skip the leading and trailing FLAG field */
-      buffer++;
-      for(i = 0; i < 8 * (buffer_len - 2); i++){
+      buffer += preamble_len;
+      for(i = 0; i < 8 * (buffer_len - preamble_len - postamble_len); i++){
 	bit = (buffer[i / 8] >> ( i % 8)) & 0x1;
 	out[out_idx++] = bit;
 
@@ -318,8 +329,10 @@ namespace gr
       }
 
       /* Trailing FLAG field does not need bit stuffing */
-      memcpy(out + out_idx, AX25_SYNC_FLAG_MAP_BIN, 8 * sizeof(uint8_t));
-      out_idx += 8;
+      for(i = 0; i < postamble_len; i++) {
+	memcpy(out + out_idx, AX25_SYNC_FLAG_MAP_BIN, 8 * sizeof(uint8_t));
+	out_idx += 8;
+      }
 
       *out_len = out_idx;
       return AX25_ENC_OK;

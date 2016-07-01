@@ -15,10 +15,7 @@
 #include "satnogs/morse_debug_source.h"
 #include "satnogs/multi_format_msg_sink.h"
 #include "satnogs/cw_to_symbol.h"
-#include "satnogs/afsk_decoder.h"
 #include "satnogs/sine_matched_filter_ff.h"
-#include "satnogs/ax25_encoder_bf.h"
-#include "satnogs/ax25_decoder_b.h"
 #include "satnogs/udp_msg_source.h"
 #include "satnogs/debug_msg_source.h"
 #include "satnogs/tcp_rigctl_msg_source.h"
@@ -31,6 +28,8 @@
 #include "satnogs/udp_msg_sink.h"
 #include "satnogs/coarse_doppler_correction_cc.h"
 #include "satnogs/debug_msg_source_raw.h"
+#include "satnogs/ax25_encoder_mb.h"
+#include "satnogs/ax25_decoder_bm.h"
 %}
 
 
@@ -45,14 +44,10 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, morse_debug_source);
 GR_SWIG_BLOCK_MAGIC2(satnogs, multi_format_msg_sink);
 %include "satnogs/cw_to_symbol.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, cw_to_symbol);
-%include "satnogs/afsk_decoder.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, afsk_decoder);
+
 %include "satnogs/sine_matched_filter_ff.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, sine_matched_filter_ff);
-%include "satnogs/ax25_encoder_bf.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_encoder_bf);
-%include "satnogs/ax25_decoder_b.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_decoder_b);
+
 %include "satnogs/udp_msg_source.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_source);
 %include "satnogs/debug_msg_source.h"
@@ -76,3 +71,7 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_sink);
 GR_SWIG_BLOCK_MAGIC2(satnogs, coarse_doppler_correction_cc);
 %include "satnogs/debug_msg_source_raw.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, debug_msg_source_raw);
+%include "satnogs/ax25_encoder_mb.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_encoder_mb);
+%include "satnogs/ax25_decoder_bm.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_decoder_bm);

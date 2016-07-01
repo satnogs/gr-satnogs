@@ -18,49 +18,53 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_AX25_ENCODER_BF_IMPL_H
-#define INCLUDED_SATNOGS_AX25_ENCODER_BF_IMPL_H
+#ifndef INCLUDED_SATNOGS_AX25_ENCODER_MB_IMPL_H
+#define INCLUDED_SATNOGS_AX25_ENCODER_MB_IMPL_H
 
-#include <satnogs/ax25_encoder_bf.h>
-#include <boost/thread/mutex.hpp>
+#include <satnogs/ax25_encoder_mb.h>
+#include <gnuradio/digital/lfsr.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
-    class ax25_encoder_bf_impl : public ax25_encoder_bf
+    class ax25_encoder_mb_impl : public ax25_encoder_mb
     {
-     private:
-      const ax25_frame_type_t d_type;
+    private:
+      const size_t d_preamble_len;
+      const size_t d_postamble_len;
+      const bool d_scramble;
       size_t d_remaining;
       size_t d_produced;
-      /* Twice the maximum frame length is enough to hold all possible input data*/
-      float *d_endoded_frame;
+      uint8_t d_prev_bit;
+      uint8_t *d_encoded_frame;
       uint8_t *d_tmp_buf;
       uint8_t *d_addr_field;
       size_t d_addr_len;
+      digital::lfsr d_lfsr;
       boost::mutex d_mutex;
 
-      void add_sob(uint64_t item);
-      void add_eob(uint64_t item);
-
-     public:
-      ax25_encoder_bf_impl (ax25_frame_type_t type, std::string dest_addr,
-			    uint8_t dest_ssid, std::string src_addr,
-			    uint8_t src_ssid);
-      ~ax25_encoder_bf_impl();
-
       void
-      set_address_field (std::string dest_addr, uint8_t dest_ssid,
-			 std::string src_addr, uint8_t src_ssid);
+      add_sob (uint64_t item);
+      void
+      add_eob (uint64_t item);
+
+    public:
+      ax25_encoder_mb_impl (const std::string& dest_addr, uint8_t dest_ssid,
+			    const std::string& src_addr, uint8_t src_ssid,
+			    size_t preamble_len, size_t postamble_len,
+			    bool scramble);
+      ~ax25_encoder_mb_impl ();
 
       // Where all the action really happens
-      int work(int noutput_items,
-         gr_vector_const_void_star &input_items,
-         gr_vector_void_star &output_items);
+      int
+      work (int noutput_items, gr_vector_const_void_star &input_items,
+	    gr_vector_void_star &output_items);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_AX25_ENCODER_BF_IMPL_H */
+#endif /* INCLUDED_SATNOGS_AX25_ENCODER_MB_IMPL_H */
 

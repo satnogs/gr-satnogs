@@ -1,20 +1,22 @@
 <?xml version="1.0"?>
 <block>
 	<name>AX.25 Decoder</name>
-	<key>satnogs_ax25_decoder_b</key>
+	<key>satnogs_ax25_decoder_bm</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.ax25_decoder_b($addr, $ssid, $promisc)</make>
+	<make>satnogs.ax25_decoder_bm($addr, $ssid, $promisc, $descrambling, $max_frame_len)</make>
 
 	<param>
 		<name>Receiver Callsign</name>
 		<key>addr</key>
+		<value>'GND'</value>
 		<type>string</type>
 	</param>
 
 	<param>
 		<name>Receiver SSID</name>
 		<key>ssid</key>
+		<value>0</value>
 		<type>int</type>
 	</param>
 
@@ -33,6 +35,27 @@
 		</option>
 	</param>
 
+	<param>
+		<name>G3RUH descrambling</name>
+		<key>descrambling</key>
+		<type>enum</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+
+	<param>
+		<name>Maximum frame length</name>
+		<key>max_frame_len</key>
+		<value>256</value>
+		<type>int</type>
+	</param>
+
 	<sink>
 		<name>in</name>
 		<type>byte</type>
@@ -42,4 +65,11 @@
 		<name>pdu</name>
 		<type>message</type>
 	</source>
+
+	<source>
+		<name>failed_pdu</name>
+		<type>message</type>
+		<optional>1</optional>
+	</source>
 </block>
+
