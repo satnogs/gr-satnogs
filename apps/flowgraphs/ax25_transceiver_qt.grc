@@ -676,7 +676,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>value</key>
-      <value>435.8e6</value>
+      <value>145.835e6</value>
     </param>
   </block>
   <block>
@@ -864,7 +864,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>value</key>
-      <value>435.8e6</value>
+      <value>145.835e6</value>
     </param>
   </block>
   <block>
@@ -2386,7 +2386,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(504, 418)</value>
+      <value>(640, 418)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4066,7 +4066,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>preamble_len</key>
-      <value>16</value>
+      <value>32</value>
     </param>
     <param>
       <key>src_addr</key>
@@ -4203,7 +4203,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>port</key>
-      <value>16886</value>
+      <value>16887</value>
     </param>
   </block>
   <block>

@@ -39,9 +39,6 @@ namespace gr {
     whitening::whitening (uint32_t mask, uint32_t seed, uint32_t order) :
 	    d_lfsr(mask, seed, order)
     {
-      if (order > 32) {
-	throw std::invalid_argument ("The maximum allowed order is 32");
-      }
     }
 
     /**

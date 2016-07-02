@@ -158,11 +158,8 @@ namespace gr
 	    }
 	    else{
 	      d_decoded_bits++;
-	      if(d_decoded_bits == 8){
-		d_received_bytes++;
-		if(d_received_bytes > 0){
-		  reset_state();
-		}
+	      if(d_decoded_bits/8 > 3){
+		reset_state();
 	      }
 	    }
 	    break;
@@ -207,7 +204,7 @@ namespace gr
 	     * that the distance between the last SYNC flag is greater than 3 bytes
 	     */
 	    if (d_dec_b == AX25_SYNC_FLAG) {
-	      if (d_received_bytes < 2) {
+	      if (d_received_bytes < 3) {
 		enter_sync_state ();
 	      }
 	      else {
@@ -254,11 +251,8 @@ namespace gr
 	    }
 	    else {
 	      d_decoded_bits++;
-	      if (d_decoded_bits == 8) {
-		d_received_bytes++;
-		if (d_received_bytes > 3) {
-		  reset_state ();
-		}
+	      if (d_decoded_bits / 8 > 3) {
+		reset_state();
 	      }
 	    }
 	    break;
