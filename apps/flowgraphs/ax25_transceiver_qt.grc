@@ -676,7 +676,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>value</key>
-      <value>145.835e6</value>
+      <value>435.8e6</value>
     </param>
   </block>
   <block>
@@ -864,7 +864,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>value</key>
-      <value>145.835e6</value>
+      <value>435.8e6</value>
     </param>
   </block>
   <block>
@@ -4093,7 +4093,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>delay</key>
-      <value>1</value>
+      <value>2</value>
     </param>
     <param>
       <key>_enabled</key>
