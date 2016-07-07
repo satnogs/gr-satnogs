@@ -55,7 +55,8 @@ namespace gr
 	    d_descramble (descramble),
 	    d_max_frame_len (max_frame_len),
 	    d_state (NO_SYNC),
-	    d_dec_b (0),
+	    d_shift_reg(0x0),
+	    d_dec_b (0x0),
 	    d_prev_bit_nrzi(0),
 	    d_received_bytes (0),
 	    d_decoded_bits (0),
@@ -89,18 +90,17 @@ namespace gr
 	dec_bit = (~((descr_bit - d_prev_bit_nrzi) % 2)) & 0x1;
 	d_prev_bit_nrzi = descr_bit;
 
+	/* In AX.25 the LS bit is sent first */
+	d_shift_reg = (d_shift_reg >> 1) | (dec_bit << 7);
+	d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
+
 	switch(d_state){
 	  case NO_SYNC:
-	    /* In AX.25 the LS bit is sent first */
-	    d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
-	    if(d_dec_b == AX25_SYNC_FLAG){
+	    if(d_shift_reg == AX25_SYNC_FLAG){
 	      enter_sync_state();
 	    }
 	    break;
 	  case IN_SYNC:
-	    /* In AX.25 the LS bit is sent first */
-	    d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
-
 	    /*
 	     * If the received byte was an AX.25 sync flag, there are two
 	     * possibilities. Either it was the end of frame or just a repeat of the
@@ -110,7 +110,7 @@ namespace gr
 	     * re-sync after 3 repetitions of the SYNC flag. For this reason we demand
 	     * that the distance between the last SYNC flag is greater than 3 bytes
 	     */
-	    if (d_dec_b == AX25_SYNC_FLAG) {
+	    if (d_shift_reg == AX25_SYNC_FLAG) {
 	      if(d_received_bytes < 3) {
 		enter_sync_state ();
 	      }
@@ -119,11 +119,11 @@ namespace gr
 		enter_frame_end();
 	      }
 	    }
-	    else if((d_dec_b & 0xfc) == 0x7c){
+	    else if((d_shift_reg & 0xfc) == 0x7c){
 	      /*This was a stuffed bit */
 	      d_dec_b <<= 1;
 	    }
-	    else if((d_dec_b & 0xfe) == 0xfe){
+	    else if((d_shift_reg & 0xfe) == 0xfe){
 	      /*This can never happen... Error! */
 	      if (d_received_bytes > AX25_MIN_ADDR_LEN) {
 		message_port_pub (
@@ -149,8 +149,7 @@ namespace gr
 	    }
 	    break;
 	  case FRAME_END:
-	    d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
-	    if (d_dec_b == AX25_SYNC_FLAG) {
+	    if (d_shift_reg == AX25_SYNC_FLAG) {
 	      d_dec_b = 0;
 	      d_decoded_bits = 0;
 	      d_received_bytes = 0;
@@ -181,19 +180,18 @@ namespace gr
 	dec_bit = (~(((in[i] & 0x1) - d_prev_bit_nrzi) % 2)) & 0x1;
 	d_prev_bit_nrzi = in[i] & 0x1;
 
+	/* In AX.25 the LS bit is sent first */
+	d_shift_reg = (d_shift_reg >> 1) | (dec_bit << 7);
+	d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
+
 	switch (d_state)
 	  {
 	  case NO_SYNC:
-	    /* In AX.25 the LS bit is sent first */
-	    d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
-	    if (d_dec_b == AX25_SYNC_FLAG) {
+	    if (d_shift_reg == AX25_SYNC_FLAG) {
 	      enter_sync_state ();
 	    }
 	    break;
 	  case IN_SYNC:
-	    /* In AX.25 the LS bit is sent first */
-	    d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
-
 	    /*
 	     * If the received byte was an AX.25 sync flag, there are two
 	     * possibilities. Either it was the end of frame or just a repeat of the
@@ -203,7 +201,7 @@ namespace gr
 	     * re-sync after 3 repetitions of the SYNC flag. For this reason we demand
 	     * that the distance between the last SYNC flag is greater than 3 bytes
 	     */
-	    if (d_dec_b == AX25_SYNC_FLAG) {
+	    if (d_shift_reg == AX25_SYNC_FLAG) {
 	      if (d_received_bytes < 3) {
 		enter_sync_state ();
 	      }
@@ -212,11 +210,11 @@ namespace gr
 		enter_frame_end ();
 	      }
 	    }
-	    else if ((d_dec_b & 0xfc) == 0x7c) {
+	    else if ((d_shift_reg & 0xfc) == 0x7c) {
 	      /*This was a stuffed bit */
 	      d_dec_b <<= 1;
 	    }
-	    else if ((d_dec_b & 0xfe) == 0xfe) {
+	    else if ((d_shift_reg & 0xfe) == 0xfe) {
 	      /*This can never happen... Error! */
 	      if (d_received_bytes > AX25_MIN_ADDR_LEN) {
 		message_port_pub (
@@ -242,9 +240,9 @@ namespace gr
 	    }
 	    break;
 	  case FRAME_END:
-	    d_dec_b = (d_dec_b >> 1) | (dec_bit << 7);
-	    if (d_dec_b == AX25_SYNC_FLAG) {
-	      d_dec_b = 0;
+	    if (d_shift_reg == AX25_SYNC_FLAG) {
+	      d_dec_b = 0x0;
+	      d_shift_reg = 0x0;
 	      d_decoded_bits = 0;
 	      d_received_bytes = 0;
 	      d_state = FRAME_END;
@@ -274,7 +272,8 @@ namespace gr
     ax25_decoder_bm_impl::reset_state ()
     {
       d_state = NO_SYNC;
-      d_dec_b = 0;
+      d_dec_b = 0x0;
+      d_shift_reg = 0x0;
       d_decoded_bits = 0;
       d_received_bytes = 0;
       d_prev_bit_nrzi = 0;
@@ -284,7 +283,8 @@ namespace gr
     ax25_decoder_bm_impl::enter_sync_state ()
     {
       d_state = IN_SYNC;
-      d_dec_b = 0;
+      d_dec_b = 0x0;
+      d_shift_reg = 0x0;
       d_decoded_bits = 0;
       d_received_bytes = 0;
     }
@@ -299,7 +299,8 @@ namespace gr
       if (d_received_bytes < AX25_MIN_ADDR_LEN + sizeof(uint16_t)) {
 	message_port_pub (pmt::mp ("failed_pdu"),
 			  pmt::make_blob (d_frame_buffer, d_received_bytes));
-	d_dec_b = 0;
+	d_dec_b = 0x0;
+	d_shift_reg = 0x0;
 	d_decoded_bits = 0;
 	d_received_bytes = 0;
 	d_state = FRAME_END;
@@ -326,7 +327,8 @@ namespace gr
 	    pmt::make_blob (d_frame_buffer,
 			    d_received_bytes - sizeof(uint16_t)));
       }
-      d_dec_b = 0;
+      d_dec_b = 0x0;
+      d_shift_reg = 0x0;
       d_decoded_bits = 0;
       d_received_bytes = 0;
       d_state = FRAME_END;
