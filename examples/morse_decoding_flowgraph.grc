@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.10'?>
+<?grc format='1' created='3.7.9'?>
 <flow_graph>
   <timestamp>Sun Jan 17 23:03:00 2016</timestamp>
   <block>
@@ -1549,37 +1549,6 @@ of a full period of the CW signal with frequency freq.</value>
     </param>
   </block>
   <block>
-    <key>satnogs_clear_text_msg_sink</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(928, 584)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>satnogs_clear_text_msg_sink_0</value>
-    </param>
-  </block>
-  <block>
     <key>satnogs_cw_matched_filter_ff</key>
     <param>
       <key>carrier_freq</key>
@@ -1736,6 +1705,41 @@ of a full period of the CW signal with frequency freq.</value>
       <value>ord('#')</value>
     </param>
   </block>
+  <block>
+    <key>satnogs_multi_format_msg_sink</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(864, 580)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_multi_format_msg_sink_0</value>
+    </param>
+    <param>
+      <key>format</key>
+      <value>0</value>
+    </param>
+  </block>
   <connection>
     <source_block_id>analog_agc2_xx_0_0</source_block_id>
     <sink_block_id>qtgui_time_sink_x_0_0</sink_block_id>
@@ -1828,7 +1832,7 @@ of a full period of the CW signal with frequency freq.</value>
   </connection>
   <connection>
     <source_block_id>satnogs_morse_decoder_0</source_block_id>
-    <sink_block_id>satnogs_clear_text_msg_sink_0</sink_block_id>
+    <sink_block_id>satnogs_multi_format_msg_sink_0</sink_block_id>
     <source_key>out</source_key>
     <sink_key>in</sink_key>
   </connection>

@@ -15,7 +15,7 @@
 #  GNU General Public License for more details.
 #
 #  You should have received a copy of the GNU General Public License
-# *  along with this program.  If not, see <http://www.gnu.org/licenses/>
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>
 #
 
 #===============================================================================
@@ -23,16 +23,25 @@
 # different SDR hardware. Feel free, to provide additional hardware
 # configurations
 #===============================================================================
-hw_tx_settings = {'usrpb200' : {'rf_gain' : 60.0, 'samp_rate' : 2e6},
-                  'usrp2' : {'rf_gain' : 20.0, 'samp_rate' : 2e6},
+hw_tx_settings = {'usrpb200' : {'rf_gain' : 60.0, 'if_gain' : 0.0,
+                                'bb_gain' : 0.0, 'samp_rate' : 2e6,
+                                'antenna' : 'TX/RX'},
+                  'usrp2' : {'rf_gain' : 20.0, 'samp_rate' : 2e6,
+                             'bb_gain' : 0.0, 'samp_rate' : 2e6,
+                             'antenna' : 'TX/RX'},
                   'hackrf' : {'rf_gain' : 20.0, 'if_gain' : 8.0,
-                              'bb_gain' : 5.0, 'samp_rate' : 2e6} }
+                              'bb_gain' : 5.0, 'samp_rate' : 2e6,
+                              'antenna' : ''} }
 
 hw_rx_settings = {'usrpb200' : {'rf_gain' : 20.0, 'if_gain' : 0.0,
-                                'bb_gain' : 0.0, 'samp_rate' : 2e6},
+                                'bb_gain' : 0.0, 'samp_rate' : 1e6,
+                                'antenna' : 'RX2'},
                   'usrp2' : {'rf_gain' : 20.0, 'if_gain' : 0.0,
-                             'bb_gain' : 0.0, 'samp_rate' : 2e6},
+                             'bb_gain' : 0.0, 'samp_rate' : 2e6,
+                             'antenna' : 'RX2'},
                   'airspy' : {'rf_gain' : 20.0, 'if_gain' : 0.0,
-                              'bb_gain' : 0.0, 'samp_rate' : 2.5e6},
+                              'bb_gain' : 0.0, 'samp_rate' : 2.5e6,
+                              'antenna' : ''},
                   'hackrf' : {'rf_gain' : 20.0, 'if_gain' : 8.0,
-                              'bb_gain' : 5.0, 'samp_rate' : 2e6} }
+                              'bb_gain' : 5.0, 'samp_rate' : 2e6,
+                              'antenna' : ''} }
