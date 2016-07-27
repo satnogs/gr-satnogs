@@ -5,7 +5,7 @@
 # Title: Upsat Transceiver Cli
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: SATNOGS transceiver for UPSAT satellite
-# Generated: Sun Jul 24 21:44:09 2016
+# Generated: Wed Jul 27 17:36:54 2016
 ##################################################
 
 from gnuradio import analog
@@ -27,7 +27,7 @@ import time
 
 class upsat_transceiver_cli(gr.top_block):
 
-    def __init__(self, bind_addr="0.0.0.0", dest_addr="127.0.0.1", lo_offset=100e3, recv_port=16886, rx_sdr_device="usrpb200", send_port=5022, tx_sdr_device="usrpb200"):
+    def __init__(self, bind_addr="0.0.0.0", dest_addr="127.0.0.1", recv_port=16886, send_port=5022, tx_sdr_device="usrpb200", rx_sdr_device="usrpb200", lo_offset=100e3, wod_port=5023):
         gr.top_block.__init__(self, "Upsat Transceiver Cli")
 
         ##################################################
@@ -35,11 +35,12 @@ class upsat_transceiver_cli(gr.top_block):
         ##################################################
         self.bind_addr = bind_addr
         self.dest_addr = dest_addr
-        self.lo_offset = lo_offset
         self.recv_port = recv_port
-        self.rx_sdr_device = rx_sdr_device
         self.send_port = send_port
         self.tx_sdr_device = tx_sdr_device
+        self.rx_sdr_device = rx_sdr_device
+        self.lo_offset = lo_offset
+        self.wod_port = wod_port
 
         ##################################################
         # Variables
@@ -66,8 +67,9 @@ class upsat_transceiver_cli(gr.top_block):
         ##################################################
         self.satnogs_upsat_fsk_frame_encoder_0 = satnogs.upsat_fsk_frame_encoder([0x33]*8 , [0x7A, 0x0E], False, False, False, True, True, "ABCD", 0, "ON02GR", 0, 64)
         self.satnogs_udp_msg_source_0 = satnogs.udp_msg_source(bind_addr, recv_port, 1500)
+        self.satnogs_udp_msg_sink_0_0_0 = satnogs.udp_msg_sink(dest_addr, wod_port, 1500)
         self.satnogs_udp_msg_sink_0_0 = satnogs.udp_msg_sink(dest_addr, send_port, 1500)
-        self.satnogs_multi_format_msg_sink_0_0 = satnogs.multi_format_msg_sink(1)
+        self.satnogs_qb50_deframer_0 = satnogs.qb50_deframer(0xe)
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, False, True, 256)
         self.pfb_arb_resampler_xxx_0 = pfb.arb_resampler_ccf(
         	  samp_rate_tx / (baud_rate * samples_per_symbol_tx),
@@ -111,8 +113,9 @@ class upsat_transceiver_cli(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_multi_format_msg_sink_0_0, 'in'))    
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_udp_msg_sink_0_0, 'in'))    
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_qb50_deframer_0, 'in'))    
+        self.msg_connect((self.satnogs_qb50_deframer_0, 'out'), (self.satnogs_udp_msg_sink_0_0, 'in'))    
+        self.msg_connect((self.satnogs_qb50_deframer_0, 'wod'), (self.satnogs_udp_msg_sink_0_0_0, 'in'))    
         self.msg_connect((self.satnogs_udp_msg_source_0, 'msg'), (self.satnogs_upsat_fsk_frame_encoder_0, 'pdu'))    
         self.connect((self.analog_frequency_modulator_fc_0, 0), (self.pfb_arb_resampler_xxx_0, 0))    
         self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))    
@@ -138,33 +141,11 @@ class upsat_transceiver_cli(gr.top_block):
     def set_dest_addr(self, dest_addr):
         self.dest_addr = dest_addr
 
-    def get_lo_offset(self):
-        return self.lo_offset
-
-    def set_lo_offset(self, lo_offset):
-        self.lo_offset = lo_offset
-        self.analog_sig_source_x_0.set_frequency(self.lo_offset )
-        self.osmosdr_sink_0.set_center_freq(self.tx_frequency - self.lo_offset, 0)
-        self.osmosdr_source_0.set_center_freq(self.rx_frequency - self.lo_offset, 0)
-        self.freq_xlating_fir_filter_xxx_0.set_center_freq(self.lo_offset)
-
     def get_recv_port(self):
         return self.recv_port
 
     def set_recv_port(self, recv_port):
         self.recv_port = recv_port
-
-    def get_rx_sdr_device(self):
-        return self.rx_sdr_device
-
-    def set_rx_sdr_device(self, rx_sdr_device):
-        self.rx_sdr_device = rx_sdr_device
-        self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
-        self.set_samp_rate_tx(satnogs.hw_tx_settings[self.rx_sdr_device]['samp_rate'])
-        self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['rf_gain'], 0)
-        self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['if_gain'], 0)
-        self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
-        self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
 
     def get_send_port(self):
         return self.send_port
@@ -181,6 +162,34 @@ class upsat_transceiver_cli(gr.top_block):
         self.osmosdr_sink_0.set_if_gain(satnogs.hw_tx_settings[self.tx_sdr_device]['if_gain'], 0)
         self.osmosdr_sink_0.set_bb_gain(satnogs.hw_tx_settings[self.tx_sdr_device]['bb_gain'], 0)
         self.osmosdr_sink_0.set_antenna(satnogs.hw_tx_settings[self.tx_sdr_device]['antenna'], 0)
+
+    def get_rx_sdr_device(self):
+        return self.rx_sdr_device
+
+    def set_rx_sdr_device(self, rx_sdr_device):
+        self.rx_sdr_device = rx_sdr_device
+        self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['rf_gain'], 0)
+        self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['if_gain'], 0)
+        self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
+        self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
+        self.set_samp_rate_tx(satnogs.hw_tx_settings[self.rx_sdr_device]['samp_rate'])
+        self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
+
+    def get_lo_offset(self):
+        return self.lo_offset
+
+    def set_lo_offset(self, lo_offset):
+        self.lo_offset = lo_offset
+        self.analog_sig_source_x_0.set_frequency(self.lo_offset )
+        self.freq_xlating_fir_filter_xxx_0.set_center_freq(self.lo_offset)
+        self.osmosdr_sink_0.set_center_freq(self.tx_frequency - self.lo_offset, 0)
+        self.osmosdr_source_0.set_center_freq(self.rx_frequency - self.lo_offset, 0)
+
+    def get_wod_port(self):
+        return self.wod_port
+
+    def set_wod_port(self, wod_port):
+        self.wod_port = wod_port
 
     def get_samples_per_symbol_tx(self):
         return self.samples_per_symbol_tx
@@ -235,9 +244,9 @@ class upsat_transceiver_cli(gr.top_block):
     def set_baud_rate(self, baud_rate):
         self.baud_rate = baud_rate
         self.set_modulation_index(self.deviation / (self.baud_rate / 2.0))
-        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate * self.samples_per_symbol_tx))
         self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate)/(math.pi*self.modulation_index))
         self.digital_clock_recovery_mm_xx_0.set_omega(self.first_stage_samp_rate_rx/self.baud_rate)
+        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate * self.samples_per_symbol_tx))
 
     def get_tx_frequency(self):
         return self.tx_frequency
@@ -259,9 +268,9 @@ class upsat_transceiver_cli(gr.top_block):
     def set_samp_rate_tx(self, samp_rate_tx):
         self.samp_rate_tx = samp_rate_tx
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate_tx)
-        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate * self.samples_per_symbol_tx))
         self.osmosdr_sink_0.set_sample_rate(self.samp_rate_tx)
         self.osmosdr_sink_0.set_bandwidth(self.samp_rate_tx, 0)
+        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate * self.samples_per_symbol_tx))
 
     def get_rx_frequency(self):
         return self.rx_frequency
@@ -303,20 +312,23 @@ def argument_parser():
         "", "--dest-addr", dest="dest_addr", type="string", default="127.0.0.1",
         help="Set dest_addr [default=%default]")
     parser.add_option(
-        "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
-        help="Set lo_offset [default=%default]")
-    parser.add_option(
         "", "--recv-port", dest="recv_port", type="intx", default=16886,
         help="Set recv_port [default=%default]")
-    parser.add_option(
-        "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default="usrpb200",
-        help="Set rx_sdr_device [default=%default]")
     parser.add_option(
         "", "--send-port", dest="send_port", type="intx", default=5022,
         help="Set send_port [default=%default]")
     parser.add_option(
         "", "--tx-sdr-device", dest="tx_sdr_device", type="string", default="usrpb200",
         help="Set tx_sdr_device [default=%default]")
+    parser.add_option(
+        "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default="usrpb200",
+        help="Set rx_sdr_device [default=%default]")
+    parser.add_option(
+        "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
+        help="Set lo_offset [default=%default]")
+    parser.add_option(
+        "", "--wod-port", dest="wod_port", type="intx", default=5023,
+        help="Set wod_port [default=%default]")
     return parser
 
 
@@ -324,13 +336,8 @@ def main(top_block_cls=upsat_transceiver_cli, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(bind_addr=options.bind_addr, dest_addr=options.dest_addr, lo_offset=options.lo_offset, recv_port=options.recv_port, rx_sdr_device=options.rx_sdr_device, send_port=options.send_port, tx_sdr_device=options.tx_sdr_device)
+    tb = top_block_cls(bind_addr=options.bind_addr, dest_addr=options.dest_addr, recv_port=options.recv_port, send_port=options.send_port, tx_sdr_device=options.tx_sdr_device, rx_sdr_device=options.rx_sdr_device, lo_offset=options.lo_offset, wod_port=options.wod_port)
     tb.start()
-    try:
-        raw_input('Press Enter to quit: ')
-    except EOFError:
-        pass
-    tb.stop()
     tb.wait()
 
 

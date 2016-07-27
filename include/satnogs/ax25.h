@@ -133,6 +133,19 @@ namespace gr
       return AX25_MIN_ADDR_LEN;
     }
 
+    /**
+     * Gets the destination SSID of an AX.25 frame
+     * @param in the AX.25 frame buffer
+     * @return the destination SSID
+     */
+    static inline uint8_t
+    ax25_get_dest_ssid(const uint8_t *in)
+    {
+      uint8_t ret;
+      ret = in[AX25_CALLSIGN_MAX_LEN];
+      return (ret >> 1) & 0b1111;
+    }
+
     static inline size_t
     ax25_prepare_frame (uint8_t *out, const uint8_t *info, size_t info_len,
 			ax25_frame_type_t type, uint8_t *addr, size_t addr_len,

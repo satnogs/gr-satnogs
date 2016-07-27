@@ -37,5 +37,6 @@ install(FILES
     satnogs_coarse_doppler_correction_cc.xml
     satnogs_debug_msg_source_raw.xml
     satnogs_ax25_encoder_mb.xml
-    satnogs_ax25_decoder_bm.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_ax25_decoder_bm.xml
+    satnogs_qb50_deframer.xml DESTINATION share/gnuradio/grc/blocks
 )

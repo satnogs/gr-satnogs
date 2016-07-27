@@ -47,7 +47,8 @@ list(APPEND satnogs_sources
     coarse_doppler_correction_cc_impl.cc
     debug_msg_source_raw_impl.cc
     ax25_encoder_mb_impl.cc
-    ax25_decoder_bm_impl.cc )
+    ax25_decoder_bm_impl.cc
+    qb50_deframer_impl.cc )
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)

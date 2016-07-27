@@ -313,13 +313,10 @@ namespace gr
 	  | d_frame_buffer[d_received_bytes - 2];
 
       if (fcs == recv_fcs) {
-	/*
-	 * FIXME: Skip the right amount of header bytes based on the frame  type
-	 */
 	message_port_pub (
 	    pmt::mp ("pdu"),
-	    pmt::make_blob (d_frame_buffer + AX25_MIN_ADDR_LEN + 2,
-			    d_received_bytes - AX25_MIN_ADDR_LEN - 2 - sizeof(uint16_t)));
+	    pmt::make_blob (d_frame_buffer,
+			    d_received_bytes - sizeof(uint16_t)));
       }
       else {
 	message_port_pub (

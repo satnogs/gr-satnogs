@@ -66,7 +66,7 @@
     </param>
     <param>
       <key>run_options</key>
-      <value>prompt</value>
+      <value>run</value>
     </param>
     <param>
       <key>run</key>
@@ -313,7 +313,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(672, 917)</value>
+      <value>(760, 885)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -341,7 +341,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(672, 805)</value>
+      <value>(760, 773)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1100,7 +1100,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(360, 774)</value>
+      <value>(864, 774)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3958,7 +3958,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(560, 902)</value>
+      <value>(648, 870)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4009,7 +4009,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1176, 568)</value>
+      <value>(1176, 592)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4045,7 +4045,7 @@ we shift the LO a little further</value>
     </param>
   </block>
   <block>
-    <key>satnogs_multi_format_msg_sink</key>
+    <key>satnogs_qb50_deframer</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -4060,11 +4060,11 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(920, 684)</value>
+      <value>(968, 624)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4072,11 +4072,19 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>id</key>
-      <value>satnogs_multi_format_msg_sink_0_0</value>
+      <value>satnogs_qb50_deframer_0</value>
     </param>
     <param>
-      <key>format</key>
-      <value>1</value>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>wod_ssid</key>
+      <value>0xe</value>
     </param>
   </block>
   <block>
@@ -4099,7 +4107,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(936, 598)</value>
+      <value>(728, 670)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4120,6 +4128,49 @@ we shift the LO a little further</value>
     <param>
       <key>port</key>
       <value>send_port</value>
+    </param>
+  </block>
+  <block>
+    <key>satnogs_udp_msg_sink</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(728, 598)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_udp_msg_sink_0_0_0</value>
+    </param>
+    <param>
+      <key>addr</key>
+      <value>dest_addr</value>
+    </param>
+    <param>
+      <key>mtu</key>
+      <value>1500</value>
+    </param>
+    <param>
+      <key>port</key>
+      <value>wod_port</value>
     </param>
   </block>
   <block>
@@ -4321,7 +4372,7 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(560, 806)</value>
+      <value>(648, 774)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4346,6 +4397,49 @@ similar to produce dynamic payloads.</value>
     <param>
       <key>value</key>
       <value>usrpb200</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(352, 846)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>wod_port</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>intx</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>5023</value>
     </param>
   </block>
   <connection>
@@ -4416,14 +4510,20 @@ similar to produce dynamic payloads.</value>
   </connection>
   <connection>
     <source_block_id>satnogs_ax25_decoder_bm_0</source_block_id>
-    <sink_block_id>satnogs_multi_format_msg_sink_0_0</sink_block_id>
+    <sink_block_id>satnogs_qb50_deframer_0</sink_block_id>
     <source_key>pdu</source_key>
     <sink_key>in</sink_key>
   </connection>
   <connection>
-    <source_block_id>satnogs_ax25_decoder_bm_0</source_block_id>
+    <source_block_id>satnogs_qb50_deframer_0</source_block_id>
     <sink_block_id>satnogs_udp_msg_sink_0_0</sink_block_id>
-    <source_key>pdu</source_key>
+    <source_key>out</source_key>
+    <sink_key>in</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_qb50_deframer_0</source_block_id>
+    <sink_block_id>satnogs_udp_msg_sink_0_0_0</sink_block_id>
+    <source_key>wod</source_key>
     <sink_key>in</sink_key>
   </connection>
   <connection>
