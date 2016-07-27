@@ -2039,7 +2039,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>args</key>
-      <value></value>
+      <value>satnogs.hw_tx_settings[rx_sdr_device]['dev_arg']</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -3438,7 +3438,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>args</key>
-      <value></value>
+      <value>satnogs.hw_rx_settings[rx_sdr_device]['dev_arg']</value>
     </param>
     <param>
       <key>_enabled</key>

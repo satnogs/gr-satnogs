@@ -25,23 +25,23 @@
 #===============================================================================
 hw_tx_settings = {'usrpb200' : {'rf_gain' : 60.0, 'if_gain' : 0.0,
                                 'bb_gain' : 0.0, 'samp_rate' : 2e6,
-                                'antenna' : 'TX/RX'},
+                                'antenna' : 'TX/RX', 'dev_arg': 'uhd'},
                   'usrp2' : {'rf_gain' : 20.0, 'samp_rate' : 2e6,
                              'bb_gain' : 0.0, 'samp_rate' : 2e6,
-                             'antenna' : 'TX/RX'},
+                             'antenna' : 'TX/RX', 'dev_arg': 'uhd'},
                   'hackrf' : {'rf_gain' : 20.0, 'if_gain' : 8.0,
                               'bb_gain' : 5.0, 'samp_rate' : 2e6,
-                              'antenna' : ''} }
+                              'antenna' : '', 'dev_arg': 'hackrf'} }
 
 hw_rx_settings = {'usrpb200' : {'rf_gain' : 20.0, 'if_gain' : 0.0,
                                 'bb_gain' : 0.0, 'samp_rate' : 1e6,
-                                'antenna' : 'RX2'},
+                                'antenna' : 'RX2', 'dev_arg': 'uhd'},
                   'usrp2' : {'rf_gain' : 20.0, 'if_gain' : 0.0,
                              'bb_gain' : 0.0, 'samp_rate' : 2e6,
-                             'antenna' : 'RX2'},
-                  'airspy' : {'rf_gain' : 20.0, 'if_gain' : 0.0,
+                             'antenna' : 'RX2', 'dev_arg': 'uhd'},
+                  'airspy' : {'rf_gain' : 16.0, 'if_gain' : 0.0,
                               'bb_gain' : 0.0, 'samp_rate' : 2.5e6,
-                              'antenna' : ''},
+                              'antenna' : '', 'dev_arg': 'airspy'},
                   'hackrf' : {'rf_gain' : 20.0, 'if_gain' : 8.0,
                               'bb_gain' : 5.0, 'samp_rate' : 2e6,
-                              'antenna' : ''} }
+                              'antenna' : '', 'dev_arg': 'hackrf'} }
