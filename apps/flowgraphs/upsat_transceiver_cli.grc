@@ -101,11 +101,38 @@
     </param>
     <param>
       <key>id</key>
-      <value>baud_rate</value>
+      <value>baud_rate_downlink</value>
     </param>
     <param>
       <key>value</key>
       <value>9600</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value>FSK baud rate</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1048, 109)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>baud_rate_uplink</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>1200</value>
     </param>
   </block>
   <block>
@@ -122,7 +149,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(752, 13)</value>
+      <value>(736, 13)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -149,7 +176,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(888, 13)</value>
+      <value>(872, 13)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -257,7 +284,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(416, 13)</value>
+      <value>(296, 13)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -265,11 +292,38 @@ SDR received samples</value>
     </param>
     <param>
       <key>id</key>
-      <value>modulation_index</value>
+      <value>modulation_index_downlink</value>
     </param>
     <param>
       <key>value</key>
-      <value>deviation / (baud_rate / 2.0)</value>
+      <value>deviation / (baud_rate_downlink / 2.0)</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(296, 77)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>modulation_index_uplink</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>deviation / (baud_rate_uplink / 2.0)</value>
     </param>
   </block>
   <block>
@@ -285,7 +339,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1296, 13)</value>
+      <value>(1368, 13)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -473,7 +527,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1144, 13)</value>
+      <value>(1216, 13)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -528,7 +582,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>sensitivity</key>
-      <value>(math.pi*modulation_index) / samples_per_symbol_tx</value>
+      <value>(math.pi*modulation_index_uplink) / samples_per_symbol_tx</value>
     </param>
   </block>
   <block>
@@ -559,7 +613,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>gain</key>
-      <value>((first_stage_samp_rate_rx) / baud_rate)/(math.pi*modulation_index)</value>
+      <value>((first_stage_samp_rate_rx) / baud_rate_downlink)/(math.pi*modulation_index_downlink)</value>
     </param>
     <param>
       <key>id</key>
@@ -869,7 +923,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>omega</key>
-      <value>first_stage_samp_rate_rx/baud_rate</value>
+      <value>first_stage_samp_rate_rx/baud_rate_downlink</value>
     </param>
     <param>
       <key>type</key>
@@ -3593,7 +3647,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>rrate</key>
-      <value>samp_rate_tx / (baud_rate * samples_per_symbol_tx)</value>
+      <value>samp_rate_tx / (baud_rate_uplink * samples_per_symbol_tx)</value>
     </param>
     <param>
       <key>samp_delay</key>

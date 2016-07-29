@@ -5,7 +5,7 @@
 # Title: Upsat Transceiver Cli
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: SATNOGS transceiver for UPSAT satellite
-# Generated: Wed Jul 27 21:46:59 2016
+# Generated: Sun Jul 31 13:00:43 2016
 ##################################################
 
 from gnuradio import analog
@@ -51,14 +51,16 @@ class upsat_transceiver_cli(gr.top_block):
         self.gaussian_taps = gaussian_taps = filter.firdes.gaussian(1.0, samples_per_symbol_tx, 1.0, 4*samples_per_symbol_tx)
         self.deviation = deviation = 3.9973e3
         self.decimation_rx = decimation_rx = 20
-        self.baud_rate = baud_rate = 9600
+        self.baud_rate_uplink = baud_rate_uplink = 1200
+        self.baud_rate_downlink = baud_rate_downlink = 9600
         self.tx_frequency = tx_frequency = 145.835e6
         
         self.taps = taps = firdes.low_pass(1.0, samp_rate_rx, 20000, 60000, firdes.WIN_HAMMING, 6.76)
           
         self.samp_rate_tx = samp_rate_tx = satnogs.hw_tx_settings[rx_sdr_device]['samp_rate']
         self.rx_frequency = rx_frequency = 435.765e6
-        self.modulation_index = modulation_index = deviation / (baud_rate / 2.0)
+        self.modulation_index_uplink = modulation_index_uplink = deviation / (baud_rate_uplink / 2.0)
+        self.modulation_index_downlink = modulation_index_downlink = deviation / (baud_rate_downlink / 2.0)
         self.interp_taps = interp_taps = numpy.convolve(numpy.array(gaussian_taps), numpy.array(sq_wave))
         self.first_stage_samp_rate_rx = first_stage_samp_rate_rx = samp_rate_rx / decimation_rx
 
@@ -72,7 +74,7 @@ class upsat_transceiver_cli(gr.top_block):
         self.satnogs_qb50_deframer_0 = satnogs.qb50_deframer(0xe)
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, False, True, 256)
         self.pfb_arb_resampler_xxx_0 = pfb.arb_resampler_ccf(
-        	  samp_rate_tx / (baud_rate * samples_per_symbol_tx),
+        	  samp_rate_tx / (baud_rate_uplink * samples_per_symbol_tx),
                   taps=(firdes.low_pass_2(32, 32, 0.8, 0.1, 60)),
         	  flt_size=32)
         self.pfb_arb_resampler_xxx_0.declare_sample_delay(0)
@@ -103,12 +105,12 @@ class upsat_transceiver_cli(gr.top_block):
         self.interp_fir_filter_xxx_0 = filter.interp_fir_filter_fff(samples_per_symbol_tx, (interp_taps))
         self.interp_fir_filter_xxx_0.declare_sample_delay(0)
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(decimation_rx, (taps), lo_offset, samp_rate_rx)
-        self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(first_stage_samp_rate_rx/baud_rate, 0.25*0.175*0.175, 0.5, 0.175, 0.005)
+        self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(first_stage_samp_rate_rx/baud_rate_downlink, 0.25*0.175*0.175, 0.5, 0.175, 0.005)
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
         self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.analog_sig_source_x_0 = analog.sig_source_c(samp_rate_tx, analog.GR_COS_WAVE, lo_offset , 1, 0)
-        self.analog_quadrature_demod_cf_0_0 = analog.quadrature_demod_cf(((first_stage_samp_rate_rx) / baud_rate)/(math.pi*modulation_index))
-        self.analog_frequency_modulator_fc_0 = analog.frequency_modulator_fc((math.pi*modulation_index) / samples_per_symbol_tx)
+        self.analog_quadrature_demod_cf_0_0 = analog.quadrature_demod_cf(((first_stage_samp_rate_rx) / baud_rate_downlink)/(math.pi*modulation_index_downlink))
+        self.analog_frequency_modulator_fc_0 = analog.frequency_modulator_fc((math.pi*modulation_index_uplink) / samples_per_symbol_tx)
 
         ##################################################
         # Connections
@@ -198,8 +200,8 @@ class upsat_transceiver_cli(gr.top_block):
         self.samples_per_symbol_tx = samples_per_symbol_tx
         self.set_gaussian_taps(filter.firdes.gaussian(1.0, self.samples_per_symbol_tx, 1.0, 4*self.samples_per_symbol_tx))
         self.set_sq_wave((1.0, ) * self.samples_per_symbol_tx)
-        self.analog_frequency_modulator_fc_0.set_sensitivity((math.pi*self.modulation_index) / self.samples_per_symbol_tx)
-        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate * self.samples_per_symbol_tx))
+        self.analog_frequency_modulator_fc_0.set_sensitivity((math.pi*self.modulation_index_uplink) / self.samples_per_symbol_tx)
+        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
 
     def get_sq_wave(self):
         return self.sq_wave
@@ -229,7 +231,8 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_deviation(self, deviation):
         self.deviation = deviation
-        self.set_modulation_index(self.deviation / (self.baud_rate / 2.0))
+        self.set_modulation_index_downlink(self.deviation / (self.baud_rate_downlink / 2.0))
+        self.set_modulation_index_uplink(self.deviation / (self.baud_rate_uplink / 2.0))
 
     def get_decimation_rx(self):
         return self.decimation_rx
@@ -238,15 +241,22 @@ class upsat_transceiver_cli(gr.top_block):
         self.decimation_rx = decimation_rx
         self.set_first_stage_samp_rate_rx(self.samp_rate_rx / self.decimation_rx)
 
-    def get_baud_rate(self):
-        return self.baud_rate
+    def get_baud_rate_uplink(self):
+        return self.baud_rate_uplink
 
-    def set_baud_rate(self, baud_rate):
-        self.baud_rate = baud_rate
-        self.set_modulation_index(self.deviation / (self.baud_rate / 2.0))
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate)/(math.pi*self.modulation_index))
-        self.digital_clock_recovery_mm_xx_0.set_omega(self.first_stage_samp_rate_rx/self.baud_rate)
-        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate * self.samples_per_symbol_tx))
+    def set_baud_rate_uplink(self, baud_rate_uplink):
+        self.baud_rate_uplink = baud_rate_uplink
+        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
+        self.set_modulation_index_uplink(self.deviation / (self.baud_rate_uplink / 2.0))
+
+    def get_baud_rate_downlink(self):
+        return self.baud_rate_downlink
+
+    def set_baud_rate_downlink(self, baud_rate_downlink):
+        self.baud_rate_downlink = baud_rate_downlink
+        self.set_modulation_index_downlink(self.deviation / (self.baud_rate_downlink / 2.0))
+        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate_downlink)/(math.pi*self.modulation_index_downlink))
+        self.digital_clock_recovery_mm_xx_0.set_omega(self.first_stage_samp_rate_rx/self.baud_rate_downlink)
 
     def get_tx_frequency(self):
         return self.tx_frequency
@@ -270,7 +280,7 @@ class upsat_transceiver_cli(gr.top_block):
         self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate_tx)
         self.osmosdr_sink_0.set_sample_rate(self.samp_rate_tx)
         self.osmosdr_sink_0.set_bandwidth(self.samp_rate_tx, 0)
-        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate * self.samples_per_symbol_tx))
+        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
 
     def get_rx_frequency(self):
         return self.rx_frequency
@@ -279,13 +289,19 @@ class upsat_transceiver_cli(gr.top_block):
         self.rx_frequency = rx_frequency
         self.osmosdr_source_0.set_center_freq(self.rx_frequency - self.lo_offset, 0)
 
-    def get_modulation_index(self):
-        return self.modulation_index
+    def get_modulation_index_uplink(self):
+        return self.modulation_index_uplink
 
-    def set_modulation_index(self, modulation_index):
-        self.modulation_index = modulation_index
-        self.analog_frequency_modulator_fc_0.set_sensitivity((math.pi*self.modulation_index) / self.samples_per_symbol_tx)
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate)/(math.pi*self.modulation_index))
+    def set_modulation_index_uplink(self, modulation_index_uplink):
+        self.modulation_index_uplink = modulation_index_uplink
+        self.analog_frequency_modulator_fc_0.set_sensitivity((math.pi*self.modulation_index_uplink) / self.samples_per_symbol_tx)
+
+    def get_modulation_index_downlink(self):
+        return self.modulation_index_downlink
+
+    def set_modulation_index_downlink(self, modulation_index_downlink):
+        self.modulation_index_downlink = modulation_index_downlink
+        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate_downlink)/(math.pi*self.modulation_index_downlink))
 
     def get_interp_taps(self):
         return self.interp_taps
@@ -299,8 +315,8 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_first_stage_samp_rate_rx(self, first_stage_samp_rate_rx):
         self.first_stage_samp_rate_rx = first_stage_samp_rate_rx
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate)/(math.pi*self.modulation_index))
-        self.digital_clock_recovery_mm_xx_0.set_omega(self.first_stage_samp_rate_rx/self.baud_rate)
+        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate_downlink)/(math.pi*self.modulation_index_downlink))
+        self.digital_clock_recovery_mm_xx_0.set_omega(self.first_stage_samp_rate_rx/self.baud_rate_downlink)
 
 
 def argument_parser():
