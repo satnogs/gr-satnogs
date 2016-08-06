@@ -34,11 +34,13 @@ namespace gr
 
     ax25_decoder_bm::sptr
     ax25_decoder_bm::make (const std::string& addr, uint8_t ssid, bool promisc,
-			   bool descramble, size_t max_frame_len)
+			   bool descramble, size_t max_frame_len,
+			   size_t n_sync_flags)
     {
       return gnuradio::get_initial_sptr (
 	  new ax25_decoder_bm_impl (addr, ssid, promisc,
-				    descramble, max_frame_len));
+				    descramble, max_frame_len,
+				    n_sync_flags));
     }
 
     /*
@@ -47,18 +49,21 @@ namespace gr
     ax25_decoder_bm_impl::ax25_decoder_bm_impl (const std::string& addr,
 						uint8_t ssid, bool promisc,
 						bool descramble,
-						size_t max_frame_len) :
+						size_t max_frame_len,
+						size_t n_sync_flags) :
 	    gr::sync_block ("ax25_decoder_bm",
 			    gr::io_signature::make (1, 1, sizeof(uint8_t)),
 			    gr::io_signature::make (0, 0, 0)),
 	    d_promisc (promisc),
 	    d_descramble (descramble),
 	    d_max_frame_len (max_frame_len),
+	    d_sync_flags_thr (n_sync_flags - 1),
 	    d_state (NO_SYNC),
 	    d_shift_reg(0x0),
 	    d_dec_b (0x0),
 	    d_prev_bit_nrzi(0),
 	    d_received_bytes (0),
+	    d_sync_received(0),
 	    d_decoded_bits (0),
 	    d_lfsr(0x21, 0x0, 16),
 	    d_frame_buffer (
@@ -101,6 +106,22 @@ namespace gr
 	    }
 	    break;
 	  case IN_SYNC:
+	    d_decoded_bits++;
+	    if(d_decoded_bits == 8){
+	      d_received_bytes++;
+	      d_decoded_bits = 0;
+	      if(d_shift_reg == AX25_SYNC_FLAG){
+		d_sync_received++;
+		if(d_sync_received > d_sync_flags_thr) {
+		  enter_decoding_state();
+		}
+	      }
+	      if(d_received_bytes > 3){
+		reset_state();
+	      }
+	    }
+	    break;
+	  case DECODING:
 	    /*
 	     * If the received byte was an AX.25 sync flag, there are two
 	     * possibilities. Either it was the end of frame or just a repeat of the
@@ -140,6 +161,7 @@ namespace gr
 
 		/*Check if the frame limit was reached */
 		if(d_received_bytes >= d_max_frame_len) {
+		  LOG_WARN("Wrong size");
 		  message_port_pub (
 		      pmt::mp ("failed_pdu"),
 		      pmt::make_blob (d_frame_buffer, d_max_frame_len));
@@ -192,6 +214,22 @@ namespace gr
 	    }
 	    break;
 	  case IN_SYNC:
+	    d_decoded_bits++;
+	    if (d_decoded_bits == 8) {
+	      d_received_bytes++;
+	      d_decoded_bits = 0;
+	      if (d_shift_reg == AX25_SYNC_FLAG) {
+		d_sync_received++;
+		if (d_sync_received > d_sync_flags_thr) {
+		  enter_decoding_state ();
+		}
+	      }
+	      if (d_received_bytes > 3) {
+		reset_state ();
+	      }
+	    }
+	    break;
+	  case DECODING:
 	    /*
 	     * If the received byte was an AX.25 sync flag, there are two
 	     * possibilities. Either it was the end of frame or just a repeat of the
@@ -231,6 +269,7 @@ namespace gr
 
 		/*Check if the frame limit was reached */
 		if (d_received_bytes >= d_max_frame_len) {
+		  LOG_WARN("Wrong size");
 		  message_port_pub (
 		      pmt::mp ("failed_pdu"),
 		      pmt::make_blob (d_frame_buffer, d_max_frame_len));
@@ -277,12 +316,24 @@ namespace gr
       d_decoded_bits = 0;
       d_received_bytes = 0;
       d_prev_bit_nrzi = 0;
+      d_sync_received = 0;
     }
 
     void
     ax25_decoder_bm_impl::enter_sync_state ()
     {
       d_state = IN_SYNC;
+      d_dec_b = 0x0;
+      d_shift_reg = 0x0;
+      d_decoded_bits = 0;
+      d_received_bytes = 0;
+      d_sync_received = 0;
+    }
+
+    void
+    ax25_decoder_bm_impl::enter_decoding_state ()
+    {
+      d_state = DECODING;
       d_dec_b = 0x0;
       d_shift_reg = 0x0;
       d_decoded_bits = 0;
@@ -303,6 +354,7 @@ namespace gr
 	d_shift_reg = 0x0;
 	d_decoded_bits = 0;
 	d_received_bytes = 0;
+	d_sync_received = 0;
 	d_state = FRAME_END;
 	return;
       }
@@ -323,11 +375,13 @@ namespace gr
 	    pmt::mp ("failed_pdu"),
 	    pmt::make_blob (d_frame_buffer,
 			    d_received_bytes - sizeof(uint16_t)));
+	LOG_WARN("Wrong crc");
       }
       d_dec_b = 0x0;
       d_shift_reg = 0x0;
       d_decoded_bits = 0;
       d_received_bytes = 0;
+      d_sync_received = 0;
       d_state = FRAME_END;
     }
 
