@@ -5,7 +5,7 @@
 # Title: Upsat Transceiver Cli
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: SATNOGS transceiver for UPSAT satellite
-# Generated: Sun Jul 31 13:00:43 2016
+# Generated: Sun Aug 14 22:13:27 2016
 ##################################################
 
 from gnuradio import analog
@@ -72,14 +72,15 @@ class upsat_transceiver_cli(gr.top_block):
         self.satnogs_udp_msg_sink_0_0_0 = satnogs.udp_msg_sink(dest_addr, wod_port, 1500)
         self.satnogs_udp_msg_sink_0_0 = satnogs.udp_msg_sink(dest_addr, send_port, 1500)
         self.satnogs_qb50_deframer_0 = satnogs.qb50_deframer(0xe)
-        self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, False, True, 256)
+        self.satnogs_multi_format_msg_sink_0 = satnogs.multi_format_msg_sink(1)
+        self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, False, True, 256, 3)
         self.pfb_arb_resampler_xxx_0 = pfb.arb_resampler_ccf(
         	  samp_rate_tx / (baud_rate_uplink * samples_per_symbol_tx),
                   taps=(firdes.low_pass_2(32, 32, 0.8, 0.1, 60)),
         	  flt_size=32)
         self.pfb_arb_resampler_xxx_0.declare_sample_delay(0)
         	
-        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + "satnogs.hw_rx_settings[rx_sdr_device]['dev_arg']" )
+        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_frequency - lo_offset, 0)
         self.osmosdr_source_0.set_freq_corr(0, 0)
@@ -92,7 +93,7 @@ class upsat_transceiver_cli(gr.top_block):
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[rx_sdr_device]['antenna'], 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
           
-        self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + "satnogs.hw_tx_settings[rx_sdr_device]['dev_arg']" )
+        self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + satnogs.hw_tx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_sink_0.set_sample_rate(samp_rate_tx)
         self.osmosdr_sink_0.set_center_freq(tx_frequency - lo_offset, 0)
         self.osmosdr_sink_0.set_freq_corr(0, 0)
@@ -115,6 +116,7 @@ class upsat_transceiver_cli(gr.top_block):
         ##################################################
         # Connections
         ##################################################
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_multi_format_msg_sink_0, 'in'))    
         self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_qb50_deframer_0, 'in'))    
         self.msg_connect((self.satnogs_qb50_deframer_0, 'out'), (self.satnogs_udp_msg_sink_0_0, 'in'))    
         self.msg_connect((self.satnogs_qb50_deframer_0, 'wod'), (self.satnogs_udp_msg_sink_0_0_0, 'in'))    
@@ -246,8 +248,8 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_baud_rate_uplink(self, baud_rate_uplink):
         self.baud_rate_uplink = baud_rate_uplink
-        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
         self.set_modulation_index_uplink(self.deviation / (self.baud_rate_uplink / 2.0))
+        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
 
     def get_baud_rate_downlink(self):
         return self.baud_rate_downlink
