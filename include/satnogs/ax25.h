@@ -133,6 +133,19 @@ namespace gr
       return AX25_MIN_ADDR_LEN;
     }
 
+    /**
+     * Gets the destination SSID of an AX.25 frame
+     * @param in the AX.25 frame buffer
+     * @return the destination SSID
+     */
+    static inline uint8_t
+    ax25_get_dest_ssid(const uint8_t *in)
+    {
+      uint8_t ret;
+      ret = in[AX25_CALLSIGN_MAX_LEN];
+      return (ret >> 1) & 0b1111;
+    }
+
     static inline size_t
     ax25_prepare_frame (uint8_t *out, const uint8_t *info, size_t info_len,
 			ax25_frame_type_t type, uint8_t *addr, size_t addr_len,
@@ -286,11 +299,9 @@ namespace gr
 		       size_t postamble_len)
     {
       uint8_t bit;
-      uint8_t prev_bit = 0;
+      uint8_t shift_reg = 0x0;
       size_t out_idx = 0;
       size_t bit_idx;
-      size_t cont_1 = 0;
-      size_t total_cont_1 = 0;
       size_t i;
 
       /* Leading FLAG field does not need bit stuffing */
@@ -303,28 +314,13 @@ namespace gr
       buffer += preamble_len;
       for(i = 0; i < 8 * (buffer_len - preamble_len - postamble_len); i++){
 	bit = (buffer[i / 8] >> ( i % 8)) & 0x1;
+	shift_reg = (shift_reg << 1) | bit;
 	out[out_idx++] = bit;
 
 	/* Check if bit stuffing should be applied */
-	if(bit & prev_bit){
-	  cont_1++;
-	  total_cont_1++;
-	  if(cont_1 == 4){
-	    out[out_idx++] = 0;
-	    cont_1 = 0;
-	  }
-	}
-	else{
-	  cont_1 = total_cont_1 = 0;
-	}
-	prev_bit = bit;
-
-	/*
-	 * If the total number of continuous 1's is 15 the the frame should be
-	 * dropped
-	 */
-	if(total_cont_1 >= 14) {
-	  return AX25_ENC_FAIL;
+	if( (shift_reg & 0x1F) == 0x1F){
+	  out[out_idx++] = 0x0;
+	  shift_reg = 0x0;
 	}
       }
 

@@ -34,7 +34,7 @@ namespace gr
     private:
       typedef enum
       {
-	NO_SYNC, IN_SYNC, FRAME_END
+	NO_SYNC, IN_SYNC, DECODING, FRAME_END
       } decoding_state_t;
 
       /**
@@ -44,10 +44,13 @@ namespace gr
       const bool d_promisc;
       const bool d_descramble;
       const size_t d_max_frame_len;
+      const size_t d_sync_flags_thr;
       decoding_state_t d_state;
+      uint8_t d_shift_reg;
       uint8_t d_dec_b;
       uint8_t d_prev_bit_nrzi;
       size_t d_received_bytes;
+      size_t d_sync_received;
       size_t d_decoded_bits;
       digital::lfsr d_lfsr;
       uint8_t *d_frame_buffer;
@@ -56,6 +59,8 @@ namespace gr
       reset_state ();
       void
       enter_sync_state ();
+      void
+      enter_decoding_state ();
       void
       enter_frame_end ();
 
@@ -66,7 +71,8 @@ namespace gr
 
     public:
       ax25_decoder_bm_impl (const std::string& addr, uint8_t ssid, bool promisc,
-			    bool descramble, size_t max_frame_len);
+			    bool descramble, size_t max_frame_len,
+			    size_t n_sync_flags);
       ~ax25_decoder_bm_impl ();
 
       // Where all the action really happens

@@ -25,11 +25,12 @@ description here (python/__init__.py).
 
 # import swig generated symbols into the satnogs namespace
 try:
-	# this might fail if the module is python-only
-	from satnogs_swig import *
-	from satnogs_upsat_transmitter import *
+    # this might fail if the module is python-only
+    from satnogs_swig import *
+    from hw_settings import *
+    from satnogs_upsat_transmitter import *
 except ImportError:
-	pass
+    pass
 
 # import any pure python here
 #

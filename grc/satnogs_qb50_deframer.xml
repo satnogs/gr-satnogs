@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<block>
+	<name>QB50 AX.25 Deframer</name>
+	<key>satnogs_qb50_deframer</key>
+	<category>satnogs</category>
+	<import>import satnogs</import>
+	<make>satnogs.qb50_deframer($wod_ssid)</make>
+
+	<param>
+		<name>WOD SSID</name>
+		<key>wod_ssid</key>
+		<value>0xe</value>
+		<type>int</type>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>message</type>
+	</sink>
+
+	<source>
+		<name>out</name>
+		<type>message</type>
+	</source>
+
+	<source>
+		<name>wod</name>
+		<type>message</type>
+	</source>
+
+</block>

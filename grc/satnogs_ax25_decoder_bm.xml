@@ -4,7 +4,7 @@
 	<key>satnogs_ax25_decoder_bm</key>
 	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.ax25_decoder_bm($addr, $ssid, $promisc, $descrambling, $max_frame_len)</make>
+	<make>satnogs.ax25_decoder_bm($addr, $ssid, $promisc, $descrambling, $max_frame_len, $n_sync_flags)</make>
 
 	<param>
 		<name>Receiver Callsign</name>
@@ -53,6 +53,13 @@
 		<name>Maximum frame length</name>
 		<key>max_frame_len</key>
 		<value>256</value>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>AX.25 Leading SYNC flags Threshold</name>
+		<key>n_sync_flags</key>
+		<value>2</value>
 		<type>int</type>
 	</param>
 
