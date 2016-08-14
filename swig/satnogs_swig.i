@@ -30,7 +30,6 @@
 #include "satnogs/debug_msg_source_raw.h"
 #include "satnogs/ax25_encoder_mb.h"
 #include "satnogs/ax25_decoder_bm.h"
-#include "satnogs/qb50_deframer.h"
 %}
 
 
@@ -76,5 +75,3 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, debug_msg_source_raw);
 GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_encoder_mb);
 %include "satnogs/ax25_decoder_bm.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, ax25_decoder_bm);
-%include "satnogs/qb50_deframer.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, qb50_deframer);

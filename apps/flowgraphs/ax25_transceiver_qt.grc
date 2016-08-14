@@ -2386,7 +2386,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(640, 418)</value>
+      <value>(504, 418)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4066,7 +4066,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>preamble_len</key>
-      <value>32</value>
+      <value>16</value>
     </param>
     <param>
       <key>src_addr</key>
@@ -4093,7 +4093,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>delay</key>
-      <value>2</value>
+      <value>1</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -4203,7 +4203,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>port</key>
-      <value>16887</value>
+      <value>16886</value>
     </param>
   </block>
   <block>

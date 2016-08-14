@@ -21,6 +21,5 @@ include(GrPython)
 
 GR_PYTHON_INSTALL(
     PROGRAMS
-    flowgraphs/upsat_transceiver_cli.py
     DESTINATION bin
 )

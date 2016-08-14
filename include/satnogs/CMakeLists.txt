@@ -49,6 +49,5 @@ install(FILES
     coarse_doppler_correction_cc.h
     debug_msg_source_raw.h
     ax25_encoder_mb.h
-    ax25_decoder_bm.h
-    qb50_deframer.h DESTINATION include/satnogs
+    ax25_decoder_bm.h DESTINATION include/satnogs
 )
