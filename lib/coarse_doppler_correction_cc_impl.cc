@@ -49,7 +49,7 @@ namespace gr
 			    gr::io_signature::make (1, 1, sizeof(gr_complex))),
 	    d_target_freq (target_freq),
 	    d_samp_rate (sampling_rate),
-	    d_buf_items (std::min (8192UL, (size_t) (d_samp_rate / 4))),
+	    d_buf_items (std::min ((size_t)8192UL, (size_t) (d_samp_rate / 4))),
 	    d_freq_diff (0),
 	    d_nco ()
     {
