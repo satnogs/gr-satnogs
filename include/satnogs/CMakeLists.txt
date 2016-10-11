@@ -20,7 +20,13 @@
 ########################################################################
 # Install public header files
 ########################################################################
-install(FILES
+list(APPEND DEBUG_HEADER_FILES
+	morse_debug_source.h
+	debug_msg_source_raw.h
+	debug_msg_source.h
+)
+
+list(APPEND HEADER_FILES
     api.h
     ax25.h
     config.h
@@ -29,13 +35,11 @@ install(FILES
     morse_tree.h
     morse.h
     morse_decoder.h
-    morse_debug_source.h
     multi_format_msg_sink.h
     cw_to_symbol.h
     sine_matched_filter_ff.h
     utils.h
     udp_msg_source.h
-    debug_msg_source.h
     tcp_rigctl_msg_source.h
     frame_encoder.h
     doppler_correction_cc.h
@@ -46,8 +50,16 @@ install(FILES
     whitening.h
     udp_msg_sink.h
     coarse_doppler_correction_cc.h
-    debug_msg_source_raw.h
     ax25_encoder_mb.h
     ax25_decoder_bm.h
-    qb50_deframer.h DESTINATION include/satnogs
+    qb50_deframer.h
+)
+
+if(${INCLUDE_DEBUG_BLOCKS})
+	list(APPEND HEADER_FILES ${DEBUG_HEADER_FILES})
+endif()
+
+install(FILES
+	${HEADER_FILES}
+	DESTINATION include/satnogs
 )

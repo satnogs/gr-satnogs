@@ -16,15 +16,20 @@
 # along with GNU Radio; see the file COPYING.  If not, write to
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
-install(FILES
+
+list(APPEND debug_blocks
+	satnogs_morse_debug_source.xml
+	satnogs_debug_msg_source.xml
+	satnogs_debug_msg_source_raw.xml
+)
+
+list(APPEND enabled_blocks
     satnogs_cw_matched_filter_ff.xml
     satnogs_morse_decoder.xml
-    satnogs_morse_debug_source.xml
     satnogs_multi_format_msg_sink.xml
     satnogs_cw_to_symbol.xml
     satnogs_sine_matched_filter_ff.xml
     satnogs_udp_msg_source.xml
-    satnogs_debug_msg_source.xml
     satnogs_tcp_rigctl_msg_source.xml
     satnogs_frame_encoder.xml
     satnogs_doppler_correction_cc.xml
@@ -34,8 +39,16 @@ install(FILES
     satnogs_udp_msg_sink.xml
     satnogs_upsat_transmitter.xml
     satnogs_coarse_doppler_correction_cc.xml
-    satnogs_debug_msg_source_raw.xml
     satnogs_ax25_encoder_mb.xml
     satnogs_ax25_decoder_bm.xml
-    satnogs_qb50_deframer.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_qb50_deframer.xml
+)
+
+if(${INCLUDE_DEBUG_BLOCKS})
+	list(APPEND enabled_blocks ${debug_blocks})
+endif()
+
+install(FILES
+	${enabled_blocks}
+	DESTINATION share/gnuradio/grc/blocks
 )

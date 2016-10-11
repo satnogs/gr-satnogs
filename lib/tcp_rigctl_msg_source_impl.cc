@@ -161,7 +161,7 @@ namespace gr
 	       * NOTE: Comparison for equality in floats is a bit tricky.
 	       * But here the get_freq_from_buf() will assign a 0.0 explicitly
 	       * if something goes wrong. For this reason it is safe to compare
-	       * the in-equality agains 0.0.
+	       * the in-equality against 0.0.
 	       */
 	      if (freq != 0.0) {
 		reported_freq = freq;
