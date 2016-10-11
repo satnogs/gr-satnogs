@@ -137,6 +137,14 @@ else(DOXYGEN_FOUND)
 endif(DOXYGEN_FOUND)
 
 ########################################################################
+# Include or not into the module blocks for debugging
+########################################################################
+if(NOT INCLUDE_DEBUG_BLOCKS)
+	set(INCLUDE_DEBUG_BLOCKS OFF CACHE BOOL 
+	    "Disable blocks that are used for debugging purposes")
+endif()
+
+########################################################################
 # Setup the include and linker paths
 ########################################################################
 include_directories(

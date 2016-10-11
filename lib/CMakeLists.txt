@@ -24,16 +24,21 @@ include(GrPlatform) #define LIB_SUFFIX
 
 include_directories(${Boost_INCLUDE_DIR})
 link_directories(${Boost_LIBRARY_DIRS})
+
+list(APPEND satnogs_debug_sources
+	morse_debug_source_impl.cc
+	debug_msg_source_impl.cc
+	debug_msg_source_raw_impl.cc
+)
+
 list(APPEND satnogs_sources
     cw_matched_filter_ff_impl.cc
     morse_tree.cc
     morse_decoder_impl.cc
-    morse_debug_source_impl.cc
     multi_format_msg_sink_impl.cc
     cw_to_symbol_impl.cc
     sine_matched_filter_ff_impl.cc
     udp_msg_source_impl.cc
-    debug_msg_source_impl.cc
     tcp_rigctl_msg_source_impl.cc
     doppler_correction_cc_impl.cc
     frame_encoder_impl.cc
@@ -44,10 +49,13 @@ list(APPEND satnogs_sources
     whitening.cc
     udp_msg_sink_impl.cc
     coarse_doppler_correction_cc_impl.cc
-    debug_msg_source_raw_impl.cc
     ax25_encoder_mb_impl.cc
     ax25_decoder_bm_impl.cc
     qb50_deframer_impl.cc )
+
+if(${INCLUDE_DEBUG_BLOCKS})
+	list(APPEND satnogs_sources ${satnogs_debug_sources})
+endif()
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)
