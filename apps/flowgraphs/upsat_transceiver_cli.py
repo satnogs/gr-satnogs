@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: Upsat Transceiver Cli
+# Title: UPSat Tranceiver
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: SATNOGS transceiver for UPSAT satellite
-# Generated: Sun Aug 14 22:13:27 2016
+# Generated: Wed Oct 12 20:16:02 2016
 ##################################################
 
 from gnuradio import analog
@@ -28,7 +28,7 @@ import time
 class upsat_transceiver_cli(gr.top_block):
 
     def __init__(self, bind_addr="0.0.0.0", dest_addr="127.0.0.1", lo_offset=100e3, recv_port=16886, rx_sdr_device="usrpb200", send_port=5022, tx_sdr_device="usrpb200", wod_port=5023):
-        gr.top_block.__init__(self, "Upsat Transceiver Cli")
+        gr.top_block.__init__(self, "UPSat Tranceiver")
 
         ##################################################
         # Parameters
@@ -150,10 +150,10 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_lo_offset(self, lo_offset):
         self.lo_offset = lo_offset
-        self.analog_sig_source_x_0.set_frequency(self.lo_offset )
-        self.freq_xlating_fir_filter_xxx_0.set_center_freq(self.lo_offset)
-        self.osmosdr_sink_0.set_center_freq(self.tx_frequency - self.lo_offset, 0)
         self.osmosdr_source_0.set_center_freq(self.rx_frequency - self.lo_offset, 0)
+        self.osmosdr_sink_0.set_center_freq(self.tx_frequency - self.lo_offset, 0)
+        self.freq_xlating_fir_filter_xxx_0.set_center_freq(self.lo_offset)
+        self.analog_sig_source_x_0.set_frequency(self.lo_offset )
 
     def get_recv_port(self):
         return self.recv_port
@@ -166,8 +166,8 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_rx_sdr_device(self, rx_sdr_device):
         self.rx_sdr_device = rx_sdr_device
-        self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
         self.set_samp_rate_tx(satnogs.hw_tx_settings[self.rx_sdr_device]['samp_rate'])
+        self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
         self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['rf_gain'], 0)
         self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['if_gain'], 0)
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
@@ -200,10 +200,10 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_samples_per_symbol_tx(self, samples_per_symbol_tx):
         self.samples_per_symbol_tx = samples_per_symbol_tx
-        self.set_gaussian_taps(filter.firdes.gaussian(1.0, self.samples_per_symbol_tx, 1.0, 4*self.samples_per_symbol_tx))
         self.set_sq_wave((1.0, ) * self.samples_per_symbol_tx)
-        self.analog_frequency_modulator_fc_0.set_sensitivity((math.pi*self.modulation_index_uplink) / self.samples_per_symbol_tx)
         self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
+        self.set_gaussian_taps(filter.firdes.gaussian(1.0, self.samples_per_symbol_tx, 1.0, 4*self.samples_per_symbol_tx))
+        self.analog_frequency_modulator_fc_0.set_sensitivity((math.pi*self.modulation_index_uplink) / self.samples_per_symbol_tx)
 
     def get_sq_wave(self):
         return self.sq_wave
@@ -233,8 +233,8 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_deviation(self, deviation):
         self.deviation = deviation
-        self.set_modulation_index_downlink(self.deviation / (self.baud_rate_downlink / 2.0))
         self.set_modulation_index_uplink(self.deviation / (self.baud_rate_uplink / 2.0))
+        self.set_modulation_index_downlink(self.deviation / (self.baud_rate_downlink / 2.0))
 
     def get_decimation_rx(self):
         return self.decimation_rx
@@ -257,8 +257,8 @@ class upsat_transceiver_cli(gr.top_block):
     def set_baud_rate_downlink(self, baud_rate_downlink):
         self.baud_rate_downlink = baud_rate_downlink
         self.set_modulation_index_downlink(self.deviation / (self.baud_rate_downlink / 2.0))
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate_downlink)/(math.pi*self.modulation_index_downlink))
         self.digital_clock_recovery_mm_xx_0.set_omega(self.first_stage_samp_rate_rx/self.baud_rate_downlink)
+        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate_downlink)/(math.pi*self.modulation_index_downlink))
 
     def get_tx_frequency(self):
         return self.tx_frequency
@@ -279,10 +279,10 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_samp_rate_tx(self, samp_rate_tx):
         self.samp_rate_tx = samp_rate_tx
-        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate_tx)
+        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
         self.osmosdr_sink_0.set_sample_rate(self.samp_rate_tx)
         self.osmosdr_sink_0.set_bandwidth(self.samp_rate_tx, 0)
-        self.pfb_arb_resampler_xxx_0.set_rate(self.samp_rate_tx / (self.baud_rate_uplink * self.samples_per_symbol_tx))
+        self.analog_sig_source_x_0.set_sampling_freq(self.samp_rate_tx)
 
     def get_rx_frequency(self):
         return self.rx_frequency
@@ -317,12 +317,13 @@ class upsat_transceiver_cli(gr.top_block):
 
     def set_first_stage_samp_rate_rx(self, first_stage_samp_rate_rx):
         self.first_stage_samp_rate_rx = first_stage_samp_rate_rx
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate_downlink)/(math.pi*self.modulation_index_downlink))
         self.digital_clock_recovery_mm_xx_0.set_omega(self.first_stage_samp_rate_rx/self.baud_rate_downlink)
+        self.analog_quadrature_demod_cf_0_0.set_gain(((self.first_stage_samp_rate_rx) / self.baud_rate_downlink)/(math.pi*self.modulation_index_downlink))
 
 
 def argument_parser():
-    parser = OptionParser(option_class=eng_option, usage="%prog: [options]")
+    description = 'SATNOGS transceiver for UPSAT satellite'
+    parser = OptionParser(usage="%prog: [options]", option_class=eng_option, description=description)
     parser.add_option(
         "", "--bind-addr", dest="bind_addr", type="string", default="0.0.0.0",
         help="Set bind_addr [default=%default]")

@@ -27,6 +27,7 @@ description here (python/__init__.py).
 try:
     # this might fail if the module is python-only
     from satnogs_swig import *
+    from dsp_settings import *
     from hw_settings import *
     from satnogs_upsat_transmitter import *
 except ImportError:

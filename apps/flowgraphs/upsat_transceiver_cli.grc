@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.9'?>
+<?grc format='1' created='3.7.10'?>
 <flow_graph>
   <timestamp>Fri Jul  1 17:53:00 2016</timestamp>
   <block>
@@ -78,7 +78,7 @@
     </param>
     <param>
       <key>title</key>
-      <value></value>
+      <value>UPSat Tranceiver</value>
     </param>
   </block>
   <block>
@@ -3677,6 +3677,10 @@ we shift the LO a little further</value>
       <value>1.0</value>
     </param>
     <param>
+      <key>axislabels</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>bw</key>
       <value>samp_rate_rx/decimation_rx</value>
     </param>
@@ -3945,12 +3949,20 @@ we shift the LO a little further</value>
       <value>firdes.WIN_BLACKMAN_hARRIS</value>
     </param>
     <param>
+      <key>label</key>
+      <value>Relative Gain</value>
+    </param>
+    <param>
       <key>ymax</key>
       <value>0</value>
     </param>
     <param>
       <key>ymin</key>
       <value>-140</value>
+    </param>
+    <param>
+      <key>units</key>
+      <value>dB</value>
     </param>
   </block>
   <block>
