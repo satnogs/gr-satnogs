@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>satnogs_fm_demod</value>
+      <value>satnogs_generic_iq_receiver</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -78,7 +78,7 @@
     </param>
     <param>
       <key>title</key>
-      <value>FM Generic Demodulation</value>
+      <value>Generic IQ samples receiver</value>
     </param>
   </block>
   <block>
@@ -359,10 +359,10 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
-    <key>analog_wfm_rcv</key>
+    <key>blocks_file_sink</key>
     <param>
-      <key>audio_decimation</key>
-      <value>audio_decimation</value>
+      <key>append</key>
+      <value>False</value>
     </param>
     <param>
       <key>alias</key>
@@ -378,11 +378,15 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
+    </param>
+    <param>
+      <key>file</key>
+      <value>file_path</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(736, 292)</value>
+      <value>(784, 284)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -390,66 +394,15 @@ TX sampling rate</value>
     </param>
     <param>
       <key>id</key>
-      <value>analog_wfm_rcv_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>quad_rate</key>
-      <value>quadrature_rate</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_multiply_const_vxx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>const</key>
-      <value>audio_gain</value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(976, 444)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_multiply_const_vxx_0</value>
+      <value>blocks_file_sink_0</value>
     </param>
     <param>
       <key>type</key>
-      <value>float</value>
+      <value>complex</value>
     </param>
     <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
+      <key>unbuffered</key>
+      <value>True</value>
     </param>
     <param>
       <key>vlen</key>
@@ -505,53 +458,6 @@ TX sampling rate</value>
     <param>
       <key>vlen</key>
       <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_wavfile_sink</key>
-    <param>
-      <key>bits_per_sample</key>
-      <value>16</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>file</key>
-      <value>file_path</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(800, 428)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_wavfile_sink_0</value>
-    </param>
-    <param>
-      <key>nchan</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>audio_samp_rate</value>
     </param>
   </block>
   <block>
@@ -2151,69 +2057,6 @@ we shift the LO a little further</value>
     </param>
   </block>
   <block>
-    <key>pfb_arb_resampler_xxx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(944, 288)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>pfb_arb_resampler_xxx_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>nfilts</key>
-      <value>32</value>
-    </param>
-    <param>
-      <key>rrate</key>
-      <value>audio_samp_rate / (quadrature_rate * 1.0 / audio_decimation)</value>
-    </param>
-    <param>
-      <key>samp_delay</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>atten</key>
-      <value>100</value>
-    </param>
-    <param>
-      <key>taps</key>
-      <value>firdes.low_pass_2(32, 32, 0.8, 0.1, 100)</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>fff</value>
-    </param>
-  </block>
-  <block>
     <key>qtgui_freq_sink_x</key>
     <param>
       <key>autoscale</key>
@@ -2750,18 +2593,6 @@ we shift the LO a little further</value>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>analog_wfm_rcv_0</source_block_id>
-    <sink_block_id>pfb_arb_resampler_xxx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_multiply_const_vxx_0</source_block_id>
-    <sink_block_id>blocks_wavfile_sink_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>blocks_multiply_xx_0</source_block_id>
     <sink_block_id>qtgui_freq_sink_x_0</sink_block_id>
     <source_key>0</source_key>
@@ -2769,7 +2600,7 @@ we shift the LO a little further</value>
   </connection>
   <connection>
     <source_block_id>freq_xlating_fir_filter_xxx_0</source_block_id>
-    <sink_block_id>analog_wfm_rcv_0</sink_block_id>
+    <sink_block_id>blocks_file_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -2782,12 +2613,6 @@ we shift the LO a little further</value>
   <connection>
     <source_block_id>osmosdr_source_0</source_block_id>
     <sink_block_id>satnogs_doppler_correction_cc_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>pfb_arb_resampler_xxx_0</source_block_id>
-    <sink_block_id>blocks_multiply_const_vxx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

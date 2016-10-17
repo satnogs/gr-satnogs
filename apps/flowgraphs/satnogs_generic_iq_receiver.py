@@ -2,30 +2,28 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: FM Generic Demodulation
+# Title: Generic IQ samples receiver
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Mon Oct 17 19:24:53 2016
+# Generated: Mon Oct 17 19:32:33 2016
 ##################################################
 
-from gnuradio import analog
 from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
-from gnuradio.filter import pfb
 from optparse import OptionParser
 import osmosdr
 import satnogs
 import time
 
 
-class satnogs_fm_demod(gr.top_block):
+class satnogs_generic_iq_receiver(gr.top_block):
 
     def __init__(self, doppler_correction_per_sec=1000, file_path="test.wav", lo_offset=100e3, rigctl_port=4532, rx_freq=100e6, rx_sdr_device="usrpb200"):
-        gr.top_block.__init__(self, "FM Generic Demodulation")
+        gr.top_block.__init__(self, "Generic IQ samples receiver")
 
         ##################################################
         # Parameters
@@ -55,12 +53,6 @@ class satnogs_fm_demod(gr.top_block):
         ##################################################
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, 1500)
         self.satnogs_doppler_correction_cc_0 = satnogs.doppler_correction_cc(rx_freq, samp_rate_rx, doppler_correction_per_sec)
-        self.pfb_arb_resampler_xxx_0 = pfb.arb_resampler_fff(
-        	  audio_samp_rate / (quadrature_rate * 1.0 / audio_decimation),
-                  taps=(firdes.low_pass_2(32, 32, 0.8, 0.1, 100)),
-        	  flt_size=32)
-        self.pfb_arb_resampler_xxx_0.declare_sample_delay(0)
-        	
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_freq - lo_offset, 0)
@@ -75,22 +67,15 @@ class satnogs_fm_demod(gr.top_block):
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
           
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(decimation_rx, (taps), lo_offset, samp_rate_rx)
-        self.blocks_wavfile_sink_0 = blocks.wavfile_sink(file_path, 1, audio_samp_rate, 16)
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((audio_gain, ))
-        self.analog_wfm_rcv_0 = analog.wfm_rcv(
-        	quad_rate=quadrature_rate,
-        	audio_decimation=audio_decimation,
-        )
+        self.blocks_file_sink_0 = blocks.file_sink(gr.sizeof_gr_complex*1, file_path, False)
+        self.blocks_file_sink_0.set_unbuffered(True)
 
         ##################################################
         # Connections
         ##################################################
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_doppler_correction_cc_0, 'freq'))    
-        self.connect((self.analog_wfm_rcv_0, 0), (self.pfb_arb_resampler_xxx_0, 0))    
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.analog_wfm_rcv_0, 0))    
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blocks_file_sink_0, 0))    
         self.connect((self.osmosdr_source_0, 0), (self.satnogs_doppler_correction_cc_0, 0))    
-        self.connect((self.pfb_arb_resampler_xxx_0, 0), (self.blocks_multiply_const_vxx_0, 0))    
         self.connect((self.satnogs_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
 
     def get_doppler_correction_per_sec(self):
@@ -104,7 +89,7 @@ class satnogs_fm_demod(gr.top_block):
 
     def set_file_path(self, file_path):
         self.file_path = file_path
-        self.blocks_wavfile_sink_0.open(self.file_path)
+        self.blocks_file_sink_0.open(self.file_path)
 
     def get_lo_offset(self):
         return self.lo_offset
@@ -134,11 +119,11 @@ class satnogs_fm_demod(gr.top_block):
         self.rx_sdr_device = rx_sdr_device
         self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
         self.set_decimation_rx(satnogs.fm_demod_settings[self.rx_sdr_device]['decimation_rx'])
-        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
         self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['rf_gain'], 0)
         self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['if_gain'], 0)
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
+        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
 
     def get_samp_rate_rx(self):
         return self.samp_rate_rx
@@ -168,28 +153,24 @@ class satnogs_fm_demod(gr.top_block):
 
     def set_quadrature_rate(self, quadrature_rate):
         self.quadrature_rate = quadrature_rate
-        self.pfb_arb_resampler_xxx_0.set_rate(self.audio_samp_rate / (self.quadrature_rate * 1.0 / self.audio_decimation))
 
     def get_audio_samp_rate(self):
         return self.audio_samp_rate
 
     def set_audio_samp_rate(self, audio_samp_rate):
         self.audio_samp_rate = audio_samp_rate
-        self.pfb_arb_resampler_xxx_0.set_rate(self.audio_samp_rate / (self.quadrature_rate * 1.0 / self.audio_decimation))
 
     def get_audio_gain(self):
         return self.audio_gain
 
     def set_audio_gain(self, audio_gain):
         self.audio_gain = audio_gain
-        self.blocks_multiply_const_vxx_0.set_k((self.audio_gain, ))
 
     def get_audio_decimation(self):
         return self.audio_decimation
 
     def set_audio_decimation(self, audio_decimation):
         self.audio_decimation = audio_decimation
-        self.pfb_arb_resampler_xxx_0.set_rate(self.audio_samp_rate / (self.quadrature_rate * 1.0 / self.audio_decimation))
 
 
 def argument_parser():
@@ -216,7 +197,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=satnogs_fm_demod, options=None):
+def main(top_block_cls=satnogs_generic_iq_receiver, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
