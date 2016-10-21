@@ -116,6 +116,14 @@ find_package (Threads REQUIRED)
 find_package(CppUnit)
 find_package(Doxygen)
 
+########################################################################
+# Find gr-satnogs external build dependencies
+########################################################################
+find_package(Nova)
+if(NOT NOVA_FOUND)
+    message(FATAL_ERROR "libnova required to compile satnogs")
+endif()
+
 # Search for GNU Radio and its components and versions. Add any
 # components required to the list of GR_REQUIRED_COMPONENTS (in all
 # caps such as FILTER or FFT) and change the version to the minimum
@@ -140,7 +148,7 @@ endif(DOXYGEN_FOUND)
 # Include or not into the module blocks for debugging
 ########################################################################
 if(NOT INCLUDE_DEBUG_BLOCKS)
-	set(INCLUDE_DEBUG_BLOCKS OFF CACHE BOOL 
+	set(INCLUDE_DEBUG_BLOCKS ON CACHE BOOL 
 	    "Disable blocks that are used for debugging purposes")
 endif()
 
@@ -155,6 +163,7 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
     ${CPPUNIT_INCLUDE_DIRS}
     ${GNURADIO_ALL_INCLUDE_DIRS}
+    ${NOVA_INCLUDE_DIRS}
 )
 
 link_directories(

@@ -18,45 +18,35 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_TCP_RIGCTL_MSG_SOURCE_IMPL_H
-#define INCLUDED_SATNOGS_TCP_RIGCTL_MSG_SOURCE_IMPL_H
+#ifndef INCLUDED_SATNOGS_LEO_CHANNEL_IMPL_H
+#define INCLUDED_SATNOGS_LEO_CHANNEL_IMPL_H
 
-#include <satnogs/tcp_rigctl_msg_source.h>
+#include <satnogs/leo_channel.h>
+#include <libnova/libnova.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class tcp_rigctl_msg_source_impl : public tcp_rigctl_msg_source
+    class leo_channel_impl : public leo_channel
     {
     private:
-      const std::string d_ip_addr;
-      const uint16_t d_port;
-      const bool d_is_server;
-      const size_t d_interval_ms;
-      const size_t d_mtu;
-      bool d_running;
-      boost::shared_ptr<boost::thread> d_thread;
-
-      void
-      rigctl_server();
-
-      void
-      rigctl_client();
-
-      double
-      get_freq_from_buf(const uint8_t *buf);
+      const double d_freq;
+      const size_t d_shifts_per_sec;
 
     public:
-      tcp_rigctl_msg_source_impl (const std::string& addr, uint16_t port,
-				  bool server_mode, size_t interval_ms,
-				  size_t mtu);
-      ~tcp_rigctl_msg_source_impl ();
+      leo_channel_impl (const double freq, const size_t freq_shifts_per_sec);
+      ~leo_channel_impl ();
+
+      // Where all the action really happens
+      int
+      work (int noutput_items, gr_vector_const_void_star &input_items,
+	    gr_vector_void_star &output_items);
     };
 
-    } // namespace satnogs
-  } // namespace gr
+  } // namespace satnogs
+} // namespace gr
 
-#endif /* INCLUDED_SATNOGS_TCP_RIGCTL_MSG_SOURCE_IMPL_H */
+#endif /* INCLUDED_SATNOGS_LEO_CHANNEL_IMPL_H */
 

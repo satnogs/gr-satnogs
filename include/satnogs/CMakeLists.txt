@@ -24,6 +24,7 @@ list(APPEND DEBUG_HEADER_FILES
 	morse_debug_source.h
 	debug_msg_source_raw.h
 	debug_msg_source.h
+	leo_channel.h
 )
 
 list(APPEND HEADER_FILES
@@ -61,5 +62,5 @@ endif()
 
 install(FILES
 	${HEADER_FILES}
-	DESTINATION include/satnogs
+    DESTINATION include/satnogs
 )

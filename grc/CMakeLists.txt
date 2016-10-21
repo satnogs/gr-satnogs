@@ -21,6 +21,7 @@ list(APPEND debug_blocks
 	satnogs_morse_debug_source.xml
 	satnogs_debug_msg_source.xml
 	satnogs_debug_msg_source_raw.xml
+	satnogs_leo_channel.xml
 )
 
 list(APPEND enabled_blocks
