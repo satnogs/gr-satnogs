@@ -29,6 +29,7 @@ list(APPEND satnogs_debug_sources
 	morse_debug_source_impl.cc
 	debug_msg_source_impl.cc
 	debug_msg_source_raw_impl.cc
+	leo_channel_impl.cc 
 )
 
 list(APPEND satnogs_sources
@@ -67,7 +68,8 @@ add_library(gnuradio-satnogs SHARED ${satnogs_sources})
 target_link_libraries(gnuradio-satnogs 
     ${Boost_LIBRARIES} 
     ${GNURADIO_ALL_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT})
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${NOVA_LIBRARIES})
     
 set_target_properties(gnuradio-satnogs PROPERTIES DEFINE_SYMBOL "gnuradio_satnogs_EXPORTS")
 
