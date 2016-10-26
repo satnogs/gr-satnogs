@@ -117,11 +117,21 @@ find_package(CppUnit)
 find_package(Doxygen)
 
 ########################################################################
+# Include or not into the module blocks for debugging
+########################################################################
+if(NOT INCLUDE_DEBUG_BLOCKS)
+	set(INCLUDE_DEBUG_BLOCKS ON CACHE BOOL 
+	    "Disable blocks that are used for debugging purposes")
+endif()
+
+########################################################################
 # Find gr-satnogs external build dependencies
 ########################################################################
-find_package(Nova)
-if(NOT NOVA_FOUND)
-    message(FATAL_ERROR "libnova required to compile satnogs")
+if(${INCLUDE_DEBUG_BLOCKS})
+    find_package(Nova)
+    if(NOT NOVA_FOUND)
+        message(FATAL_ERROR "libnova required to compile satnogs")
+    endif()
 endif()
 
 # Search for GNU Radio and its components and versions. Add any
@@ -129,7 +139,7 @@ endif()
 # caps such as FILTER or FFT) and change the version to the minimum
 # API compatible version required.
 set(GR_REQUIRED_COMPONENTS RUNTIME)
-find_package(Gnuradio "3.7.2" REQUIRED)
+find_package(Gnuradio "3.7.7" REQUIRED)
 
 if(NOT CPPUNIT_FOUND)
     message(FATAL_ERROR "CppUnit required to compile satnogs")
@@ -143,14 +153,6 @@ if(DOXYGEN_FOUND)
 else(DOXYGEN_FOUND)
 	option(ENABLE_DOXYGEN "Build docs using Doxygen" OFF)
 endif(DOXYGEN_FOUND)
-
-########################################################################
-# Include or not into the module blocks for debugging
-########################################################################
-if(NOT INCLUDE_DEBUG_BLOCKS)
-	set(INCLUDE_DEBUG_BLOCKS ON CACHE BOOL 
-	    "Disable blocks that are used for debugging purposes")
-endif()
 
 ########################################################################
 # Setup the include and linker paths
