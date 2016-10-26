@@ -5,12 +5,14 @@ for decoding signals from various scientific and academic sattelites.
 ## Install
 
 ### Requirements
-1. GNU Radio ( > 3.7.2 )
-2. CMake ( > 3.1)
-3. G++ (with C++11 support)
-4. VOLK
-5. git
-6. gr-osmocom (optional, for using the flowgraphs)
+* GNU Radio ( > 3.7.2 )
+* CMake ( > 3.1)
+* G++ (with C++11 support)
+* VOLK
+* git
+*** Optional ***
+* gr-osmocom (for using the flowgraphs with real SDR hardware)
+* libnova (for building the debug blocks)
 
 ### Installation
 
@@ -32,9 +34,9 @@ E.g:
 
 `cmake -DCMAKE_INSTALL_PREFIX=/usr ..`
 
-Also, by default the build system disables a set of blocks used for debugging
+Also, by default the build system enables a set of blocks used for debugging
 during the development. The enable/disable switch is controled through the 
-`INCLUDE_DEBUG_BLOCKS` boolean variable. If for example, you want to enable the
+`INCLUDE_DEBUG_BLOCKS` boolean variable. If for example, you want to disable the
 debugging blocks, the **CMake** command would be:
 
 `cmake -DINCLUDE_DEBUG_BLOCKS=OFF ..`
