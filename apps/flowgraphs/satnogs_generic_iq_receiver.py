@@ -5,7 +5,7 @@
 # Title: Generic IQ samples receiver
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Mon Oct 17 19:32:33 2016
+# Generated: Mon Oct 31 21:08:00 2016
 ##################################################
 
 from gnuradio import blocks
@@ -22,7 +22,7 @@ import time
 
 class satnogs_generic_iq_receiver(gr.top_block):
 
-    def __init__(self, doppler_correction_per_sec=1000, file_path="test.wav", lo_offset=100e3, rigctl_port=4532, rx_freq=100e6, rx_sdr_device="usrpb200"):
+    def __init__(self, doppler_correction_per_sec=1000, file_path='test.wav', lo_offset=100e3, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200'):
         gr.top_block.__init__(self, "Generic IQ samples receiver")
 
         ##################################################
@@ -51,7 +51,7 @@ class satnogs_generic_iq_receiver(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, 1500)
+        self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_doppler_correction_cc_0 = satnogs.doppler_correction_cc(rx_freq, samp_rate_rx, doppler_correction_per_sec)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
@@ -180,7 +180,7 @@ def argument_parser():
         "", "--doppler-correction-per-sec", dest="doppler_correction_per_sec", type="intx", default=1000,
         help="Set doppler_correction_per_sec [default=%default]")
     parser.add_option(
-        "", "--file-path", dest="file_path", type="string", default="test.wav",
+        "", "--file-path", dest="file_path", type="string", default='test.wav',
         help="Set file_path [default=%default]")
     parser.add_option(
         "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
@@ -192,7 +192,7 @@ def argument_parser():
         "", "--rx-freq", dest="rx_freq", type="eng_float", default=eng_notation.num_to_str(100e6),
         help="Set rx_freq [default=%default]")
     parser.add_option(
-        "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default="usrpb200",
+        "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default='usrpb200',
         help="Set rx_sdr_device [default=%default]")
     return parser
 

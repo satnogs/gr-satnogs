@@ -2570,10 +2570,6 @@ we shift the LO a little further</value>
       <value>"127.0.0.1"</value>
     </param>
     <param>
-      <key>port</key>
-      <value>rigctl_port</value>
-    </param>
-    <param>
       <key>mtu</key>
       <value>1500</value>
     </param>
@@ -2584,6 +2580,18 @@ we shift the LO a little further</value>
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+    <param>
+      <key>mode</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>port</key>
+      <value>rigctl_port</value>
+    </param>
+    <param>
+      <key>interval</key>
+      <value>1000</value>
     </param>
   </block>
   <connection>
