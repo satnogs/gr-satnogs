@@ -386,7 +386,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(784, 284)</value>
+      <value>(1136, 284)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -574,7 +574,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(520, 280)</value>
+      <value>(896, 280)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -669,7 +669,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>dc_offset_mode0</key>
-      <value>0</value>
+      <value>2</value>
     </param>
     <param>
       <key>corr0</key>
@@ -2064,7 +2064,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>average</key>
-      <value>1.0</value>
+      <value>0.2</value>
     </param>
     <param>
       <key>axislabels</key>
@@ -2485,7 +2485,7 @@ we shift the LO a little further</value>
     </param>
   </block>
   <block>
-    <key>satnogs_doppler_correction_cc</key>
+    <key>satnogs_coarse_doppler_correction_cc</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -2499,16 +2499,12 @@ we shift the LO a little further</value>
       <value></value>
     </param>
     <param>
-      <key>corrections_per_sec</key>
-      <value>doppler_correction_per_sec</value>
-    </param>
-    <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(304, 256)</value>
+      <value>(568, 288)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2516,7 +2512,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>id</key>
-      <value>satnogs_doppler_correction_cc_0</value>
+      <value>satnogs_coarse_doppler_correction_cc_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -2620,19 +2616,19 @@ we shift the LO a little further</value>
   </connection>
   <connection>
     <source_block_id>osmosdr_source_0</source_block_id>
-    <sink_block_id>satnogs_doppler_correction_cc_0</sink_block_id>
+    <sink_block_id>satnogs_coarse_doppler_correction_cc_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>satnogs_doppler_correction_cc_0</source_block_id>
+    <source_block_id>satnogs_coarse_doppler_correction_cc_0</source_block_id>
     <sink_block_id>freq_xlating_fir_filter_xxx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>satnogs_tcp_rigctl_msg_source_0</source_block_id>
-    <sink_block_id>satnogs_doppler_correction_cc_0</sink_block_id>
+    <sink_block_id>satnogs_coarse_doppler_correction_cc_0</sink_block_id>
     <source_key>freq</source_key>
     <sink_key>freq</sink_key>
   </connection>
