@@ -5,7 +5,7 @@
 # Title: Generic IQ samples receiver
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Mon Oct 31 21:08:00 2016
+# Generated: Mon Nov  7 19:49:15 2016
 ##################################################
 
 from gnuradio import blocks
@@ -52,12 +52,12 @@ class satnogs_generic_iq_receiver(gr.top_block):
         # Blocks
         ##################################################
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
-        self.satnogs_doppler_correction_cc_0 = satnogs.doppler_correction_cc(rx_freq, samp_rate_rx, doppler_correction_per_sec)
+        self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_freq - lo_offset, 0)
         self.osmosdr_source_0.set_freq_corr(0, 0)
-        self.osmosdr_source_0.set_dc_offset_mode(0, 0)
+        self.osmosdr_source_0.set_dc_offset_mode(2, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
         self.osmosdr_source_0.set_gain_mode(False, 0)
         self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[rx_sdr_device]['rf_gain'], 0)
@@ -73,10 +73,10 @@ class satnogs_generic_iq_receiver(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_doppler_correction_cc_0, 'freq'))    
+        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blocks_file_sink_0, 0))    
-        self.connect((self.osmosdr_source_0, 0), (self.satnogs_doppler_correction_cc_0, 0))    
-        self.connect((self.satnogs_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
+        self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))    
+        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
 
     def get_doppler_correction_per_sec(self):
         return self.doppler_correction_per_sec
@@ -110,6 +110,7 @@ class satnogs_generic_iq_receiver(gr.top_block):
 
     def set_rx_freq(self, rx_freq):
         self.rx_freq = rx_freq
+        self.satnogs_coarse_doppler_correction_cc_0.set_new_freq_locked(self.rx_freq)
         self.osmosdr_source_0.set_center_freq(self.rx_freq - self.lo_offset, 0)
 
     def get_rx_sdr_device(self):
