@@ -102,7 +102,7 @@ namespace gr
       boost::mutex::scoped_lock lock (d_mutex);
       double new_freq;
       new_freq = pmt::to_double (msg);
-      d_freq_diff = d_target_freq - new_freq;
+      d_freq_diff = new_freq - d_target_freq;
       if (!d_have_est) {
 	d_freq_est_num++;
 	d_doppler_freqs.push_back (
