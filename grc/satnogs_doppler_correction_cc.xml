@@ -2,7 +2,6 @@
 <block>
 	<name>Doppler Correction</name>
 	<key>satnogs_doppler_correction_cc</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.doppler_correction_cc($target_freq, $sampling_rate, $corrections_per_sec)</make>
 

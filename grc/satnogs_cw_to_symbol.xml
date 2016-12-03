@@ -2,7 +2,6 @@
 <block>
 	<name>CW to Symbols</name>
 	<key>satnogs_cw_to_symbol</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.cw_to_symbol($sampling_rate, $threshold, $conf_level, $wpm, $auto_config)</make>
 	<callback>set_act_threshold($threshold)</callback>

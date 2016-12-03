@@ -119,10 +119,8 @@ find_package(Doxygen)
 ########################################################################
 # Include or not into the module blocks for debugging
 ########################################################################
-if(NOT INCLUDE_DEBUG_BLOCKS)
-	set(INCLUDE_DEBUG_BLOCKS ON CACHE BOOL 
-	    "Disable blocks that are used for debugging purposes")
-endif()
+option(INCLUDE_DEBUG_BLOCKS "Enable/Disable blocks that are used for debugging purposes" ON)
+
 
 ########################################################################
 # Find gr-satnogs external build dependencies

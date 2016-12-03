@@ -2,7 +2,6 @@
 <block>
   <name>UDP Message Sink</name>
   <key>satnogs_udp_msg_sink</key>
-  <category>satnogs</category>
   <import>import satnogs</import>
   <make>satnogs.udp_msg_sink($addr, $port, $mtu)</make>
   	<param>

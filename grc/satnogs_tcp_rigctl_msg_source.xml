@@ -2,7 +2,6 @@
 <block>
 	<name>TCP rigctl Message Source</name>
 	<key>satnogs_tcp_rigctl_msg_source</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.tcp_rigctl_msg_source($addr, $port, $mode, $interval, $mtu)</make>
 

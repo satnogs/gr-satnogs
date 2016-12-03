@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <block>
-  <name>leo_channel</name>
+  <name>LEO Channel</name>
   <key>satnogs_leo_channel</key>
-  <category>[satnogs]</category>
+  <category>[SatNOGS]/Debug</category>
   <import>import satnogs</import>
   <make>satnogs.leo_channel($freq, $freq_shifts_per_sec)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.

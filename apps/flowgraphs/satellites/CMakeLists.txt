@@ -19,11 +19,8 @@
 
 include(GrPython)
 
-add_subdirectory(flowgraphs/satellites)
-
 GR_PYTHON_INSTALL(
     PROGRAMS
-    flowgraphs/satnogs_fm_demod.py
-    flowgraphs/satnogs_generic_iq_receiver.py
+    upsat_transceiver_cli.py
     DESTINATION bin
 )

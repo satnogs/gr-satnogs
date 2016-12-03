@@ -17,13 +17,14 @@
 # the Free Software Foundation, Inc., 51 Franklin Street,
 # Boston, MA 02110-1301, USA.
 
-include(GrPython)
+list(APPEND blocks
+    satnogs_qb50_deframer.xml
+    satnogs_upsat_fsk_frame_acquisition.xml
+    satnogs_upsat_fsk_frame_encoder.xml
+    satnogs_upsat_transmitter.xml
+)
 
-add_subdirectory(flowgraphs/satellites)
-
-GR_PYTHON_INSTALL(
-    PROGRAMS
-    flowgraphs/satnogs_fm_demod.py
-    flowgraphs/satnogs_generic_iq_receiver.py
-    DESTINATION bin
+install(FILES
+	${blocks}
+	DESTINATION share/gnuradio/grc/blocks
 )
