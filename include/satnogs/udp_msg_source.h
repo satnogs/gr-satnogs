@@ -48,9 +48,12 @@ namespace gr
        * @param addr the address to bind the UDP socket
        * @param port the UDP port to wait for packets
        * @param mtu the maximum MTU. Used to pre-allocate a maximum packet size
+       * @param type code of the data type of each message. 0 corresponds to raw
+       * bytes, 1 to 32-bit signed integers and 2 to 3 bit unsigned integers.
        */
       static sptr
-      make (const std::string& addr, uint16_t port, size_t mtu = 1500);
+      make (const std::string& addr, uint16_t port, size_t mtu = 1500,
+            size_t type = 0);
     };
 
   } // namespace satnogs

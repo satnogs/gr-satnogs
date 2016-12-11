@@ -35,6 +35,7 @@ namespace gr
       const std::string d_iface_addr;
       const uint16_t d_udp_port;
       const size_t d_mtu;
+      const size_t d_type;
       bool d_running;
       boost::shared_ptr<boost::thread> d_thread;
 
@@ -42,7 +43,8 @@ namespace gr
       udp_msg_accepter ();
 
     public:
-      udp_msg_source_impl (const std::string& addr, uint16_t port, size_t mtu);
+      udp_msg_source_impl (const std::string& addr, uint16_t port,
+                           size_t mtu, size_t type);
       ~udp_msg_source_impl ();
     };
 
