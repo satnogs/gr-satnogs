@@ -22,4 +22,5 @@
   <block>satnogs_coarse_doppler_correction_cc</block>
   <block>satnogs_ax25_encoder_mb</block>
   <block>satnogs_ax25_decoder_bm</block>
+  <block>satnogs_waterfall_plotter</block>
 </cat>

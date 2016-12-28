@@ -52,7 +52,8 @@ list(APPEND satnogs_sources
     coarse_doppler_correction_cc_impl.cc
     ax25_encoder_mb_impl.cc
     ax25_decoder_bm_impl.cc
-    qb50_deframer_impl.cc )
+    qb50_deframer_impl.cc
+    power_spectral_density_cf_impl.cc )
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND satnogs_sources ${satnogs_debug_sources})

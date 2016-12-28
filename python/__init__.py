@@ -34,4 +34,5 @@ except ImportError:
     pass
 
 # import any pure python here
+from waterfall_plotter import *
 #

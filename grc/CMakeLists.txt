@@ -48,5 +48,6 @@ endif()
 
 install(FILES
 	${enabled_blocks}
-	DESTINATION share/gnuradio/grc/blocks
+    satnogs_waterfall_plotter.xml
+    satnogs_power_spectral_density_cf.xml	DESTINATION share/gnuradio/grc/blocks
 )

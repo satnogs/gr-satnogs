@@ -62,5 +62,5 @@ endif()
 
 install(FILES
 	${HEADER_FILES}
-    DESTINATION include/satnogs
+    power_spectral_density_cf.h DESTINATION include/satnogs
 )
