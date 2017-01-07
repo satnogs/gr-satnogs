@@ -10,7 +10,7 @@
     </param>
     <param>
       <key>window_size</key>
-      <value></value>
+      <value>3000,3000</value>
     </param>
     <param>
       <key>category</key>
@@ -93,7 +93,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(568, 508)</value>
+      <value>(1864, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -122,7 +122,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(336, 612)</value>
+      <value>(1296, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -149,7 +149,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(568, 580)</value>
+      <value>(2072, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -178,7 +178,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(192, 612)</value>
+      <value>(1088, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -205,7 +205,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(432, 476)</value>
+      <value>(1680, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -233,7 +233,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(192, 484)</value>
+      <value>(1512, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -268,7 +268,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(560, 648)</value>
+      <value>(32, 788)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -323,7 +323,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(312, 24)</value>
+      <value>(320, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -382,7 +382,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(736, 292)</value>
+      <value>(1176, 476)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -429,11 +429,11 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(976, 444)</value>
+      <value>(1808, 484)</value>
     </param>
     <param>
       <key>_rotation</key>
-      <value>180</value>
+      <value>0</value>
     </param>
     <param>
       <key>id</key>
@@ -476,7 +476,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(568, 64)</value>
+      <value>(568, 140)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -535,11 +535,11 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(800, 428)</value>
+      <value>(2056, 464)</value>
     </param>
     <param>
       <key>_rotation</key>
-      <value>180</value>
+      <value>0</value>
     </param>
     <param>
       <key>id</key>
@@ -570,7 +570,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 860)</value>
+      <value>(1904, 192)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -613,7 +613,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 620)</value>
+      <value>(1272, 192)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -668,7 +668,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(520, 280)</value>
+      <value>(808, 452)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -716,7 +716,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(328, 476)</value>
+      <value>(1736, 192)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2047,7 +2047,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(24, 264)</value>
+      <value>(16, 368)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2170,7 +2170,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(944, 288)</value>
+      <value>(1456, 452)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2261,7 +2261,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(792, 28)</value>
+      <value>(728, 120)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -2528,7 +2528,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 780)</value>
+      <value>(1576, 192)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2571,7 +2571,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 700)</value>
+      <value>(1432, 192)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2614,7 +2614,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 484)</value>
+      <value>(1080, 192)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2661,7 +2661,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(272, 280)</value>
+      <value>(464, 460)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2708,7 +2708,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(24, 164)</value>
+      <value>(24, 196)</value>
     </param>
     <param>
       <key>_rotation</key>
