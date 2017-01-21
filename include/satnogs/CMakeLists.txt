@@ -54,13 +54,13 @@ list(APPEND HEADER_FILES
     ax25_encoder_mb.h
     ax25_decoder_bm.h
     qb50_deframer.h
+    waterfall_sink.h 
 )
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND HEADER_FILES ${DEBUG_HEADER_FILES})
 endif()
-
 install(FILES
 	${HEADER_FILES}
-    power_spectral_density_cf.h DESTINATION include/satnogs
+    DESTINATION include/satnogs
 )

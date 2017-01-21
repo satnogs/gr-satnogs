@@ -34,7 +34,7 @@ GR_PYTHON_INSTALL(
     dsp_settings.py
     hw_settings.py
     satnogs_upsat_transmitter.py
-    waterfall_plotter.py DESTINATION ${GR_PYTHON_DIR}/satnogs
+    DESTINATION ${GR_PYTHON_DIR}/satnogs
 )
 
 ########################################################################

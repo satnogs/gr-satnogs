@@ -40,14 +40,13 @@ list(APPEND enabled_blocks
     satnogs_coarse_doppler_correction_cc.xml
     satnogs_ax25_encoder_mb.xml
     satnogs_ax25_decoder_bm.xml
+    satnogs_waterfall_sink.xml	
 )
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND enabled_blocks ${debug_blocks})
 endif()
-
 install(FILES
 	${enabled_blocks}
-    satnogs_waterfall_plotter.xml
-    satnogs_power_spectral_density_cf.xml	DESTINATION share/gnuradio/grc/blocks
+	DESTINATION share/gnuradio/grc/blocks
 )
