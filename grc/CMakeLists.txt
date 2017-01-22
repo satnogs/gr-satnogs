@@ -51,5 +51,6 @@ endif()
 
 install(FILES
 	${enabled_blocks}
-	DESTINATION share/gnuradio/grc/blocks
+    satnogs_ogg_encoder.xml	
+    DESTINATION share/gnuradio/grc/blocks
 )

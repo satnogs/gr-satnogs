@@ -68,6 +68,7 @@ if(NOT Boost_FOUND)
     message(FATAL_ERROR "Boost required to compile satnogs")
 endif()
 
+
 ########################################################################
 # Install directories
 ########################################################################
@@ -133,6 +134,7 @@ if(${INCLUDE_DEBUG_BLOCKS})
         message(FATAL_ERROR "libnova required to compile satnogs")
     endif()
 endif()
+
 
 # Search for GNU Radio and its components and versions. Add any
 # components required to the list of GR_REQUIRED_COMPONENTS (in all

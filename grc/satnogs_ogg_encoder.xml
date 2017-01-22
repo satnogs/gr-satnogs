@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<block>
+  <name>ogg_encoder</name>
+  <key>satnogs_ogg_encoder</key>
+  <category>[satnogs]</category>
+  <import>import satnogs</import>
+  <make>satnogs.ogg_encoder($filename, $samp_rate, $quality)</make>
+  <!-- Make one 'param' node for every Parameter you want settable from the GUI.
+       Sub-nodes:
+       * name
+       * key (makes the value accessible as $keyname, e.g. in the make node)
+       * type -->
+	<param>
+		<name>Sample Rate</name>
+		<key>samp_rate</key>
+		<value>samp_rate</value>
+		<type>int</type>
+		<option>
+			<name>4KHz</name>
+			<key>4000</key>
+		</option>
+		<option>
+			<name>8KHz</name>
+			<key>8000</key>
+		</option>
+		<option>
+			<name>16KHz</name>
+			<key>16000</key>
+		</option>
+		<option>
+			<name>22.05KHz</name>
+			<key>22050</key>
+		</option>
+		<option>
+			<name>24KHz</name>
+			<key>24000</key>
+		</option>
+		<option>
+			<name>32KHz</name>
+			<key>32000</key>
+		</option>
+		<option>
+			<name>44.1KHz</name>
+			<key>44100</key>
+		</option>
+		<option>
+			<name>48KHz</name>
+			<key>48000</key>
+		</option>
+	</param>
+	<param>
+		<name>Quality</name>
+		<key>quality</key>
+		<type>float</type>
+	</param>
+	 <param>
+		<name>File</name>
+		<key>filename</key>
+		<type>file_save</type>
+	</param>
+	<check>$quality &gt; -0.1 </check>
+	<check>$quality &lt; 1.1 </check>
+	<sink>
+		<name>in</name>	
+		<type>float</type>
+	</sink>
+</block>
