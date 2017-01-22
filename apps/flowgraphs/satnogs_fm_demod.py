@@ -5,7 +5,7 @@
 # Title: FM Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Mon Nov  7 19:50:22 2016
+# Generated: Fri Jan 20 15:58:24 2017
 ##################################################
 
 from gnuradio import analog
@@ -15,8 +15,8 @@ from gnuradio import filter
 from gnuradio import gr
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
-from gnuradio.filter import pfb
 from optparse import OptionParser
+import math
 import osmosdr
 import satnogs
 import time
@@ -41,26 +41,20 @@ class satnogs_fm_demod(gr.top_block):
         # Variables
         ##################################################
         self.samp_rate_rx = samp_rate_rx = satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']
-        self.decimation_rx = decimation_rx = satnogs.fm_demod_settings[rx_sdr_device]['decimation_rx']
+        self.xlate_filter_taps = xlate_filter_taps = firdes.low_pass(1, samp_rate_rx, 125000, 25000, firdes.WIN_HAMMING, 6.76)
         
         self.taps = taps = firdes.low_pass(12.0, samp_rate_rx, 100e3, 60000, firdes.WIN_HAMMING, 6.76)
           
-        self.quadrature_rate = quadrature_rate = samp_rate_rx / decimation_rx
-        self.audio_samp_rate = audio_samp_rate = 44100
+        self.filter_rate = filter_rate = 250000
+        self.deviation = deviation = 5000
+        self.audio_samp_rate = audio_samp_rate = 48000
         self.audio_gain = audio_gain = satnogs.fm_demod_settings[rx_sdr_device]['audio_gain']
-        self.audio_decimation = audio_decimation = 2
 
         ##################################################
         # Blocks
         ##################################################
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
-        self.pfb_arb_resampler_xxx_0 = pfb.arb_resampler_fff(
-        	  audio_samp_rate / (quadrature_rate * 1.0 / audio_decimation),
-                  taps=(firdes.low_pass_2(32, 32, 0.8, 0.1, 100)),
-        	  flt_size=32)
-        self.pfb_arb_resampler_xxx_0.declare_sample_delay(0)
-        	
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_freq - lo_offset, 0)
@@ -74,23 +68,24 @@ class satnogs_fm_demod(gr.top_block):
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[rx_sdr_device]['antenna'], 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
           
-        self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(decimation_rx, (taps), lo_offset, samp_rate_rx)
+        self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(int(samp_rate_rx/filter_rate), (xlate_filter_taps), lo_offset, samp_rate_rx)
         self.blocks_wavfile_sink_0 = blocks.wavfile_sink(file_path, 1, audio_samp_rate, 16)
-        self.blocks_multiply_const_vxx_0 = blocks.multiply_const_vff((audio_gain, ))
-        self.analog_wfm_rcv_0 = analog.wfm_rcv(
-        	quad_rate=quadrature_rate,
-        	audio_decimation=audio_decimation,
+        self.blks2_rational_resampler_xxx_1 = filter.rational_resampler_ccc(
+                interpolation=24,
+                decimation=125,
+                taps=None,
+                fractional_bw=None,
         )
+        self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf((2*math.pi*deviation)/audio_samp_rate)
 
         ##################################################
         # Connections
         ##################################################
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
-        self.connect((self.analog_wfm_rcv_0, 0), (self.pfb_arb_resampler_xxx_0, 0))    
-        self.connect((self.blocks_multiply_const_vxx_0, 0), (self.blocks_wavfile_sink_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.analog_wfm_rcv_0, 0))    
+        self.connect((self.analog_quadrature_demod_cf_0, 0), (self.blocks_wavfile_sink_0, 0))    
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.analog_quadrature_demod_cf_0, 0))    
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blks2_rational_resampler_xxx_1, 0))    
         self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))    
-        self.connect((self.pfb_arb_resampler_xxx_0, 0), (self.blocks_multiply_const_vxx_0, 0))    
         self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
 
     def get_doppler_correction_per_sec(self):
@@ -134,63 +129,59 @@ class satnogs_fm_demod(gr.top_block):
     def set_rx_sdr_device(self, rx_sdr_device):
         self.rx_sdr_device = rx_sdr_device
         self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
-        self.set_decimation_rx(satnogs.fm_demod_settings[self.rx_sdr_device]['decimation_rx'])
-        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
         self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['rf_gain'], 0)
         self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['if_gain'], 0)
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
+        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
 
     def get_samp_rate_rx(self):
         return self.samp_rate_rx
 
     def set_samp_rate_rx(self, samp_rate_rx):
         self.samp_rate_rx = samp_rate_rx
-        self.set_quadrature_rate(self.samp_rate_rx / self.decimation_rx)
+        self.set_xlate_filter_taps(firdes.low_pass(1, self.samp_rate_rx, 125000, 25000, firdes.WIN_HAMMING, 6.76))
         self.osmosdr_source_0.set_sample_rate(self.samp_rate_rx)
         self.osmosdr_source_0.set_bandwidth(self.samp_rate_rx, 0)
 
-    def get_decimation_rx(self):
-        return self.decimation_rx
+    def get_xlate_filter_taps(self):
+        return self.xlate_filter_taps
 
-    def set_decimation_rx(self, decimation_rx):
-        self.decimation_rx = decimation_rx
-        self.set_quadrature_rate(self.samp_rate_rx / self.decimation_rx)
+    def set_xlate_filter_taps(self, xlate_filter_taps):
+        self.xlate_filter_taps = xlate_filter_taps
+        self.freq_xlating_fir_filter_xxx_0.set_taps((self.xlate_filter_taps))
 
     def get_taps(self):
         return self.taps
 
     def set_taps(self, taps):
         self.taps = taps
-        self.freq_xlating_fir_filter_xxx_0.set_taps((self.taps))
 
-    def get_quadrature_rate(self):
-        return self.quadrature_rate
+    def get_filter_rate(self):
+        return self.filter_rate
 
-    def set_quadrature_rate(self, quadrature_rate):
-        self.quadrature_rate = quadrature_rate
-        self.pfb_arb_resampler_xxx_0.set_rate(self.audio_samp_rate / (self.quadrature_rate * 1.0 / self.audio_decimation))
+    def set_filter_rate(self, filter_rate):
+        self.filter_rate = filter_rate
+
+    def get_deviation(self):
+        return self.deviation
+
+    def set_deviation(self, deviation):
+        self.deviation = deviation
+        self.analog_quadrature_demod_cf_0.set_gain((2*math.pi*self.deviation)/self.audio_samp_rate)
 
     def get_audio_samp_rate(self):
         return self.audio_samp_rate
 
     def set_audio_samp_rate(self, audio_samp_rate):
         self.audio_samp_rate = audio_samp_rate
-        self.pfb_arb_resampler_xxx_0.set_rate(self.audio_samp_rate / (self.quadrature_rate * 1.0 / self.audio_decimation))
+        self.analog_quadrature_demod_cf_0.set_gain((2*math.pi*self.deviation)/self.audio_samp_rate)
 
     def get_audio_gain(self):
         return self.audio_gain
 
     def set_audio_gain(self, audio_gain):
         self.audio_gain = audio_gain
-        self.blocks_multiply_const_vxx_0.set_k((self.audio_gain, ))
-
-    def get_audio_decimation(self):
-        return self.audio_decimation
-
-    def set_audio_decimation(self, audio_decimation):
-        self.audio_decimation = audio_decimation
-        self.pfb_arb_resampler_xxx_0.set_rate(self.audio_samp_rate / (self.quadrature_rate * 1.0 / self.audio_decimation))
 
 
 def argument_parser():
