@@ -22,6 +22,7 @@
 This is the GNU Radio SATNOGS module. Place your Python package
 description here (python/__init__.py).
 '''
+import sys
 
 # import swig generated symbols into the satnogs namespace
 try:
@@ -30,8 +31,8 @@ try:
     from dsp_settings import *
     from hw_settings import *
     from satnogs_upsat_transmitter import *
-except ImportError:
+except ImportError as err:
+    sys.stderr.write("Failed to import SatNOGS ({})\n".format(err))
+    sys.stderr.write("Consider first to run 'sudo ldconfig'\n")
     pass
 
-# import any pure python here
-#

@@ -20,6 +20,7 @@
 include(GrPython)
 
 add_subdirectory(flowgraphs/satellites)
+add_subdirectory(scripts)
 
 GR_PYTHON_INSTALL(
     PROGRAMS
