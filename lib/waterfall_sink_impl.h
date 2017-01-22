@@ -55,6 +55,7 @@ namespace gr
       fft::fft_complex d_fft;
       gr_complex *d_shift_buffer;
       float *d_hold_buffer;
+      float *d_tmp_buffer;
       std::ofstream d_fos;
 
     public:

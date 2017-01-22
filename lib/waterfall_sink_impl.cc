@@ -75,11 +75,19 @@ namespace gr
         throw std::runtime_error("Could not allocate aligned memory");
       }
 
-      d_hold_buffer = (float *)volk_malloc(fft_size * sizeof(float),
+      d_hold_buffer = (float *)volk_malloc(fft_size * sizeof(gr_complex),
                                            volk_get_alignment());
       if(!d_hold_buffer){
         LOG_ERROR("Could not allocate aligned memory");
         throw std::runtime_error("Could not allocate aligned memory");
+      }
+      memset(d_hold_buffer, 0, fft_size * sizeof(gr_complex));
+
+      d_tmp_buffer = (float *) volk_malloc (fft_size * sizeof(float),
+                                            volk_get_alignment ());
+      if (!d_tmp_buffer) {
+        LOG_ERROR("Could not allocate aligned memory");
+        throw std::runtime_error ("Could not allocate aligned memory");
       }
 
       d_fos.open(filename, std::ios::binary | std::ios::trunc);
@@ -101,6 +109,7 @@ namespace gr
       d_fos.close();
       volk_free(d_shift_buffer);
       volk_free(d_hold_buffer);
+      volk_free(d_tmp_buffer);
     }
 
     int
@@ -167,11 +176,91 @@ namespace gr
     void
     waterfall_sink_impl::compute_max_hold (const gr_complex* in, size_t n_fft)
     {
+      size_t i;
+      size_t j;
+      float t;
+      gr_complex *fft_in;
+      for(i = 0; i < n_fft; i++){
+        fft_in = d_fft.get_inbuf ();
+        memcpy (fft_in, in + i * d_fft_size, d_fft_size * sizeof(gr_complex));
+        d_fft.execute ();
+        /* Perform FFT shift */
+        memcpy (d_shift_buffer, &d_fft.get_outbuf ()[d_fft_shift],
+                sizeof(gr_complex) * (d_fft_size - d_fft_shift));
+        memcpy (&d_shift_buffer[d_fft_size - d_fft_shift],
+                &d_fft.get_outbuf ()[0], sizeof(gr_complex) * d_fft_shift);
+
+        /* Normalization factor */
+        volk_32fc_s32fc_multiply_32fc(d_shift_buffer, d_shift_buffer,
+                                      1.0/d_fft_size, d_fft_size);
+
+        /* Compute the mag^2 */
+        volk_32fc_magnitude_squared_32f(d_tmp_buffer, d_shift_buffer,
+                                        d_fft_size);
+        /* Max hold */
+        volk_32f_x2_max_32f (d_hold_buffer, d_hold_buffer, d_tmp_buffer,
+                             d_fft_size);
+        d_fft_cnt++;
+        if(d_fft_cnt > d_refresh) {
+          /* Compute the energy in dB */
+          for(j = 0; j < d_fft_size; j++){
+            d_hold_buffer[j] = 10.0 * log10f(d_hold_buffer[j] + 1.0e-20);
+          }
+
+          /* Write the result to the file */
+          t = (float)(d_samples_cnt / d_samp_rate);
+          d_fos.write((char *) &t, sizeof(float));
+          d_fos.write((char *) d_hold_buffer, d_fft_size * sizeof(float));
+
+          /* Reset */
+          d_fft_cnt = 0;
+          memset(d_hold_buffer, 0, d_fft_size * sizeof(float));
+        }
+        d_samples_cnt += d_fft_size;
+      }
     }
 
     void
     waterfall_sink_impl::compute_mean (const gr_complex* in, size_t n_fft)
     {
+      size_t i;
+      size_t j;
+      float t;
+      gr_complex *fft_in;
+      for(i = 0; i < n_fft; i++){
+        fft_in = d_fft.get_inbuf ();
+        memcpy (fft_in, in + i * d_fft_size, d_fft_size * sizeof(gr_complex));
+        d_fft.execute ();
+        /* Perform FFT shift */
+        memcpy (d_shift_buffer, &d_fft.get_outbuf ()[d_fft_shift],
+                sizeof(gr_complex) * (d_fft_size - d_fft_shift));
+        memcpy (&d_shift_buffer[d_fft_size - d_fft_shift],
+                &d_fft.get_outbuf ()[0], sizeof(gr_complex) * d_fft_shift);
+
+        /* Accumulate the complex numbers  */
+        volk_32f_x2_add_32f(d_hold_buffer, d_hold_buffer,
+                            (float *)d_shift_buffer, 2 * d_fft_size);
+        d_fft_cnt++;
+        if(d_fft_cnt > d_refresh) {
+          /*
+           * Compute the energy in dB performing the proper normalization
+           * before any dB calculation, emulating the mean
+           */
+          volk_32fc_s32f_x2_power_spectral_density_32f (
+              d_hold_buffer, (gr_complex *)d_hold_buffer,
+              (float) d_fft_cnt * d_fft_size, 1.0, d_fft_size);
+
+          /* Write the result to the file */
+          t = (float)(d_samples_cnt / d_samp_rate);
+          d_fos.write((char *) &t, sizeof(float));
+          d_fos.write((char *) d_hold_buffer, d_fft_size * sizeof(float));
+
+          /* Reset */
+          d_fft_cnt = 0;
+          memset(d_hold_buffer, 0, 2 * d_fft_size * sizeof(float));
+        }
+        d_samples_cnt += d_fft_size;
+      }
     }
 
   } /* namespace satnogs */

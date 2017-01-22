@@ -19,8 +19,12 @@
 #
 
 reset
-set terminal pngcairo size 800,800 enhanced font 'Verdana,14'
-set output 'waterfall.png'
+if (!exists("height")) height=800
+if (!exists("width")) width=800
+if (!exists("outfile")) outfile='/tmp/waterfall.png'
+
+set terminal pngcairo size height,width enhanced font 'Verdana,14'
+set output outfile
 
 unset key
 set style line 11 lc rgb '#808080' lt 1
@@ -31,8 +35,6 @@ set tics nomirror out scale 0.75
 
 set xlabel 'Frequency (kHz)'
 set ylabel 'Time'
-#set format y '%.0f k'
-# disable colorbar tics
 set cbtics scale 0
 
 # palette
@@ -48,4 +50,11 @@ set ylabel 'Time (seconds)'
 set cbrange [-110:-20]
 set cblabel 'Power (dB)'
 
-plot input_file u ($1*1e-3):2:3 binary matrix with image
+# Get automatically the axis ranges from the file 
+stats inputfile using 1 binary nooutput
+set xrange [STATS_min*1e-3:STATS_max*1e-3 + 1]
+stats inputfile using 2 binary nooutput
+set yrange [0:STATS_max + 1]
+
+# Plot and scale the frequency axis to kHz for readability 
+plot inputfile using ($1*1e-3):2:3 binary matrix with image
