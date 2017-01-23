@@ -62,5 +62,6 @@ endif()
 
 install(FILES
 	${HEADER_FILES}
+    ogg_encoder.h 
     DESTINATION include/satnogs
 )
