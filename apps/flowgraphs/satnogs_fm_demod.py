@@ -5,7 +5,7 @@
 # Title: FM Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Fri Jan 20 15:58:24 2017
+# Generated: Mon Jan 23 20:10:12 2017
 ##################################################
 
 from gnuradio import analog
@@ -24,7 +24,7 @@ import time
 
 class satnogs_fm_demod(gr.top_block):
 
-    def __init__(self, doppler_correction_per_sec=1000, file_path='test.wav', lo_offset=100e3, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200'):
+    def __init__(self, doppler_correction_per_sec=1000, file_path='test.wav', lo_offset=100e3, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
         gr.top_block.__init__(self, "FM Generic Demodulation")
 
         ##################################################
@@ -36,6 +36,7 @@ class satnogs_fm_demod(gr.top_block):
         self.rigctl_port = rigctl_port
         self.rx_freq = rx_freq
         self.rx_sdr_device = rx_sdr_device
+        self.waterfall_file_path = waterfall_file_path
 
         ##################################################
         # Variables
@@ -53,6 +54,7 @@ class satnogs_fm_demod(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
+        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 10, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
@@ -84,6 +86,7 @@ class satnogs_fm_demod(gr.top_block):
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
         self.connect((self.analog_quadrature_demod_cf_0, 0), (self.blocks_wavfile_sink_0, 0))    
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.analog_quadrature_demod_cf_0, 0))    
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))    
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blks2_rational_resampler_xxx_1, 0))    
         self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))    
         self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
@@ -134,6 +137,12 @@ class satnogs_fm_demod(gr.top_block):
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
         self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
+
+    def get_waterfall_file_path(self):
+        return self.waterfall_file_path
+
+    def set_waterfall_file_path(self, waterfall_file_path):
+        self.waterfall_file_path = waterfall_file_path
 
     def get_samp_rate_rx(self):
         return self.samp_rate_rx
@@ -205,6 +214,9 @@ def argument_parser():
     parser.add_option(
         "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default='usrpb200',
         help="Set rx_sdr_device [default=%default]")
+    parser.add_option(
+        "", "--waterfall-file-path", dest="waterfall_file_path", type="string", default='/tmp/waterfall.dat',
+        help="Set waterfall_file_path [default=%default]")
     return parser
 
 
@@ -212,7 +224,7 @@ def main(top_block_cls=satnogs_fm_demod, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, file_path=options.file_path, lo_offset=options.lo_offset, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device)
+    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, file_path=options.file_path, lo_offset=options.lo_offset, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path)
     tb.start()
     tb.wait()
 
