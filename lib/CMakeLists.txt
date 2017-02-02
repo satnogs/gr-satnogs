@@ -25,6 +25,8 @@ include(GrPlatform) #define LIB_SUFFIX
 include_directories(
     ${Boost_INCLUDE_DIR}
     ${VOLK_INCLUDE_DIRS}
+    ${VORBIS_INCLUDE_DIR}
+    ${OGG_INCLUDE_DIR}
 )
 
 link_directories(${Boost_LIBRARY_DIRS})
@@ -40,6 +42,7 @@ list(APPEND satnogs_sources
     morse_tree.cc
     morse_decoder_impl.cc
     multi_format_msg_sink_impl.cc
+    ogg_encoder_impl.cc 
     cw_to_symbol_impl.cc
     sine_matched_filter_ff_impl.cc
     udp_msg_source_impl.cc
@@ -56,7 +59,7 @@ list(APPEND satnogs_sources
     ax25_encoder_mb_impl.cc
     ax25_decoder_bm_impl.cc
     qb50_deframer_impl.cc
-    waterfall_sink_impl.cc )
+    waterfall_sink_impl.cc)
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND satnogs_sources ${satnogs_debug_sources})
@@ -76,6 +79,7 @@ target_link_libraries(gnuradio-satnogs
     ${CMAKE_THREAD_LIBS_INIT}
     ${NOVA_LIBRARIES}
     ${VOLK_LIBRARIES}
+    ${OGGVORBIS_LIBRARIES}
 )
     
 set_target_properties(gnuradio-satnogs PROPERTIES DEFINE_SYMBOL "gnuradio_satnogs_EXPORTS")

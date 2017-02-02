@@ -13,6 +13,7 @@
   <block>satnogs_cw_matched_filter_ff</block>
   <block>satnogs_morse_decoder</block>
   <block>satnogs_multi_format_msg_sink</block>
+  <block>satnogs_ogg_encoder</block>
   <block>satnogs_cw_to_symbol</block>
   <block>satnogs_sine_matched_filter_ff</block>
   <block>satnogs_udp_msg_source</block>
