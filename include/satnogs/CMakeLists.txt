@@ -62,5 +62,5 @@ if(${INCLUDE_DEBUG_BLOCKS})
 endif()
 install(FILES
 	${HEADER_FILES}
-    DESTINATION include/satnogs
+    ogg_enc.h DESTINATION include/satnogs
 )
