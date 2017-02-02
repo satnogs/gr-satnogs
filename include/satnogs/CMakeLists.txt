@@ -37,6 +37,7 @@ list(APPEND HEADER_FILES
     morse.h
     morse_decoder.h
     multi_format_msg_sink.h
+    ogg_encoder.h 
     cw_to_symbol.h
     sine_matched_filter_ff.h
     utils.h
@@ -61,6 +62,6 @@ if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND HEADER_FILES ${DEBUG_HEADER_FILES})
 endif()
 install(FILES
-	${HEADER_FILES}
-    ogg_enc.h DESTINATION include/satnogs
+    ${HEADER_FILES}
+    DESTINATION include/satnogs
 )

@@ -31,7 +31,7 @@
 #include "satnogs/ax25_decoder_bm.h"
 #include "satnogs/qb50_deframer.h"
 #include "satnogs/waterfall_sink.h"
-#include "satnogs/ogg_enc.h"
+#include "satnogs/ogg_encoder.h"
 %}
 
 
@@ -98,5 +98,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, qb50_deframer);
 
 %include "satnogs/waterfall_sink.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, waterfall_sink);
-%include "satnogs/ogg_enc.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, ogg_enc);
+%include "satnogs/ogg_encoder.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, ogg_encoder);

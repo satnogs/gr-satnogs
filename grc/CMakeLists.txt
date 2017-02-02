@@ -31,6 +31,7 @@ list(APPEND enabled_blocks
     satnogs_cw_matched_filter_ff.xml
     satnogs_morse_decoder.xml
     satnogs_multi_format_msg_sink.xml
+    satnogs_ogg_encoder.xml 
     satnogs_cw_to_symbol.xml
     satnogs_sine_matched_filter_ff.xml
     satnogs_udp_msg_source.xml
@@ -48,5 +49,5 @@ if(${INCLUDE_DEBUG_BLOCKS})
 endif()
 install(FILES
 	${enabled_blocks}
-    satnogs_ogg_enc.xml	DESTINATION share/gnuradio/grc/blocks
+    DESTINATION share/gnuradio/grc/blocks
 )

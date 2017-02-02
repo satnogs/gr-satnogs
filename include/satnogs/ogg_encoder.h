@@ -24,28 +24,29 @@
 #include <satnogs/api.h>
 #include <gnuradio/sync_block.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
     /*!
-     * \brief <+description of block+>
+     * \brief Ogg encoder and sink block
      * \ingroup satnogs
      *
      */
     class SATNOGS_API ogg_encoder : virtual public gr::sync_block
     {
-     public:
+    public:
       typedef boost::shared_ptr<ogg_encoder> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of satnogs::ogg_encoder.
-       *
-       * To avoid accidental use of raw pointers, satnogs::ogg_encoder's
-       * constructor is in a private implementation
-       * class. satnogs::ogg_encoder::make is the public interface for
-       * creating new instances.
+       * Ogg encoder and sink block.
+       * @param filename filename of the output file
+       * @param samp_rate the sampling rate
+       * @param quality the quality of the output file. [0.1 - 1.0] (worst - best)
        */
-      static sptr make(char* filename, double samp_rate, float quality);
+      static sptr
+      make (char* filename, double samp_rate, float quality);
     };
 
   } // namespace satnogs

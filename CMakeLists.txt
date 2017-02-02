@@ -116,6 +116,7 @@ find_package (Threads REQUIRED)
 find_package(CppUnit)
 find_package(Doxygen)
 find_package(Volk REQUIRED)
+find_package(OggVorbis REQUIRED)
 
 ########################################################################
 # Include or not into the module blocks for debugging
