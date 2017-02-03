@@ -112,6 +112,7 @@ namespace gr
           switch(d_type){
             case 0:
               message_port_pub (pmt::mp ("msg"), pmt::make_blob (buf, bytes_num));
+              break;
             case 1:
               if(bytes_num < sizeof(uint32_t)){
                 continue;
