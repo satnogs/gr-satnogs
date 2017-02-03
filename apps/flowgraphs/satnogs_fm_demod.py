@@ -5,11 +5,10 @@
 # Title: FM Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Mon Jan 23 20:10:12 2017
+# Generated: Fri Feb  3 16:44:07 2017
 ##################################################
 
 from gnuradio import analog
-from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
 from gnuradio import gr
@@ -56,6 +55,7 @@ class satnogs_fm_demod(gr.top_block):
         ##################################################
         self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 10, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
+        self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
@@ -71,7 +71,6 @@ class satnogs_fm_demod(gr.top_block):
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
           
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(int(samp_rate_rx/filter_rate), (xlate_filter_taps), lo_offset, samp_rate_rx)
-        self.blocks_wavfile_sink_0 = blocks.wavfile_sink(file_path, 1, audio_samp_rate, 16)
         self.blks2_rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=24,
                 decimation=125,
@@ -84,7 +83,7 @@ class satnogs_fm_demod(gr.top_block):
         # Connections
         ##################################################
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
-        self.connect((self.analog_quadrature_demod_cf_0, 0), (self.blocks_wavfile_sink_0, 0))    
+        self.connect((self.analog_quadrature_demod_cf_0, 0), (self.satnogs_ogg_encoder_0, 0))    
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.analog_quadrature_demod_cf_0, 0))    
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))    
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blks2_rational_resampler_xxx_1, 0))    
@@ -102,7 +101,6 @@ class satnogs_fm_demod(gr.top_block):
 
     def set_file_path(self, file_path):
         self.file_path = file_path
-        self.blocks_wavfile_sink_0.open(self.file_path)
 
     def get_lo_offset(self):
         return self.lo_offset

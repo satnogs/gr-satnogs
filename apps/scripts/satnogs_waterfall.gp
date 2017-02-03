@@ -23,7 +23,7 @@ if (!exists("height")) height=800
 if (!exists("width")) width=800
 if (!exists("outfile")) outfile='/tmp/waterfall.png'
 
-set terminal pngcairo size height,width enhanced font 'Verdana,14'
+set terminal pngcairo size width,height enhanced font 'Verdana,14'
 set output outfile
 
 unset key
@@ -36,18 +36,23 @@ set tics nomirror out scale 0.75
 set xlabel 'Frequency (kHz)'
 set ylabel 'Time'
 set cbtics scale 0
+set cbtics (-110, -105, -100, -95, -90, -85, -80, -75, -70, -65, -60, -55, -50, -55, -40)
 
 # palette
-set palette defined (0 '#3288BD',\
-                     1 '#66C2A5',\
-                     2 '#ABDDA4',\
-                     3 '#E6F598',\
-                     4 '#FEE08B',\
-                     5 '#FDAE61',\
-                     6 '#F46D43',\
-                     7 '#D53E4F')
+set palette defined (0 '#aa00ff',\
+                     1 '#6200ea',\
+                     2 '#2962ff',\
+                     3 '#00b8d4',\
+                     4 '#00bfa5',\
+                     5 '#00c853',\
+                     6 '#64dd17 ',\
+                     7 '#aeea00',\
+                     9 '#ffd600 ',\
+                     10 '#ffab00 ',\
+                     11 '#ff6d00',\
+                     12 '#d50000')
 set ylabel 'Time (seconds)'
-set cbrange [-110:-20]
+set cbrange [-100:-50]
 set cblabel 'Power (dB)'
 
 # Get automatically the axis ranges from the file 

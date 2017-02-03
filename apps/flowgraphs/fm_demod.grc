@@ -452,53 +452,6 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
-    <key>blocks_wavfile_sink</key>
-    <param>
-      <key>bits_per_sample</key>
-      <value>16</value>
-    </param>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>file</key>
-      <value>file_path</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1088, 664)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_wavfile_sink_0</value>
-    </param>
-    <param>
-      <key>nchan</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>audio_samp_rate</value>
-    </param>
-  </block>
-  <block>
     <key>parameter</key>
     <param>
       <key>alias</key>
@@ -2271,6 +2224,49 @@ we shift the LO a little further</value>
     </param>
   </block>
   <block>
+    <key>satnogs_ogg_encoder</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>filename</key>
+      <value>file_path</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(920, 548)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_ogg_encoder_0</value>
+    </param>
+    <param>
+      <key>quality</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>audio_samp_rate</value>
+    </param>
+  </block>
+  <block>
     <key>satnogs_tcp_rigctl_msg_source</key>
     <param>
       <key>alias</key>
@@ -2429,7 +2425,7 @@ we shift the LO a little further</value>
   </block>
   <connection>
     <source_block_id>analog_quadrature_demod_cf_0</source_block_id>
-    <sink_block_id>blocks_wavfile_sink_0</sink_block_id>
+    <sink_block_id>satnogs_ogg_encoder_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
