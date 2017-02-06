@@ -5,7 +5,7 @@ for decoding signals from various scientific and academic sattelites.
 ## Install
 
 ### Requirements
-* GNU Radio ( > 3.7.2 )
+* GNU Radio ( > 3.7.7 )
 * CMake ( > 3.1)
 * G++ (with C++11 support)
 * VOLK
@@ -13,6 +13,7 @@ for decoding signals from various scientific and academic sattelites.
 *** Optional ***
 * gr-osmocom (for using the flowgraphs with real SDR hardware)
 * libnova (for building the debug blocks)
+* libvorbis (for ogg vorbis encoder block)
 
 ### Installation
 
