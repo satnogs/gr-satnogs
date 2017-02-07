@@ -16,7 +16,12 @@
 #
 #  You should have received a copy of the GNU General Public License
 #  along with this program.  If not, see <http://www.gnu.org/licenses/>
+
+# satnogs-waterfall.gp
+# Plot a waterfall diagramm from the output of the satnogs_waterfall_sink block.
 #
+# Usage:
+# gnuplot -e "inputfile='waterfall_sink.data'" -e "outfile='waterfall.png'" /usr/local/share/satnogs/scripts/satnogs_waterfall.gp
 
 reset
 if (!exists("height")) height=800
