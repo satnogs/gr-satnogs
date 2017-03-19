@@ -5,7 +5,7 @@
 # Title: FM Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Fri Feb  3 16:44:07 2017
+# Generated: Sun Mar 19 10:01:51 2017
 ##################################################
 
 from gnuradio import analog
@@ -23,7 +23,7 @@ import time
 
 class satnogs_fm_demod(gr.top_block):
 
-    def __init__(self, doppler_correction_per_sec=1000, file_path='test.wav', lo_offset=100e3, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
+    def __init__(self, doppler_correction_per_sec=1000, file_path='test.wav', lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
         gr.top_block.__init__(self, "FM Generic Demodulation")
 
         ##################################################
@@ -32,6 +32,7 @@ class satnogs_fm_demod(gr.top_block):
         self.doppler_correction_per_sec = doppler_correction_per_sec
         self.file_path = file_path
         self.lo_offset = lo_offset
+        self.ppm = ppm
         self.rigctl_port = rigctl_port
         self.rx_freq = rx_freq
         self.rx_sdr_device = rx_sdr_device
@@ -60,7 +61,7 @@ class satnogs_fm_demod(gr.top_block):
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_freq - lo_offset, 0)
-        self.osmosdr_source_0.set_freq_corr(0, 0)
+        self.osmosdr_source_0.set_freq_corr(ppm, 0)
         self.osmosdr_source_0.set_dc_offset_mode(2, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
         self.osmosdr_source_0.set_gain_mode(False, 0)
@@ -109,6 +110,13 @@ class satnogs_fm_demod(gr.top_block):
         self.lo_offset = lo_offset
         self.osmosdr_source_0.set_center_freq(self.rx_freq - self.lo_offset, 0)
         self.freq_xlating_fir_filter_xxx_0.set_center_freq(self.lo_offset)
+
+    def get_ppm(self):
+        return self.ppm
+
+    def set_ppm(self, ppm):
+        self.ppm = ppm
+        self.osmosdr_source_0.set_freq_corr(self.ppm, 0)
 
     def get_rigctl_port(self):
         return self.rigctl_port
@@ -204,6 +212,9 @@ def argument_parser():
         "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
         help="Set lo_offset [default=%default]")
     parser.add_option(
+        "", "--ppm", dest="ppm", type="intx", default=0,
+        help="Set ppm [default=%default]")
+    parser.add_option(
         "", "--rigctl-port", dest="rigctl_port", type="intx", default=4532,
         help="Set rigctl_port [default=%default]")
     parser.add_option(
@@ -222,7 +233,7 @@ def main(top_block_cls=satnogs_fm_demod, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, file_path=options.file_path, lo_offset=options.lo_offset, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path)
+    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, file_path=options.file_path, lo_offset=options.lo_offset, ppm=options.ppm, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path)
     tb.start()
     tb.wait()
 
