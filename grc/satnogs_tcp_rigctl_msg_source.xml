@@ -2,9 +2,8 @@
 <block>
 	<name>TCP rigctl Message Source</name>
 	<key>satnogs_tcp_rigctl_msg_source</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.tcp_rigctl_msg_source($addr, $port, $mtu)</make>
+	<make>satnogs.tcp_rigctl_msg_source($addr, $port, $mode, $interval, $mtu)</make>
 
 	<param>
 		<name>IP Address</name>
@@ -14,9 +13,30 @@
 	</param>
 
 	<param>
-		<name>Listen port</name>
+		<name>Port</name>
 		<key>port</key>
 		<value>16886</value>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Mode</name>
+		<key>mode</key>
+		<type>enum</type>
+		<option>
+			<name>Client</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Server</name>
+			<key>True</key>
+		</option>
+	</param>
+	
+	<param>
+		<name>Update interval (ms)</name>
+		<key>interval</key>
+		<value>1000</value>
 		<type>int</type>
 	</param>
 

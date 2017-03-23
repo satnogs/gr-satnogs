@@ -33,37 +33,37 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 
-
 namespace gr
 {
   namespace satnogs
   {
 
     udp_msg_source::sptr
-    udp_msg_source::make (const std::string& addr, uint16_t port, size_t mtu)
+    udp_msg_source::make (const std::string& addr, uint16_t port, size_t mtu,
+                          size_t type)
     {
       return gnuradio::get_initial_sptr (
-	  new udp_msg_source_impl (addr, port, mtu));
+          new udp_msg_source_impl (addr, port, mtu, type));
     }
 
     /*
      * The private constructor
      */
     udp_msg_source_impl::udp_msg_source_impl (const std::string& addr,
-					      uint16_t port,
-					      size_t mtu) :
-	    gr::block ("udp_msg_source",
-		       gr::io_signature::make (0, 0, 0),
-		       gr::io_signature::make (0, 0, 0)),
-	    d_iface_addr (addr),
-	    d_udp_port (port),
-	    d_mtu(mtu),
-	    d_running (true)
+                                              uint16_t port, size_t mtu,
+                                              size_t type) :
+            gr::block ("udp_msg_source", gr::io_signature::make (0, 0, 0),
+                       gr::io_signature::make (0, 0, 0)),
+            d_iface_addr (addr),
+            d_udp_port (port),
+            d_mtu (mtu),
+            d_type (type),
+            d_running (true)
     {
-      message_port_register_out(pmt::mp("msg"));
+      message_port_register_out (pmt::mp ("msg"));
       boost::shared_ptr<boost::thread> (
-	  new boost::thread (
-	      boost::bind (&udp_msg_source_impl::udp_msg_accepter, this)));
+          new boost::thread (
+              boost::bind (&udp_msg_source_impl::udp_msg_accepter, this)));
     }
 
     void
@@ -75,10 +75,13 @@ namespace gr
       socklen_t client_addr_len;
       ssize_t ret;
       uint8_t *buf;
+      uint32_t bytes_num;
+      uint32_t uint_val;
+      uint32_t int_val;
 
       if ((sock = socket (AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
-	perror ("opening UDP socket");
-	exit (EXIT_FAILURE);
+        perror ("opening UDP socket");
+        exit (EXIT_FAILURE);
       }
 
       memset (&client_addr, 0, sizeof(struct sockaddr));
@@ -86,35 +89,61 @@ namespace gr
       sin.sin_family = AF_INET;
       sin.sin_port = htons (d_udp_port);
 
-      if( inet_aton(d_iface_addr.c_str(), &(sin.sin_addr)) == 0){
-	LOG_ERROR("Wrong IP address");
-	close(sock);
-	exit (EXIT_FAILURE);
+      if (inet_aton (d_iface_addr.c_str (), &(sin.sin_addr)) == 0) {
+        LOG_ERROR("Wrong IP address");
+        close (sock);
+        exit (EXIT_FAILURE);
       }
 
       if (bind (sock, (struct sockaddr *) &sin, sizeof(struct sockaddr_in))
-	  == -1) {
-	perror ("UDP bind");
-	close(sock);
-	exit (EXIT_FAILURE);
+          == -1) {
+        perror ("UDP bind");
+        close (sock);
+        exit (EXIT_FAILURE);
       }
 
       /* All good until now. Allocate buffer memory and proceed */
       buf = new uint8_t[d_mtu];
 
-      while(d_running){
-	ret = recvfrom(sock, buf, d_mtu, 0, &client_addr, &client_addr_len);
-	if(ret > 0) {
-	  message_port_pub(pmt::mp("msg"), pmt::make_blob(buf, ret));
-	}
-	else{
-	  perror("UDP recvfrom");
-	  close(sock);
-	  delete[] buf;
-	  exit(EXIT_FAILURE);
-	}
+      while (d_running) {
+        ret = recvfrom (sock, buf, d_mtu, 0, &client_addr, &client_addr_len);
+        if (ret > 0) {
+          bytes_num = (uint32_t) ret;
+          switch(d_type){
+            case 0:
+              message_port_pub (pmt::mp ("msg"), pmt::make_blob (buf, bytes_num));
+              break;
+            case 1:
+              if(bytes_num < sizeof(uint32_t)){
+                continue;
+              }
+              memcpy(&uint_val, buf, sizeof(uint32_t));
+              message_port_pub (pmt::mp ("msg"),
+                                pmt::from_uint64 (ntohl (uint_val)));
+              break;
+            case 2:
+              if (bytes_num < sizeof(int32_t)) {
+                continue;
+              }
+              memcpy(&int_val, buf, sizeof(int32_t));
+              message_port_pub (pmt::mp ("msg"),
+                                pmt::from_long (ntohl (int_val)));
+              break;
+            default:
+              LOG_ERROR("Unsupported message type");
+              close (sock);
+              delete[] buf;
+              exit (EXIT_FAILURE);
+          }
+        }
+        else {
+          perror ("UDP recvfrom");
+          close (sock);
+          delete[] buf;
+          exit (EXIT_FAILURE);
+        }
       }
-      close(sock);
+      close (sock);
       delete[] buf;
       exit (EXIT_SUCCESS);
     }

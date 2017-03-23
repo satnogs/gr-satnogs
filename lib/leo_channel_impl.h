@@ -18,46 +18,35 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_JSON_TO_ECSS_SRC_IMPL_H
-#define INCLUDED_SATNOGS_JSON_TO_ECSS_SRC_IMPL_H
+#ifndef INCLUDED_SATNOGS_LEO_CHANNEL_IMPL_H
+#define INCLUDED_SATNOGS_LEO_CHANNEL_IMPL_H
 
-#include <satnogs/json_to_ecss_src.h>
-#include <boost/property_tree/ptree.hpp>
-#include <boost/property_tree/json_parser.hpp>
+#include <satnogs/leo_channel.h>
+#include <libnova/libnova.h>
 
-using boost::property_tree::ptree;
-using boost::property_tree::read_json;
+namespace gr
+{
+  namespace satnogs
+  {
 
-
-
-namespace gr {
-  namespace satnogs {
-
-    class json_to_ecss_src_impl : public json_to_ecss_src
+    class leo_channel_impl : public leo_channel
     {
-     private:
-      // Nothing to declare in this block.
-    	bool is_running;
-    	pmt::pmt_t d_in_port;
-    	pmt::pmt_t d_out_port;
+    private:
+      const double d_freq;
+      const size_t d_shifts_per_sec;
 
-    	uint8_t*	d_buf;
-
-    	void json_accepter();
-
-     public:
-      json_to_ecss_src_impl();
-      ~json_to_ecss_src_impl();
+    public:
+      leo_channel_impl (const double freq, const size_t freq_shifts_per_sec);
+      ~leo_channel_impl ();
 
       // Where all the action really happens
-      int work(int noutput_items,
-         gr_vector_const_void_star &input_items,
-         gr_vector_void_star &output_items);
-
+      int
+      work (int noutput_items, gr_vector_const_void_star &input_items,
+	    gr_vector_void_star &output_items);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_JSON_TO_ECSS_SRC_IMPL_H */
+#endif /* INCLUDED_SATNOGS_LEO_CHANNEL_IMPL_H */
 

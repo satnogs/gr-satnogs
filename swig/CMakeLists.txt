@@ -57,9 +57,18 @@ GR_SWIG_INSTALL(TARGETS satnogs_swig DESTINATION ${GR_PYTHON_DIR}/satnogs)
 ########################################################################
 # Install swig .i files for development
 ########################################################################
+list(APPEND swig_files
+	satnogs_swig.i
+    ${CMAKE_CURRENT_BINARY_DIR}/satnogs_swig_doc.i
+)
+
+if(${INCLUDE_DEBUG_BLOCKS})
+	list(APPEND swig_files "satnogs_debug_swig.i")
+endif()
+
 install(
     FILES
-    satnogs_swig.i
+    ${swig_files}
     ${CMAKE_CURRENT_BINARY_DIR}/satnogs_swig_doc.i
     DESTINATION ${GR_INCLUDE_DIR}/satnogs/swig
 )
