@@ -9,11 +9,13 @@ for decoding signals from various scientific and academic sattelites.
 * CMake ( > 3.1)
 * G++ (with C++11 support)
 * VOLK
+* libogg 
+* libvorbis
 * git
-*** Optional ***
+
+**Optional**
 * gr-osmocom (for using the flowgraphs with real SDR hardware)
 * libnova (for building the debug blocks)
-* libvorbis (for ogg vorbis encoder block)
 
 ### Installation
 

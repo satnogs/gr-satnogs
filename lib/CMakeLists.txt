@@ -93,32 +93,11 @@ endif(APPLE)
 ########################################################################
 # Install built library files
 ########################################################################
-install(TARGETS gnuradio-satnogs
-    LIBRARY DESTINATION lib${LIB_SUFFIX} # .so/.dylib file
-    ARCHIVE DESTINATION lib${LIB_SUFFIX} # .lib file
-    RUNTIME DESTINATION bin              # .dll file
-)
+include(GrMiscUtils)
+GR_LIBRARY_FOO(gnuradio-satnogs RUNTIME_COMPONENT "satnogs_runtime" DEVEL_COMPONENT "satnogs_devel")
 
 ########################################################################
-# Build and register unit test
+# Print summary
 ########################################################################
-include(GrTest)
-
-#include_directories(${CPPUNIT_INCLUDE_DIRS})
-
-#list(APPEND test_satnogs_sources
-#    ${CMAKE_CURRENT_SOURCE_DIR}/test_satnogs.cc
-#    ${CMAKE_CURRENT_SOURCE_DIR}/qa_satnogs.cc
-#)
-
-#add_executable(test-satnogs ${test_satnogs_sources})
-
-#target_link_libraries(
-#  test-satnogs
-#  ${GNURADIO_RUNTIME_LIBRARIES}
-#  ${Boost_LIBRARIES}
-#  ${CPPUNIT_LIBRARIES}
-#  gnuradio-satnogs
-#)
-
-#GR_ADD_TEST(test_satnogs test-satnogs)
+message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "Building for version: ${VERSION} / ${LIBVER}")

@@ -29,15 +29,27 @@ set (CMAKE_CXX_STANDARD 11)
 add_definitions(-std=c++11)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra")
 
+#install to PyBOMBS target prefix if defined
+if(DEFINED ENV{PYBOMBS_PREFIX})
+#IGNORE     set(CMAKE_INSTALL_PREFIX $ENV{PYBOMBS_PREFIX})
+    message(STATUS "PyBOMBS installed GNU Radio. Setting CMAKE_INSTALL_PREFIX to $ENV{PYBOMBS_PREFIX}")
+endif()
+
 #select the release build type by default to get optimization flags
 if(NOT CMAKE_BUILD_TYPE)
-   set(CMAKE_BUILD_TYPE "Release")
+#IGNORE    set(CMAKE_BUILD_TYPE "Release")
    message(STATUS "Build type not specified: defaulting to release.")
 endif(NOT CMAKE_BUILD_TYPE)
-set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "")
+#IGNORE set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE} CACHE STRING "")
 
 #make sure our local CMake Modules path comes first
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
+
+# Set the version information here
+set(VERSION_INFO_MAJOR_VERSION 1)
+set(VERSION_INFO_API_COMPAT    0)
+set(VERSION_INFO_MINOR_VERSION 1)
+set(VERSION_INFO_MAINT_VERSION git)
 
 ########################################################################
 # Compiler specific setup
@@ -139,7 +151,10 @@ endif()
 # caps such as FILTER or FFT) and change the version to the minimum
 # API compatible version required.
 set(GR_REQUIRED_COMPONENTS RUNTIME FFT)
+set(GR_REQUIRED_COMPONENTS RUNTIME FILTER)
 find_package(Gnuradio "3.7.7" REQUIRED)
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
+include(GrVersion)
 
 if(NOT CPPUNIT_FOUND)
     message(FATAL_ERROR "CppUnit required to compile satnogs")
