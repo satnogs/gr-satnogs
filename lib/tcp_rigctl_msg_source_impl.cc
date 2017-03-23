@@ -71,12 +71,12 @@ namespace gr
     {
       message_port_register_out (pmt::mp ("freq"));
       if(d_is_server) {
-        boost::shared_ptr<boost::thread> (
+        d_thread = boost::shared_ptr<boost::thread> (
           new boost::thread (
               boost::bind (&tcp_rigctl_msg_source_impl::rigctl_server, this)));
       }
       else{
-        boost::shared_ptr<boost::thread> (
+        d_thread = boost::shared_ptr<boost::thread> (
           new boost::thread (
               boost::bind (&tcp_rigctl_msg_source_impl::rigctl_client, this)));
       }

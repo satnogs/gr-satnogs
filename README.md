@@ -13,7 +13,7 @@ for decoding signals from various scientific and academic sattelites.
 * libvorbis
 * git
 
-** Optional **
+**Optional**
 * gr-osmocom (for using the flowgraphs with real SDR hardware)
 * libnova (for building the debug blocks)
 
