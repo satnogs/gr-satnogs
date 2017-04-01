@@ -25,30 +25,58 @@
 #include <gnuradio/io_signature.h>
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
+#include <volk/volk.h>
 
 #include "ogg_source_impl.h"
+
+#define PCM_BUF_SIZE 4096
 
 namespace gr {
   namespace satnogs {
 
     ogg_source::sptr
-    ogg_source::make(double samp_rate, const std::string& filename)
+    ogg_source::make(const std::string& filename, size_t channels)
     {
       return gnuradio::get_initial_sptr
-        (new ogg_source_impl(samp_rate, filename));
+        (new ogg_source_impl(filename, channels));
     }
 
     /*
      * The private constructor
      */
-    ogg_source_impl::ogg_source_impl(double samp_rate, const std::string& filename)
-      : gr::sync_block("ogg_source",
-              gr::io_signature::make(0, 0, 0),
-              gr::io_signature::make(1, 1, sizeof(float)))
+    ogg_source_impl::ogg_source_impl (const std::string& filename,
+                                      size_t channels) :
+            gr::sync_block (
+                "ogg_source", gr::io_signature::make (0, 0, 0),
+                gr::io_signature::make (channels, channels, sizeof(float))),
+            d_channels (channels)
     {
-        if(ov_fopen(filename.c_str(), &d_ogvorb_f) < 0) {
-          throw std::invalid_argument("Invalid .ogg file");
-        }
+      if (channels < 1) {
+        throw std::invalid_argument ("At least one output channels should"
+                                     " be specified");
+      }
+
+      if (ov_fopen (filename.c_str (), &d_ogvorb_f) < 0) {
+        throw std::invalid_argument ("Invalid .ogg file");
+      }
+
+      vorbis_info *vi = ov_info(&d_ogvorb_f,-1);
+      if(vi->channels != (int) channels) {
+        throw std::invalid_argument (
+            std::string ("Channels number specified (")
+                + std::to_string (channels)
+                + ") does not match the channels of "
+                    "the ogg stream (" + std::to_string (vi->channels) + ")");
+      }
+
+      const int alignment_multiple = volk_get_alignment() / sizeof(float);
+      set_alignment(std::max(1,alignment_multiple));
+      set_max_noutput_items(PCM_BUF_SIZE);
+
+      d_in_buffer = (int16_t *)volk_malloc(PCM_BUF_SIZE * sizeof(int16_t),
+                                volk_get_alignment());
+      d_out_buffer = (float *)volk_malloc(PCM_BUF_SIZE * sizeof(float),
+                                volk_get_alignment());
     }
 
     /*
@@ -56,6 +84,9 @@ namespace gr {
      */
     ogg_source_impl::~ogg_source_impl()
     {
+      ov_clear(&d_ogvorb_f);
+      volk_free(d_in_buffer);
+      volk_free(d_out_buffer);
     }
 
     int
@@ -63,12 +94,30 @@ namespace gr {
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
     {
-      float *out = (float *) output_items[0];
+      long int ret;
+      int section = 0;
+      int available = (noutput_items / d_channels);
+      int produced = 0;
 
-      // Do <+signal processing+>
+      ret = ov_read (&d_ogvorb_f, (char *)d_in_buffer,
+                     available * sizeof(int16_t),
+                     0, sizeof(int16_t), 1, &section);
+      if(ret < sizeof(int16_t)) {
+        return WORK_DONE;
+      }
 
-      // Tell runtime system how many output items we produced.
-      return noutput_items;
+      /* Convert to float the signed-short audio samples */
+      volk_16i_s32f_convert_32f (d_out_buffer, d_in_buffer, 2 << 15,
+                                 ret / sizeof(int16_t));
+
+      /* De-interleave the available channels */
+      for(int i = 0; i < ret / sizeof(int16_t); i += d_channels, produced++) {
+        for(int chan = 0; chan < d_channels; chan++){
+          ((float *)output_items[chan])[produced] = d_out_buffer[i * d_channels + chan];
+        }
+      }
+
+      return produced;
     }
 
   } /* namespace satnogs */

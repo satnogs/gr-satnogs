@@ -43,11 +43,13 @@ namespace gr
 
       /*!
        *
-       * @param samp_rate the sampling rate
        * @param filename the OGG audio file path
+       * @param number of channels of the OGG stream. If the actual OGG stream
+       * contains a different number of channels than specified an exception
+       * is raised
        */
       static sptr
-      make (double samp_rate, const std::string& filename);
+      make (const std::string& filename, size_t channels = 1);
     };
 
   } // namespace satnogs

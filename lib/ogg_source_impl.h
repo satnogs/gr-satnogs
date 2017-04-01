@@ -33,10 +33,14 @@ namespace gr
     class ogg_source_impl : public ogg_source
     {
     private:
+      const size_t d_channels;
       OggVorbis_File d_ogvorb_f;
 
+      int16_t *d_in_buffer;
+      float *d_out_buffer;
+
     public:
-      ogg_source_impl (double samp_rate, const std::string& filename);
+      ogg_source_impl (const std::string& filename, size_t channels);
       ~ogg_source_impl ();
 
       // Where all the action really happens
