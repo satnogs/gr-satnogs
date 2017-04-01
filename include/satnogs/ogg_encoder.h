@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2017, Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -18,39 +18,38 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_JSON_TO_ECSS_SRC_H
-#define INCLUDED_SATNOGS_JSON_TO_ECSS_SRC_H
+#ifndef INCLUDED_SATNOGS_OGG_ENCODER_H
+#define INCLUDED_SATNOGS_OGG_ENCODER_H
 
 #include <satnogs/api.h>
 #include <gnuradio/sync_block.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
     /*!
-     * \brief <+description of block+>
+     * \brief Ogg encoder and sink block
      * \ingroup satnogs
      *
      */
-    class SATNOGS_API json_to_ecss_src : virtual public gr::block
+    class SATNOGS_API ogg_encoder : virtual public gr::sync_block
     {
-     public:
-      typedef boost::shared_ptr<json_to_ecss_src> sptr;
+    public:
+      typedef boost::shared_ptr<ogg_encoder> sptr;
 
       /*!
-       * \brief Return a shared_ptr to a new instance of satnogs::json_to_ecss_src.
-       *
-       * To avoid accidental use of raw pointers, satnogs::json_to_ecss_src's
-       * constructor is in a private implementation
-       * class. satnogs::json_to_ecss_src::make is the public interface for
-       * creating new instances.
+       * Ogg encoder and sink block.
+       * @param filename filename of the output file
+       * @param samp_rate the sampling rate
+       * @param quality the quality of the output file. [0.1 - 1.0] (worst - best)
        */
-      static sptr make();
-
+      static sptr
+      make (char* filename, double samp_rate, float quality);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_JSON_TO_ECSS_SRC_H */
-
+#endif /* INCLUDED_SATNOGS_OGG_ENCODER_H */

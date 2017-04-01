@@ -2,7 +2,6 @@
 <block>
 	<name>AX.25 Decoder</name>
 	<key>satnogs_ax25_decoder_bm</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.ax25_decoder_bm($addr, $ssid, $promisc, $descrambling, $max_frame_len, $n_sync_flags)</make>
 

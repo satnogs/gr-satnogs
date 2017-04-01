@@ -2,7 +2,6 @@
 <block>
 	<name>CW Matched Filter</name>
 	<key>satnogs_cw_matched_filter_ff</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.cw_matched_filter_ff($sampling_rate, $carrier_freq, $wpm, $energy)</make>
 	<callback>set_new_freq_locked($carrier_freq)</callback>

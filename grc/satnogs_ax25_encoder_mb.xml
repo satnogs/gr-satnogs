@@ -2,7 +2,6 @@
 <block>
 	<name>AX.25 Encoder</name>
 	<key>satnogs_ax25_encoder_mb</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.ax25_encoder_mb($dest_addr, $dest_ssid, $src_addr, $src_ssid, $preamble_len, $postamble_len, $scramble)</make>
 	

@@ -44,13 +44,19 @@ namespace gr
 
       /**
        * Rigctl TCP command accepter
+       *
        * @param addr the address of the interface to listen at
-       * @param port the TCP port to listen for TCP connections
+       * @param port the TCP port to listen or connect
+       * @param serve_mode If set to yes this block, act as a rigctl server.
+       * Otherwise as a rigctl client
+       * @param interval_ms The interval in milliseconds at which the client
+       * request the frequency from the rigctl
        * @param mtu the maximum MTU
        * @return
        */
       static sptr
-      make (const std::string& addr, uint16_t port, size_t mtu = 1500);
+      make (const std::string& addr, uint16_t port, bool server_mode,
+	    size_t interval_ms = 1000, size_t mtu = 1500);
     };
 
   } // namespace satnogs

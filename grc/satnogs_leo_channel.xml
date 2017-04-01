@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <block>
-  <name>whitening</name>
-  <key>satnogs_whitening</key>
-  <category>satnogs</category>
+  <name>LEO Channel</name>
+  <key>satnogs_leo_channel</key>
+  <category>[SatNOGS]/Debug</category>
   <import>import satnogs</import>
-  <make>satnogs.whitening($mask, $seed, $order)</make>
+  <make>satnogs.leo_channel($freq, $freq_shifts_per_sec)</make>
   <!-- Make one 'param' node for every Parameter you want settable from the GUI.
        Sub-nodes:
        * name

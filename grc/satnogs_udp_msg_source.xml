@@ -2,9 +2,8 @@
 <block>
 	<name>UDP Message Source</name>
 	<key>satnogs_udp_msg_source</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
-	<make>satnogs.udp_msg_source($addr, $port, $mtu)</make>
+	<make>satnogs.udp_msg_source($addr, $port, $mtu, $msg_type)</make>
 
 	<param>
 		<name>IP Address</name>
@@ -25,6 +24,24 @@
 		<key>mtu</key>
 		<value>1500</value>
 		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Message Type</name>
+		<key>msg_type</key>
+		<type>enum</type>
+		<option>
+			<name>Raw</name>
+			<key>0</key>
+		</option>
+		<option>
+			<name>uin32_t</name>
+			<key>1</key>
+		</option>
+		<option>
+			<name>in32_t</name>
+			<key>2</key>
+		</option>
 	</param>
 
 	<source>

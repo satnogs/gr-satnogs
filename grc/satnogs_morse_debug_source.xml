@@ -2,7 +2,7 @@
 <block>
 	<name>Morse code Debug Source</name>
 	<key>satnogs_morse_debug_source</key>
-	<category>satnogs</category>
+	<category>[SatNOGS]/Debug</category>
 	<import>import satnogs</import>
 	<make>satnogs.morse_debug_source($debug_seq, $errors, $p)</make>
 

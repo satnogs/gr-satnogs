@@ -2,7 +2,6 @@
 <block>
 	<name>Sine Matched filter</name>
 	<key>satnogs_sine_matched_filter_ff</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.sine_matched_filter_ff($sampling_rate, $sine_freq, $baud, $compute_energy)</make>
 
