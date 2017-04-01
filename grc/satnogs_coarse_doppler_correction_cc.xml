@@ -2,7 +2,6 @@
 <block>
 	<name>Coarse Doppler Correction</name>
 	<key>satnogs_coarse_doppler_correction_cc</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.coarse_doppler_correction_cc($target_freq, $sampling_rate)</make>
 	<callback>set_new_freq_locked($target_freq)</callback>

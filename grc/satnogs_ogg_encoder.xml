@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<block>
+	<name>OGG Encoder</name>
+	<key>satnogs_ogg_encoder</key>
+	<import>import satnogs</import>
+	<make>satnogs.ogg_encoder($filename, $samp_rate, $quality)</make>
+
+	<param>
+		<name>File</name>
+		<key>filename</key>
+		<value></value>
+		<type>file_save</type>
+	</param>
+	
+	<param>
+		<name>Sampling rate</name>
+		<key>samp_rate</key>
+		<type>real</type>
+	</param>
+	
+	<param>
+		<name>Quality</name>
+		<key>quality</key>
+		<value>0.8</value>
+		<type>real</type>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>float</type>
+	</sink>
+</block>

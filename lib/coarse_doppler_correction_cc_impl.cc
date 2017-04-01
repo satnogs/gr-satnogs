@@ -25,6 +25,7 @@
 #include <gnuradio/io_signature.h>
 #include "coarse_doppler_correction_cc_impl.h"
 #include <volk/volk.h>
+#include <satnogs/log.h>
 
 namespace gr
 {
@@ -49,7 +50,7 @@ namespace gr
 			    gr::io_signature::make (1, 1, sizeof(gr_complex))),
 	    d_target_freq (target_freq),
 	    d_samp_rate (sampling_rate),
-	    d_buf_items (std::min (8192UL, (size_t) (d_samp_rate / 4))),
+	    d_buf_items (std::min ((size_t)8192UL, (size_t) (d_samp_rate / 4))),
 	    d_freq_diff (0),
 	    d_nco ()
     {
@@ -86,7 +87,7 @@ namespace gr
       boost::mutex::scoped_lock lock (d_mutex);
       double new_freq;
       new_freq = pmt::to_double (msg);
-      d_freq_diff = d_target_freq - new_freq;
+      d_freq_diff = new_freq - d_target_freq;
       d_nco.set_freq ((2 * M_PI * (-d_freq_diff)) / d_samp_rate);
     }
 

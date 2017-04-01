@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.9'?>
+<?grc format='1' created='3.7.10'?>
 <flow_graph>
   <timestamp>Fri Jul  1 17:53:00 2016</timestamp>
   <block>
@@ -30,7 +30,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(8, 8)</value>
+      <value>(8, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -38,7 +38,7 @@
     </param>
     <param>
       <key>generate_options</key>
-      <value>no_gui</value>
+      <value>qt_gui</value>
     </param>
     <param>
       <key>hier_block_src_path</key>
@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>upsat_transceiver_cli</value>
+      <value>upsat_transceiver_qt</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -66,7 +66,7 @@
     </param>
     <param>
       <key>run_options</key>
-      <value>run</value>
+      <value>prompt</value>
     </param>
     <param>
       <key>run</key>
@@ -78,7 +78,7 @@
     </param>
     <param>
       <key>title</key>
-      <value></value>
+      <value>UPSat Transceiver QT</value>
     </param>
   </block>
   <block>
@@ -93,7 +93,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1048, 13)</value>
+      <value>(1048, 16)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -120,7 +120,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1048, 109)</value>
+      <value>(1048, 112)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -149,7 +149,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(736, 13)</value>
+      <value>(696, 20)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -176,7 +176,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(872, 13)</value>
+      <value>(840, 20)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -203,7 +203,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(168, 925)</value>
+      <value>(168, 932)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -230,7 +230,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 901)</value>
+      <value>(16, 904)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -257,7 +257,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(168, 981)</value>
+      <value>(168, 1004)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -284,7 +284,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(296, 13)</value>
+      <value>(296, 16)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -311,7 +311,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(296, 77)</value>
+      <value>(296, 80)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -339,7 +339,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1368, 13)</value>
+      <value>(1368, 16)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -367,7 +367,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(760, 885)</value>
+      <value>(752, 900)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -395,7 +395,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(760, 773)</value>
+      <value>(760, 776)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -425,7 +425,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(536, 13)</value>
+      <value>(472, 12)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -452,7 +452,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 981)</value>
+      <value>(16, 984)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -487,7 +487,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 762)</value>
+      <value>(16, 760)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -527,7 +527,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1216, 13)</value>
+      <value>(1216, 16)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -562,7 +562,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(792, 228)</value>
+      <value>(792, 232)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -605,7 +605,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(552, 524)</value>
+      <value>(552, 528)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -707,7 +707,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(248, 774)</value>
+      <value>(272, 756)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -801,7 +801,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(248, 846)</value>
+      <value>(272, 844)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -958,7 +958,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(304, 503)</value>
+      <value>(304, 504)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1005,7 +1005,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(184, 60)</value>
+      <value>(184, 64)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1036,7 +1036,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(184, 12)</value>
+      <value>(184, 16)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1067,7 +1067,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(184, 108)</value>
+      <value>(184, 112)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1102,7 +1102,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(592, 221)</value>
+      <value>(592, 224)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1154,7 +1154,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(864, 774)</value>
+      <value>(888, 772)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2101,7 +2101,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(544, 315)</value>
+      <value>(544, 312)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3500,7 +3500,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 438)</value>
+      <value>(64, 440)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3623,7 +3623,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1080, 359)</value>
+      <value>(1080, 360)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3677,6 +3677,10 @@ we shift the LO a little further</value>
       <value>1.0</value>
     </param>
     <param>
+      <key>axislabels</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>bw</key>
       <value>samp_rate_rx/decimation_rx</value>
     </param>
@@ -3702,7 +3706,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>0</value>
+      <value>1</value>
     </param>
     <param>
       <key>fftsize</key>
@@ -3710,7 +3714,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(312, 406)</value>
+      <value>(312, 408)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -3945,12 +3949,243 @@ we shift the LO a little further</value>
       <value>firdes.WIN_BLACKMAN_hARRIS</value>
     </param>
     <param>
+      <key>label</key>
+      <value>Relative Gain</value>
+    </param>
+    <param>
       <key>ymax</key>
       <value>0</value>
     </param>
     <param>
       <key>ymin</key>
       <value>-140</value>
+    </param>
+    <param>
+      <key>units</key>
+      <value>dB</value>
+    </param>
+  </block>
+  <block>
+    <key>qtgui_waterfall_sink_x</key>
+    <param>
+      <key>axislabels</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>bw</key>
+      <value>50e3</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>fc</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fftsize</key>
+      <value>1024</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(296, 628)</value>
+    </param>
+    <param>
+      <key>gui_hint</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>grid</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>qtgui_waterfall_sink_x_0</value>
+    </param>
+    <param>
+      <key>int_max</key>
+      <value>10</value>
+    </param>
+    <param>
+      <key>int_min</key>
+      <value>-140</value>
+    </param>
+    <param>
+      <key>legend</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>alpha1</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color1</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label1</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha10</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color10</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label10</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha2</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color2</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label2</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha3</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color3</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label3</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha4</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color4</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label4</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha5</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color5</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label5</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha6</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color6</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label6</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha7</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color7</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label7</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha8</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color8</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label8</key>
+      <value></value>
+    </param>
+    <param>
+      <key>alpha9</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>color9</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>label9</key>
+      <value></value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>name</key>
+      <value>""</value>
+    </param>
+    <param>
+      <key>nconnections</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>showports</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>freqhalf</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>update_time</key>
+      <value>0.10</value>
+    </param>
+    <param>
+      <key>wintype</key>
+      <value>firdes.WIN_BLACKMAN_hARRIS</value>
     </param>
   </block>
   <block>
@@ -3969,7 +4204,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(160, 774)</value>
+      <value>(168, 756)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4012,7 +4247,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(648, 870)</value>
+      <value>(648, 900)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4067,7 +4302,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1312, 586)</value>
+      <value>(1312, 584)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4122,7 +4357,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1080, 562)</value>
+      <value>(1080, 560)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4200,7 +4435,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(728, 670)</value>
+      <value>(728, 672)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4243,7 +4478,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(728, 598)</value>
+      <value>(728, 600)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4288,7 +4523,7 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(0, 214)</value>
+      <value>(16, 208)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4308,6 +4543,10 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>msg_type</key>
       <value>0</value>
     </param>
     <param>
@@ -4355,7 +4594,7 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(304, 151)</value>
+      <value>(304, 152)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4422,7 +4661,7 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(160, 846)</value>
+      <value>(168, 844)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4465,7 +4704,7 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(648, 774)</value>
+      <value>(648, 776)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4508,7 +4747,7 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(352, 846)</value>
+      <value>(552, 780)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4580,6 +4819,12 @@ similar to produce dynamic payloads.</value>
   <connection>
     <source_block_id>freq_xlating_fir_filter_xxx_0</source_block_id>
     <sink_block_id>qtgui_freq_sink_x_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>freq_xlating_fir_filter_xxx_0</source_block_id>
+    <sink_block_id>qtgui_waterfall_sink_x_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
