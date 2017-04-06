@@ -39,7 +39,6 @@ list(APPEND satnogs_debug_sources
 	leo_channel_impl.cc 
 )
 list(APPEND satnogs_sources
-    cw_matched_filter_ff_impl.cc
     morse_tree.cc
     morse_decoder_impl.cc
     multi_format_msg_sink_impl.cc

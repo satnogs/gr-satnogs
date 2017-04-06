@@ -28,7 +28,6 @@ list(APPEND debug_blocks
 
 list(APPEND enabled_blocks
     satnogs_block_tree.xml
-    satnogs_cw_matched_filter_ff.xml
     satnogs_morse_decoder.xml
     satnogs_multi_format_msg_sink.xml
     satnogs_ogg_encoder.xml 

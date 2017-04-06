@@ -31,7 +31,6 @@ list(APPEND HEADER_FILES
     api.h
     ax25.h
     config.h
-    cw_matched_filter_ff.h
     log.h
     morse_tree.h
     morse.h
