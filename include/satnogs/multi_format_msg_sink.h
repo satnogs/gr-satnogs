@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017, Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -44,12 +44,24 @@ namespace gr
 
       /*!
        * \brief Block accepting clear text messages from various decoders.
-       * Its purpose is to forward these messages at other services, programs,
-       * stdout, etc,
+       * Its purpose is to either print these messages to stdout or save them
+       * in text format in a file.
        *
+       * Depending on format parameter, the contents of each message are
+       * converted to hexademical, binary or ASCII format.
+       *
+       * @param format the format that will used to display the messages.
+       * 0: Clear Text 1: Hexademical 2: Binary
+       * @param timestamp if set, a ISO 8601 timestamp is inserted in front of
+       * each message
+       * @param out_stdout if set, the messages are displayed in the stdout.
+       * Otherwise messages are saved in a text file
+       * @param filepath specifies the file path of the text file
        */
       static sptr
-      make (size_t format);
+      make (size_t format, bool timestamp = true,
+            bool out_stdout = true,
+            const std::string& filepath = "");
     };
 
   } // namespace satnogs

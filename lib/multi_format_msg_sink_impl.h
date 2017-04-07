@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017, Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,6 +22,7 @@
 #define INCLUDED_SATNOGS_MULTI_FORMAT_MSG_SINK_IMPL_H
 
 #include <satnogs/multi_format_msg_sink.h>
+#include <fstream>
 
 namespace gr
 {
@@ -32,12 +33,20 @@ namespace gr
     {
     private:
       void
-      msg_handler(pmt::pmt_t msg);
+      msg_handler_stdout (pmt::pmt_t msg);
+      void
+      msg_handler_file (pmt::pmt_t msg);
 
-      size_t d_format;
+      const size_t d_format;
+      const bool d_timestamp;
+      const bool d_stdout;
+      std::ofstream d_fos;
 
     public:
-      multi_format_msg_sink_impl (size_t format);
+      multi_format_msg_sink_impl (size_t format, bool timestamp,
+                                  bool out_stdout, const std::string& filepath);
+
+      ~multi_format_msg_sink_impl ();
 
     };
 
