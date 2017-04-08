@@ -63,5 +63,6 @@ if(${INCLUDE_DEBUG_BLOCKS})
 endif()
 install(FILES
     ${HEADER_FILES}
-    ogg_source.h DESTINATION include/satnogs
+    ogg_source.h
+    noaa_apt_sync.h DESTINATION include/satnogs
 )

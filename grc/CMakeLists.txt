@@ -49,5 +49,6 @@ if(${INCLUDE_DEBUG_BLOCKS})
 endif()
 install(FILES
 	${enabled_blocks}
-    satnogs_ogg_source.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_ogg_source.xml
+    satnogs_noaa_apt_sync.xml DESTINATION share/gnuradio/grc/blocks
 )

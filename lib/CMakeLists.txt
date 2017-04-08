@@ -27,6 +27,7 @@ include_directories(
     ${VOLK_INCLUDE_DIRS}
     ${VORBIS_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
+    ${PNG_INCLUDE_DIR}
 )
 
 link_directories(${Boost_LIBRARY_DIRS})
@@ -60,7 +61,8 @@ list(APPEND satnogs_sources
     ax25_decoder_bm_impl.cc
     qb50_deframer_impl.cc
     waterfall_sink_impl.cc
-    ogg_source_impl.cc)
+    ogg_source_impl.cc
+    noaa_apt_sync_impl.cc)
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND satnogs_sources ${satnogs_debug_sources})
@@ -81,6 +83,7 @@ target_link_libraries(gnuradio-satnogs
     ${NOVA_LIBRARIES}
     ${VOLK_LIBRARIES}
     ${OGGVORBIS_LIBRARIES}
+    ${PNG_LIBRARIES}
 )
     
 set_target_properties(gnuradio-satnogs PROPERTIES DEFINE_SYMBOL "gnuradio_satnogs_EXPORTS")
