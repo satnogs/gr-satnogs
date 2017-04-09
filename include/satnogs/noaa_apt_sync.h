@@ -703,7 +703,7 @@ namespace gr {
        * class. satnogs::noaa_apt_sync::make is the public interface for
        * creating new instances.
        */
-      static sptr make( const char *filename, const char *filename_png, size_t width, size_t height);
+      static sptr make( const char *filename, const char *filename_png, size_t width, size_t height, bool split);
     };
 
   } // namespace satnogs

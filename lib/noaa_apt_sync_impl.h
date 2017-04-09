@@ -701,9 +701,10 @@ namespace gr {
       const char* d_filename_png;
       size_t d_width;
       size_t d_height;
+      bool d_split;
 
      public:
-      noaa_apt_sync_impl( const char *filename, const char *filename_png, size_t width, size_t height);
+      noaa_apt_sync_impl( const char *filename, const char *filename_png, size_t width, size_t height, bool split);
       ~noaa_apt_sync_impl();
       void produce_image();
 
