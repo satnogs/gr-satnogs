@@ -33,7 +33,7 @@
 #include "satnogs/waterfall_sink.h"
 #include "satnogs/ogg_encoder.h"
 #include "satnogs/ogg_source.h"
-#include "satnogs/noaa_apt_sync.h"
+#include "satnogs/noaa_apt_sink.h"
 %}
 
 
@@ -104,5 +104,5 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, waterfall_sink);
 GR_SWIG_BLOCK_MAGIC2(satnogs, ogg_encoder);
 %include "satnogs/ogg_source.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, ogg_source);
-%include "satnogs/noaa_apt_sync.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, noaa_apt_sync);
+%include "satnogs/noaa_apt_sink.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, noaa_apt_sink);

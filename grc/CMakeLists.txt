@@ -50,5 +50,5 @@ endif()
 install(FILES
 	${enabled_blocks}
     satnogs_ogg_source.xml
-    satnogs_noaa_apt_sync.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_noaa_apt_sink.xml DESTINATION share/gnuradio/grc/blocks
 )

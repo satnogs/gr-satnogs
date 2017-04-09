@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<block>
+  <name>NOAA APT Sink</name>
+  <key>satnogs_noaa_apt_sink</key>
+  <category>[satnogs]</category>
+  <import>import satnogs</import>
+  <make>satnogs.noaa_apt_sink($*filename,$*filename_png, $width, $height, $split, $sync)</make>
+  <param>
+ 		<name>Output Data Filename</name>
+		<key>filename</key>
+		<value></value>
+		<type>file_save</type>
+  </param>
+   <param>
+ 		<name>Output PNG Filename</name>
+		<key>filename_png</key>
+		<value></value>
+		<type>file_save</type>
+  </param>
+   <param>
+ 		<name>PNG width</name>
+		<key>width</key>
+		<value>2080</value>
+		<type>int</type>
+  </param>  
+   <param>
+ 		<name>PNG height</name>
+		<key>height</key>
+		<value>1500</value>
+		<type>int</type>
+  </param>  
+	<param>
+		<name>Split Images</name>
+		<key>split</key>
+		<value>False</value>
+		<type>bool</type>
+		<hide>part</hide>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+	</param>
+	<param>
+		<name>Synchronize</name>
+		<key>sync</key>
+		<value>False</value>
+		<type>bool</type>
+		<hide>part</hide>
+		<option>
+			<name>Yes</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>True</key>
+		</option>
+	</param>
+  <sink>
+    <name>in</name>
+    <type>float</type>
+  </sink>
+
+</block>

@@ -64,5 +64,5 @@ endif()
 install(FILES
     ${HEADER_FILES}
     ogg_source.h
-    noaa_apt_sync.h DESTINATION include/satnogs
+    noaa_apt_sink.h DESTINATION include/satnogs
 )
