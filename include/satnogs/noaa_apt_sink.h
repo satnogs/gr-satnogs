@@ -703,12 +703,15 @@ namespace gr
        * choose between deriving a single PNG file for each
        * width x length pixels or two PNG files corresponding to
        * each one of the two different spectrum images contained
-       * in a NOAA APT transmission. Further, this block performs
-       * normalization on the input float values based on the max
-       * and min values observed in the stream. Adding to that,
-       * the user has the option to synchronize to the first of the
+       * in a NOAA APT transmission. The notation 'left' and 'right'
+       * is with respect to the original image sent by the satellite.
+       * Further, this block performs normalization on the input
+       * float values based on the max and min values observed in the stream.
+       * Adding to that, the user has the option to synchronize to the first of the
        * two training sequences used by the NOAA APT protocol so that
-       * the two images are displayed one next to the other.
+       * the two images are displayed one next to the other. The user
+       * can also select to rotate the image 180 degrees in case the captured one
+       * is upside down.
        *
        *
        * @param filename_png the base filename of the output PNG file(s)
@@ -718,11 +721,12 @@ namespace gr
        * in a NOAA APT transmission
        * @param sync user option for synchronizing to the first of the
        * two training sequences
+       * @param flip user option to rotate the image(s) 180 degrees
        *
        */
       static sptr
       make (const char *filename_png, size_t width,
-	    size_t height, bool split, bool sync);
+	    size_t height, bool split, bool sync, bool flip);
     };
 
   } // namespace satnogs

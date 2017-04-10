@@ -709,20 +709,25 @@ namespace gr
       uint8_t* d_row_buffer;
       png_byte d_color_type;
       png_byte d_bit_depth;
-      FILE** d_png_fn;
+      FILE** d_png_fd;
       size_t d_images_per_frame;
       size_t d_row_counter;
       size_t d_num_images;
       size_t d_current_buffered_samples;
+      std::vector<std::string> d_png_fn;
+      bool d_flip;
+
 
     public:
       noaa_apt_sink_impl (const char *filename_png,
-			  size_t width, size_t height, bool split, bool sync);
+			  size_t width, size_t height, bool split, bool sync, bool flip);
       ~noaa_apt_sink_impl ();
       void
       write_png_row ();
       void
       init_png ();
+      void
+      flip_image();
 
       // Where all the action really happens
       int
