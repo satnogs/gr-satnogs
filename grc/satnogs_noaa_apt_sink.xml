@@ -4,13 +4,7 @@
   <key>satnogs_noaa_apt_sink</key>
   <category>[satnogs]</category>
   <import>import satnogs</import>
-  <make>satnogs.noaa_apt_sink($*filename,$*filename_png, $width, $height, $split, $sync)</make>
-  <param>
- 		<name>Output Data Filename</name>
-		<key>filename</key>
-		<value></value>
-		<type>file_save</type>
-  </param>
+  <make>satnogs.noaa_apt_sink($*filename_png, $width, $height, $split, $sync)</make>
    <param>
  		<name>Output PNG Filename</name>
 		<key>filename_png</key>

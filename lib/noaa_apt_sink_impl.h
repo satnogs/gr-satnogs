@@ -679,6 +679,8 @@
 #define INCLUDED_SATNOGS_NOAA_APT_SINK_IMPL_H
 
 #include <satnogs/noaa_apt_sink.h>
+#define PNG_DEBUG 3
+#include <png.h>
 
 namespace gr
 {
@@ -694,23 +696,33 @@ namespace gr
       bool d_sync_found;
       float d_max_value;
       float d_min_value;
-      const char* d_filename;
-      FILE* d_out;
       size_t d_norm_window;
       size_t d_sample_counter;
-      float d_temp_max_value;
-      float d_temp_min_value;
       const char* d_filename_png;
       size_t d_width;
       size_t d_height;
       bool d_split;
+      size_t d_history_length;
+      bool d_synchronize_opt;
+      png_structp* d_png_ptr;
+      png_infop* d_info_ptr;
+      uint8_t* d_row_buffer;
+      png_byte d_color_type;
+      png_byte d_bit_depth;
+      FILE** d_png_fn;
+      size_t d_images_per_frame;
+      size_t d_row_counter;
+      size_t d_num_images;
+      size_t d_current_buffered_samples;
 
     public:
-      noaa_apt_sink_impl (const char *filename, const char *filename_png,
+      noaa_apt_sink_impl (const char *filename_png,
 			  size_t width, size_t height, bool split, bool sync);
       ~noaa_apt_sink_impl ();
       void
-      produce_image ();
+      write_png_row ();
+      void
+      init_png ();
 
       // Where all the action really happens
       int

@@ -682,9 +682,6 @@
 #include <gnuradio/io_signature.h>
 #include "noaa_apt_sink_impl.h"
 
-#define PNG_DEBUG 3
-#include <png.h>
-
 #include <cmath>
 
 namespace gr
@@ -693,18 +690,17 @@ namespace gr
   {
 
     noaa_apt_sink::sptr
-    noaa_apt_sink::make (const char *filename, const char *filename_png,
+    noaa_apt_sink::make (const char *filename_png,
 			 size_t width, size_t height, bool split, bool sync)
     {
       return gnuradio::get_initial_sptr (
-	  new noaa_apt_sink_impl (filename, filename_png, width, height, split, sync));
+	  new noaa_apt_sink_impl (filename_png, width, height, split, sync));
     }
 
     /*
      * The private constructor
      */
-    noaa_apt_sink_impl::noaa_apt_sink_impl (const char *filename,
-					    const char *filename_png,
+    noaa_apt_sink_impl::noaa_apt_sink_impl (const char *filename_png,
 					    size_t width, size_t height,
 					    bool split,
 					    bool sync) :
@@ -717,246 +713,149 @@ namespace gr
 	    d_sync_found (sync),
 	    d_max_value (-1),
 	    d_min_value (100),
-	    d_filename (filename),
 	    d_norm_window (2048),
 	    d_sample_counter (0),
-	    d_temp_max_value (-1),
-	    d_temp_min_value (100),
 	    d_filename_png (filename_png),
 	    d_width (width),
 	    d_height (height),
-	    d_split (split)
+	    d_split (split),
+	    d_history_length(28),
+	    d_synchronize_opt(sync),
+	    d_row_counter(0),
+	    d_num_images(0),
+	    d_current_buffered_samples(0)
+
     {
-      d_out = fopen (filename, "wb");
+      set_history(d_history_length);
+      d_color_type = PNG_COLOR_TYPE_GRAY;
+      d_bit_depth = 8;
+      d_row_buffer = (uint8_t*)malloc(d_width*sizeof(uint8_t));
+      init_png();
+    }
+
+    void
+    noaa_apt_sink_impl::init_png(){
+      if (d_split) {
+	d_images_per_frame = 2;
+	d_png_fn = (FILE**) malloc (2 * sizeof(FILE*));
+	d_png_ptr = (png_structp*) malloc (2 * sizeof(png_structp));
+	d_info_ptr = (png_infop*) malloc (2 * sizeof(png_infop));
+	std::string fn (d_filename_png);
+	std::string fn_left (d_filename_png);
+	std::string fn_right (d_filename_png);
+	std::size_t found = fn.find (".");
+	if (d_num_images == 0) {
+	  if (found == std::string::npos) {
+	    fn_left.append ("_left");
+	    fn_right.append ("_right");
+	  }
+	  else {
+	    fn_left.insert (found, "_left");
+	    fn_right.insert (found, "_right");
+	  }
+	}
+	else {
+	  if (found == std::string::npos) {
+	    fn_left.append (std::to_string (d_num_images).append ("_left"));
+	    fn_right.append (std::to_string (d_num_images).append ("_right"));
+	  }
+	  else {
+	    fn_left.insert (found,
+			    std::to_string (d_num_images).append ("_left"));
+	    fn_right.insert (found,
+			     std::to_string (d_num_images).append ("_right"));
+	  }
+	}
+	d_png_fn[0] = fopen (fn_left.c_str (), "wb");
+	d_png_fn[1] = fopen (fn_right.c_str (), "wb");
+	for (size_t i = 0; i < d_images_per_frame; i++) {
+	  d_png_ptr[i] = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL,
+	  NULL,
+						  NULL);
+	  d_info_ptr[i] = png_create_info_struct (d_png_ptr[i]);
+	  png_init_io (d_png_ptr[i], d_png_fn[i]);
+	  png_set_IHDR (d_png_ptr[i], d_info_ptr[i], d_width / 2, d_height,
+			d_bit_depth, d_color_type,
+			PNG_INTERLACE_NONE,
+			PNG_COMPRESSION_TYPE_BASE,
+			PNG_FILTER_TYPE_BASE);
+
+	  png_write_info (d_png_ptr[i], d_info_ptr[i]);
+	}
+      }
+      else {
+	d_images_per_frame = 1;
+	d_png_fn = (FILE**) malloc (sizeof(FILE*));
+	d_png_ptr = (png_structp*) malloc (sizeof(png_structp));
+	d_info_ptr = (png_infop*) malloc (sizeof(png_infop));
+	if (d_num_images == 0) {
+	  d_png_fn[0] = fopen (d_filename_png, "wb");
+	}
+	else {
+	  std::string fn (d_filename_png);
+	  std::size_t found = fn.find (".");
+	  if (found == std::string::npos)
+	    fn.append (std::to_string (d_num_images));
+	  else {
+	    fn.insert (found, std::to_string (d_num_images));
+	  }
+	  d_png_fn[0] = fopen (fn.c_str (), "wb");
+	}
+
+	d_png_ptr[0] = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL,
+	NULL,
+						NULL);
+	d_info_ptr[0] = png_create_info_struct (d_png_ptr[0]);
+	png_init_io (d_png_ptr[0], d_png_fn[0]);
+	png_set_IHDR (d_png_ptr[0], d_info_ptr[0], d_width, d_height,
+		      d_bit_depth, d_color_type,
+		      PNG_INTERLACE_NONE,
+		      PNG_COMPRESSION_TYPE_BASE,
+		      PNG_FILTER_TYPE_BASE);
+	png_write_info (d_png_ptr[0], d_info_ptr[0]);
+      }
+    }
+
+    void
+    noaa_apt_sink_impl::write_png_row (){
+      if (d_row_counter == d_height) {
+	d_row_counter =0;
+	d_num_images++;
+	for (size_t i = 0; i < d_images_per_frame; i++) {
+	  png_write_end (d_png_ptr[i], NULL);
+	  fclose (d_png_fn[i]);
+	}
+	init_png();
+      }
+      if (d_split) {
+	for (size_t i = 0; i < d_images_per_frame; i++) {
+	  png_write_row (d_png_ptr[i], d_row_buffer + i*d_width/2);
+	}
+      }
+      else{
+	png_write_row(d_png_ptr[0], d_row_buffer);
+      }
+      d_row_counter++;
     }
 
     noaa_apt_sink_impl::~noaa_apt_sink_impl ()
     {
-      fclose (d_out);
-      produce_image ();
-    }
-    void
-    noaa_apt_sink_impl::produce_image ()
-    {
-      std::ifstream file (d_filename, std::ios::binary | std::ios::ate);
-      std::streamsize size = file.tellg ();
-      if (size == 0)
-    	  return;
-      file.seekg (0, std::ios::beg);
-      std::vector<char> buffer (size);
-      png_structp png_ptr;
-      png_infop info_ptr;
-      png_byte color_type;
-      png_byte bit_depth;
-      png_bytep * row_pointers;
-      png_bytep * row_pointers_left;
-      png_bytep * row_pointers_right;
-      size_t num_pictures = 0;
-      size_t height = size / d_width;
-      size_t picture_modulo = 0;
-      size_t row_modulo = 0;
-      if (height > d_height) {
-	num_pictures = height / d_height;
-	if (height % d_height > 0) {
-	  num_pictures++;
-	  picture_modulo = height % d_height;
+      if(d_current_buffered_samples < d_width){
+	memset(d_row_buffer + d_current_buffered_samples,0, (d_width - d_current_buffered_samples)*sizeof(uint8_t));
+      }
+      write_png_row();
+      if(d_row_counter < d_height){
+	size_t row_count = d_row_counter;
+	for(size_t i=0; i< d_height - row_count; i++){
+	  memset(d_row_buffer, 0, d_width*sizeof(uint8_t));
+	  write_png_row();
 	}
       }
-      else {
-	num_pictures = 1;
+      for (size_t i = 0; i < d_images_per_frame; i++) {
+	png_write_end (d_png_ptr[i], NULL);
+	fclose (d_png_fn[i]);
       }
-      if (size % d_width > 0) {
-	row_modulo = size % d_width;
-      }
-      if (file.read (buffer.data (), size)) {
-	for (size_t image = 0; image < num_pictures; image++) {
-	  if (d_split == false) {
-	    FILE *fp;
-	    std::string fn;
-	    if (num_pictures == 1) {
-	      fp = fopen (d_filename_png, "wb");
-	    }
-	    else {
-	      std::string fn (d_filename_png);
-	      std::size_t found = fn.find (".");
-	      if (found == std::string::npos)
-		fn.append (std::to_string (image));
-	      else {
-		fn.insert (found, std::to_string (image));
-	      }
-	      fp = fopen (fn.c_str (), "wb");
 
-	      if ((image == num_pictures - 1) && (picture_modulo > 0)) {
-		height = picture_modulo;
-	      }
-	      else {
-		height = d_height;
-	      }
-	    }
-	    if (!fp)
-	      printf ("Error opening file\n");
-	    png_ptr = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL,
-	    NULL,
-					       NULL);
-
-	    if (!png_ptr)
-	      printf ("[write_png_file] png_create_write_struct failed");
-
-	    info_ptr = png_create_info_struct (png_ptr);
-	    if (!info_ptr)
-	      printf ("[write_png_file] png_create_info_struct failed");
-
-	    png_init_io (png_ptr, fp);
-	    png_set_IHDR (png_ptr, info_ptr, d_width, height, 8,
-	    PNG_COLOR_TYPE_GRAY,
-			  PNG_INTERLACE_NONE,
-			  PNG_COMPRESSION_TYPE_BASE,
-			  PNG_FILTER_TYPE_BASE);
-
-	    png_write_info (png_ptr, info_ptr);
-	    row_pointers = (png_bytep*) malloc (sizeof(png_bytep) * height);
-	    for (size_t y = 0; y < height; y++) {
-	      row_pointers[y] = (png_byte*) malloc (
-		  png_get_rowbytes (png_ptr, info_ptr));
-	      if ((image == num_pictures - 1) && (y == height - 1)
-		  && (row_modulo != 0)) {
-		memcpy (
-		    row_pointers[y],
-		    buffer.data () + image * d_width * d_height + y * d_width,
-		    row_modulo * sizeof(uint8_t));
-		memset (row_pointers[y] + row_modulo, 0,
-			(d_width - row_modulo) * sizeof(uint8_t));
-	      }
-	      else {
-		memcpy (
-		    row_pointers[y],
-		    buffer.data () + image * d_width * d_height + y * d_width,
-		    d_width * sizeof(uint8_t));
-	      }
-	    }
-	    png_write_image (png_ptr, row_pointers);
-	    png_write_end (png_ptr, NULL);
-	    fclose (fp);
-	  }
-	  else {
-	    png_structp png_ptr_left;
-	    png_structp png_ptr_right;
-	    png_infop info_ptr_left;
-	    png_infop info_ptr_right;
-	    FILE *fp_left;
-	    FILE *fp_right;
-	    std::string fn (d_filename_png);
-	    std::string fn_left (d_filename_png);
-	    std::string fn_right (d_filename_png);
-	    if (num_pictures == 1) {
-	      std::size_t found = fn.find (".");
-	      if (found == std::string::npos) {
-		fn_left.append ("_left");
-		fn_right.append ("_right");
-	      }
-	      else {
-		fn_left.insert (found, "_left");
-		fn_right.insert (found, "_right");
-	      }
-	    }
-	    else {
-	      std::size_t found = fn.find (".");
-	      if (found == std::string::npos) {
-		fn_left.append (std::to_string (image).append ("_left"));
-		fn_right.append (std::to_string (image).append ("_right"));
-	      }
-	      else {
-		fn_left.insert (found, std::to_string (image).append ("_left"));
-		fn_right.insert (found,
-				 std::to_string (image).append ("_right"));
-	      }
-	      if ((image == num_pictures - 1) && (picture_modulo > 0)) {
-		height = picture_modulo;
-	      }
-	      else {
-		height = d_height;
-	      }
-	    }
-	    fp_left = fopen (fn_left.c_str (), "wb");
-	    fp_right = fopen (fn_right.c_str (), "wb");
-	    if ((!fp_left) && (!fp_right))
-	      printf ("Error opening file\n");
-	    png_ptr_left = png_create_write_struct (PNG_LIBPNG_VER_STRING, NULL,
-	    NULL,
-						    NULL);
-	    png_ptr_right = png_create_write_struct (PNG_LIBPNG_VER_STRING,
-						     NULL,
-						     NULL,
-						     NULL);
-
-	    if ((!png_ptr_left) && (!png_ptr_right))
-	      printf ("[write_png_file] png_create_write_struct failed");
-
-	    info_ptr_left = png_create_info_struct (png_ptr_left);
-	    info_ptr_right = png_create_info_struct (png_ptr_right);
-	    if ((!info_ptr_left) && (!info_ptr_right))
-	      printf ("[write_png_file] png_create_info_struct failed");
-	      printf ("[write_png_file] Error during init_io");
-
-	    png_init_io (png_ptr_left, fp_left);
-	    png_init_io (png_ptr_right, fp_right);
-
-	    png_set_IHDR (png_ptr_left, info_ptr_left, d_width / 2, height, 8,
-	    PNG_COLOR_TYPE_GRAY,
-			  PNG_INTERLACE_NONE,
-			  PNG_COMPRESSION_TYPE_BASE,
-			  PNG_FILTER_TYPE_BASE);
-	    png_set_IHDR (png_ptr_right, info_ptr_right, d_width / 2, height, 8,
-	    PNG_COLOR_TYPE_GRAY,
-			  PNG_INTERLACE_NONE,
-			  PNG_COMPRESSION_TYPE_BASE,
-			  PNG_FILTER_TYPE_BASE);
-
-	    png_write_info (png_ptr_left, info_ptr_left);
-	    png_write_info (png_ptr_right, info_ptr_right);
-	    row_pointers_left = (png_bytep*) malloc (
-		sizeof(png_bytep) * height);
-	    row_pointers_right = (png_bytep*) malloc (
-		sizeof(png_bytep) * height);
-	    for (size_t y = 0; y < height; y++) {
-	      row_pointers_left[y] = (png_byte*) malloc (
-		  (d_width / 2) * sizeof(png_byte));
-	      row_pointers_right[y] = (png_byte*) malloc (
-		  (d_width / 2) * sizeof(png_byte));
-	      if ((image == num_pictures - 1) && (y == height - 1)
-		  && (row_modulo != 0)) {
-		if (row_modulo < (d_width / 2)) {
-		  memcpy (
-		      row_pointers_left[y],
-		      buffer.data () + image * d_width * d_height + y * d_width,
-		      row_modulo * sizeof(uint8_t));
-		  memset (row_pointers_left[y] + row_modulo, 0,
-			  ((d_width / 2) - row_modulo) * sizeof(uint8_t));
-		  memset (row_pointers_right[y] + row_modulo, 0,
-			  (d_width / 2) * sizeof(uint8_t));
-		}
-	      }
-	      else {
-		memcpy (
-		    row_pointers_left[y],
-		    buffer.data () + image * d_width * d_height + y * d_width,
-		    (d_width / 2) * sizeof(uint8_t));
-		memcpy (
-		    row_pointers_right[y],
-		    buffer.data () + image * d_width * d_height + y * d_width
-			+ (d_width / 2),
-		    (d_width / 2) * sizeof(uint8_t));
-	      }
-	    }
-	    png_write_image (png_ptr_left, row_pointers_left);
-	    png_write_image (png_ptr_right, row_pointers_right);
-	    png_write_end (png_ptr_left, NULL);
-	    png_write_end (png_ptr_right, NULL);
-	    fclose (fp_left);
-	    fclose (fp_right);
-	  }
-	}
-      }
     }
     int
     noaa_apt_sink_impl::work (int noutput_items,
@@ -968,21 +867,16 @@ namespace gr
       float sample;
       long int r;
 
-      for (int i = 0; i < noutput_items; i++) {
+      for (size_t i = d_history_length - 1; i < noutput_items + d_history_length - 1; i++) {
 	if (d_sync_found) {
-	  if (d_sample_counter < d_norm_window) {
-	    if (in[i] < d_temp_min_value)
-	      d_temp_min_value = in[i];
-	    if (in[i] > d_temp_max_value)
-	      d_temp_max_value = in[i];
-	    d_sample_counter++;
-	  }
-	  else {
-	    d_min_value = d_temp_min_value;
-	    d_max_value = d_temp_max_value;
-	    d_temp_min_value = 100;
-	    d_temp_max_value = -1;
-	    d_sample_counter = 0;
+	  if (d_synchronize_opt) {
+	    if(d_sample_counter < d_norm_window){
+	      if (in[i] < d_min_value)
+		d_min_value = in[i];
+	      if (in[i] > d_max_value)
+		d_max_value = in[i];
+	      d_sample_counter++;
+	    }
 	  }
 	  sample = ((in[i] - d_min_value) / (d_max_value - d_min_value));
 	  sample = 255 * sample;
@@ -991,7 +885,12 @@ namespace gr
 	    r = 0;
 	  else if (r > 255)
 	    r = 255;
-	  fwrite (&r, sizeof(unsigned char), 1, d_out);
+	  d_row_buffer[d_current_buffered_samples] = (uint8_t)r;
+	  d_current_buffered_samples++;
+	  if(d_current_buffered_samples == d_width){
+	    write_png_row();
+	    d_current_buffered_samples=0;
+	  }
 	}
 	else {
 	  if (in[i] < d_min_value)
@@ -1002,6 +901,27 @@ namespace gr
 	  d_constructed_word = (d_constructed_word << 1) | b;
 	  if (d_constructed_word == d_sync_word) {
 	    d_sync_found = true;
+	    d_max_value = -1;
+	    d_min_value = 100;
+	    for (size_t j = i - (d_history_length - 1); j <= i; j++) {
+	      if (in[j] < d_min_value)
+		d_min_value = in[i];
+	      if (in[j] > d_max_value)
+		d_max_value = in[j];
+	      sample = ((in[i] - d_min_value) / (d_max_value - d_min_value));
+	      sample = 255 * sample;
+	      r = (long int) rint (sample);
+	      if (r < 0)
+		r = 0;
+	      else if (r > 255)
+		r = 255;
+	      d_row_buffer[d_current_buffered_samples] = (uint8_t)r;
+	      d_current_buffered_samples++;
+	      if (d_current_buffered_samples == d_width) {
+		write_png_row ();
+		d_current_buffered_samples = 0;
+	      }
+	    }
 	  }
 	}
       }

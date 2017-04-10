@@ -699,9 +699,7 @@ namespace gr
       /*!
        * Accepts a stream of floats in the range [0,1] which
        * correspond to one sample per symbol (pixel) and
-       * outputs a file containing the grayscale pixels of
-       * the resulting image in the form of one byte per pixel.
-       * The PNG image is also produced by this block. The user can
+       * outputs a grayscale PNG image. The user can
        * choose between deriving a single PNG file for each
        * width x length pixels or two PNG files corresponding to
        * each one of the two different spectrum images contained
@@ -713,7 +711,6 @@ namespace gr
        * the two images are displayed one next to the other.
        *
        *
-       * @param filename the filename of the byte output file
        * @param filename_png the base filename of the output PNG file(s)
        * @param width the width of the image in the APT transmission
        * @param height the height of the image in the APT transmission
@@ -724,7 +721,7 @@ namespace gr
        *
        */
       static sptr
-      make (const char *filename, const char *filename_png, size_t width,
+      make (const char *filename_png, size_t width,
 	    size_t height, bool split, bool sync);
     };
 
