@@ -31,20 +31,26 @@ namespace gr
     class tcp_rigctl_msg_source_impl : public tcp_rigctl_msg_source
     {
     private:
-      const std::string d_iface_addr;
+      const std::string d_ip_addr;
       const uint16_t d_port;
+      const bool d_is_server;
+      const size_t d_interval_ms;
       const size_t d_mtu;
       bool d_running;
       boost::shared_ptr<boost::thread> d_thread;
 
       void
-      tcp_msg_accepter();
+      rigctl_server();
+
+      void
+      rigctl_client();
 
       double
       get_freq_from_buf(const uint8_t *buf);
 
     public:
       tcp_rigctl_msg_source_impl (const std::string& addr, uint16_t port,
+				  bool server_mode, size_t interval_ms,
 				  size_t mtu);
       ~tcp_rigctl_msg_source_impl ();
     };

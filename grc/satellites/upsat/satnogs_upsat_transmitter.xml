@@ -1,7 +1,6 @@
 <block>
    <name>Satnogs UPSat Transmitter</name>
    <key>satnogs_upsat_transmitter</key>
-   <category>satnogs</category>
    <import>import satnogs</import>
    
    <make>satnogs.satnogs_upsat_transmitter(frame_preamble=$frame_preamble,

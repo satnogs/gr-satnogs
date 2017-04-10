@@ -2,7 +2,7 @@
 <block>
 	<name>Debug Message Source</name>
 	<key>satnogs_debug_msg_source</key>
-	<category>satnogs</category>
+	<category>[SatNOGS]/Debug</category>
 	<import>import satnogs</import>
 	<make>satnogs.debug_msg_source($msg, $delay, $repeat)</make>
 

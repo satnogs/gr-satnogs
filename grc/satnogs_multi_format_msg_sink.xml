@@ -2,7 +2,6 @@
 <block>
 	<name>Multi Format Message Sink</name>
 	<key>satnogs_multi_format_msg_sink</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.multi_format_msg_sink($format)</make>
 

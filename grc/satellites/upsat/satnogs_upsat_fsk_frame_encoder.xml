@@ -2,7 +2,6 @@
 <block>
 	<name>UPSAT FSK Frame Encoder</name>
 	<key>satnogs_upsat_fsk_frame_encoder</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.upsat_fsk_frame_encoder($preamble, $sync_word, $append_crc, $whitening, $manchester, $msb_first, $ax_25, $src_addr, $src_ssid, $dest_addr, $dest_ssid, $settling_samples)</make>
 

@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<block>
+  <name>OGG File Source</name>
+  <key>satnogs_ogg_source</key>
+  <category>[satnogs]</category>
+  <import>import satnogs</import>
+  <make>satnogs.ogg_source($filename, $channels)</make>
+
+	<param>
+		<name>File</name>
+		<key>filename</key>
+		<value></value>
+		<type>file_open</type>
+	</param>
+	
+	<param>
+		<name>Channels</name>
+		<key>channels</key>
+		<value>1</value>
+		<type>int</type>
+	</param>
+	
+  <source>
+    <name>out</name>
+    <type>float</type>
+    <nports>$channels</nports>
+  </source>
+</block>

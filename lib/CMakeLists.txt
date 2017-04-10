@@ -22,20 +22,32 @@
 ########################################################################
 include(GrPlatform) #define LIB_SUFFIX
 
-include_directories(${Boost_INCLUDE_DIR})
+include_directories(
+    ${Boost_INCLUDE_DIR}
+    ${VOLK_INCLUDE_DIRS}
+    ${VORBIS_INCLUDE_DIR}
+    ${OGG_INCLUDE_DIR}
+    ${PNG_INCLUDE_DIR}
+)
+
 link_directories(${Boost_LIBRARY_DIRS})
+
+list(APPEND satnogs_debug_sources
+	morse_debug_source_impl.cc
+	debug_msg_source_impl.cc
+	debug_msg_source_raw_impl.cc
+	leo_channel_impl.cc 
+)
 list(APPEND satnogs_sources
     cw_matched_filter_ff_impl.cc
     morse_tree.cc
     morse_decoder_impl.cc
-    morse_debug_source_impl.cc
     multi_format_msg_sink_impl.cc
+    ogg_encoder_impl.cc 
     cw_to_symbol_impl.cc
     sine_matched_filter_ff_impl.cc
     udp_msg_source_impl.cc
-    debug_msg_source_impl.cc
     tcp_rigctl_msg_source_impl.cc
-    json_to_ecss_src_impl.cc 
     doppler_correction_cc_impl.cc
     frame_encoder_impl.cc
     doppler_fit.cc
@@ -45,10 +57,16 @@ list(APPEND satnogs_sources
     whitening.cc
     udp_msg_sink_impl.cc
     coarse_doppler_correction_cc_impl.cc
-    debug_msg_source_raw_impl.cc
     ax25_encoder_mb_impl.cc
     ax25_decoder_bm_impl.cc
-    qb50_deframer_impl.cc )
+    qb50_deframer_impl.cc
+    waterfall_sink_impl.cc
+    ogg_source_impl.cc
+    noaa_apt_sink_impl.cc)
+
+if(${INCLUDE_DEBUG_BLOCKS})
+	list(APPEND satnogs_sources ${satnogs_debug_sources})
+endif()
 
 set(satnogs_sources "${satnogs_sources}" PARENT_SCOPE)
 if(NOT satnogs_sources)
@@ -60,7 +78,13 @@ add_library(gnuradio-satnogs SHARED ${satnogs_sources})
 target_link_libraries(gnuradio-satnogs 
     ${Boost_LIBRARIES} 
     ${GNURADIO_ALL_LIBRARIES}
-    ${CMAKE_THREAD_LIBS_INIT})
+    gnuradio-digital
+    ${CMAKE_THREAD_LIBS_INIT}
+    ${NOVA_LIBRARIES}
+    ${VOLK_LIBRARIES}
+    ${OGGVORBIS_LIBRARIES}
+    ${PNG_LIBRARIES}
+)
     
 set_target_properties(gnuradio-satnogs PROPERTIES DEFINE_SYMBOL "gnuradio_satnogs_EXPORTS")
 
@@ -73,32 +97,11 @@ endif(APPLE)
 ########################################################################
 # Install built library files
 ########################################################################
-install(TARGETS gnuradio-satnogs
-    LIBRARY DESTINATION lib${LIB_SUFFIX} # .so/.dylib file
-    ARCHIVE DESTINATION lib${LIB_SUFFIX} # .lib file
-    RUNTIME DESTINATION bin              # .dll file
-)
+include(GrMiscUtils)
+GR_LIBRARY_FOO(gnuradio-satnogs RUNTIME_COMPONENT "satnogs_runtime" DEVEL_COMPONENT "satnogs_devel")
 
 ########################################################################
-# Build and register unit test
+# Print summary
 ########################################################################
-include(GrTest)
-
-#include_directories(${CPPUNIT_INCLUDE_DIRS})
-
-#list(APPEND test_satnogs_sources
-#    ${CMAKE_CURRENT_SOURCE_DIR}/test_satnogs.cc
-#    ${CMAKE_CURRENT_SOURCE_DIR}/qa_satnogs.cc
-#)
-
-#add_executable(test-satnogs ${test_satnogs_sources})
-
-#target_link_libraries(
-#  test-satnogs
-#  ${GNURADIO_RUNTIME_LIBRARIES}
-#  ${Boost_LIBRARIES}
-#  ${CPPUNIT_LIBRARIES}
-#  gnuradio-satnogs
-#)
-
-#GR_ADD_TEST(test_satnogs test-satnogs)
+message(STATUS "Using install prefix: ${CMAKE_INSTALL_PREFIX}")
+message(STATUS "Building for version: ${VERSION} / ${LIBVER}")

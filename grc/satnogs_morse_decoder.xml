@@ -2,7 +2,6 @@
 <block>
 	<name>Morse Decoder</name>
 	<key>satnogs_morse_decoder</key>
-	<category>satnogs</category>
 	<import>import satnogs</import>
 	<make>satnogs.morse_decoder($unrecognized_char)</make>
 
