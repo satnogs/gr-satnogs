@@ -231,7 +231,7 @@ namespace gr
 	      d_decoded_bits = 0;
 	      if(d_shifting_byte == d_preamble[d_decoded_bytes]){
 		d_decoded_bytes++;
-		if(d_decoded_bytes == d_search_for_sync_thrhld){
+		if(d_decoded_bytes >= d_search_for_sync_thrhld){
 		  /* End of the preamble. It's time for the sync word */
 		  searching_sync_word();
 		}
