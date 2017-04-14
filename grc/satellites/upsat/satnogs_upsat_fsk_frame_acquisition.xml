@@ -3,7 +3,7 @@
 	<name>UPSAT FSK Frame Acquisition</name>
 	<key>satnogs_upsat_fsk_frame_acquisition</key>
 	<import>import satnogs</import>
-	<make>satnogs.upsat_fsk_frame_acquisition($preamble, $sync_word, $whitening, $manchester, $check_crc, $ax_25, $whitening_mask, $whitening_seed, $whitening_order)</make>
+	<make>satnogs.upsat_fsk_frame_acquisition($preamble, $sync_word, $whitening, $manchester, $check_crc, $ax_25, $whitening_mask, $whitening_seed, $whitening_order, $packet_len)</make>
 
 	<param>
 		<name>Frame Preamble</name>
@@ -87,10 +87,17 @@
 		<type>int</type>
 	</param>
 	
-		<param>
+	<param>
 		<name>Whitening order</name>
 		<key>whitening_order</key>
 		<value>17</value>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Packet length</name>
+		<key>packet_len</key>
+		<value>0</value>
 		<type>int</type>
 	</param>
 

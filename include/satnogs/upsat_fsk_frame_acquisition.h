@@ -68,6 +68,10 @@ namespace gr
        * @param whitening_mask the polynomial of the scrambler
        * @param whitening_seed the initial seed of the scrambler
        * @param whitening_order the size of the scrambler's LFSR
+       * @param packet_len if set to 0 the decoder enters the variable
+       * packet length mode, where the packet length is indicated from the
+       * first byte after the SYNC word. Otherwise this field specifies the
+       * payload length in bytes.
        */
       static sptr
       make (const std::vector<uint8_t> &preamble,
@@ -76,7 +80,8 @@ namespace gr
 	    bool ax25_format = false,
 	    uint32_t whitening_mask = 0x1001,
 	    uint32_t whitening_seed = 0x1FF,
-	    uint32_t whitening_order = 17);
+	    uint32_t whitening_order = 17,
+	    size_t packet_len = 0);
     };
 
   } // namespace satnogs

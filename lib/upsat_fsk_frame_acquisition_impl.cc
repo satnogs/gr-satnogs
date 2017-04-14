@@ -42,14 +42,16 @@ namespace gr
                                        bool check_crc, bool ax25_format,
                                        uint32_t whitening_mask,
                                        uint32_t whitening_seed,
-                                       uint32_t whitening_order)
+                                       uint32_t whitening_order,
+                                       size_t packet_len)
     {
       return gnuradio::get_initial_sptr (
           new upsat_fsk_frame_acquisition_impl (preamble, sync_word, whitening,
                                                 manchester, check_crc,
                                                 ax25_format, whitening_mask,
                                                 whitening_seed,
-                                                whitening_order));
+                                                whitening_order,
+                                                packet_len));
     }
 
     /*
@@ -59,7 +61,8 @@ namespace gr
         const std::vector<uint8_t> &preamble,
         const std::vector<uint8_t> &sync_word, bool whitening, bool manchester,
         bool check_crc, bool ax25_format, uint32_t whitening_mask,
-        uint32_t whitening_seed, uint32_t whitening_order) :
+        uint32_t whitening_seed, uint32_t whitening_order,
+        size_t packet_len) :
             gr::sync_block ("upsat_fsk_frame_acquisition",
                             gr::io_signature::make (1, 1, sizeof(float)),
                             gr::io_signature::make (0, 0, 0)),
@@ -78,6 +81,7 @@ namespace gr
             d_manchester (manchester),
             d_check_crc (check_crc),
             d_is_ax25 (ax25_format),
+            d_var_packet_len(packet_len == 0),
             d_state (SEARCHING),
             d_shifting_byte (0x0),
             d_decoded_bytes (0),
@@ -106,6 +110,9 @@ namespace gr
       d_pdu = new uint8_t[UPSAT_MAX_FRAME_LEN];
       d_ax25_tmp_buf = new uint8_t[2 * UPSAT_MAX_FRAME_LEN * 8];
       d_ax25_buf = new uint8_t[2 * UPSAT_MAX_FRAME_LEN];
+
+      /* If the fixed packet length is set, store the expected frame size */
+      d_frame_len = packet_len;
     }
 
     /*
@@ -180,7 +187,12 @@ namespace gr
     {
       LOG_DEBUG("Enter have payload");
       d_state = HAVE_PAYLOAD;
-      d_decoded_bytes = 1;
+      if(d_var_packet_len) {
+        d_decoded_bytes = 1;
+      }
+      else {
+        d_decoded_bytes = 0;
+      }
       d_decoded_bits = 0;
     }
 
@@ -219,7 +231,11 @@ namespace gr
       uint16_t crc_calc;
       size_t ax25_frame_len = 0;
       ax25_decode_status_t status;
+      size_t payload_len;
+      uint8_t *payload;
+
       const float *in = (const float *) input_items[0];
+
       for (i = 0; i < noutput_items; i++) {
         slice_and_shift (in[i]);
 
@@ -276,7 +292,12 @@ namespace gr
               if (d_shifting_byte == d_sync_word[d_decoded_bytes]) {
                 d_decoded_bytes++;
                 if (d_decoded_bytes == d_sync_word_len) {
-                  have_frame_len ();
+                  if(d_var_packet_len) {
+                    have_frame_len ();
+                  }
+                  else{
+                    have_payload();
+                  }
                 }
               }
               else {
@@ -307,6 +328,15 @@ namespace gr
           case HAVE_PAYLOAD:
             d_decoded_bits++;
             if (d_decoded_bits == 8) {
+              if(d_var_packet_len) {
+                payload = d_pdu + 1;
+                payload_len = d_frame_len - 1;
+              }
+              else{
+                payload = d_pdu;
+                payload_len = d_frame_len;
+              }
+
               d_decoded_bits = 0;
               d_pdu[d_decoded_bytes] = d_shifting_byte;
               d_decoded_bytes++;
@@ -314,9 +344,9 @@ namespace gr
               if (d_decoded_bytes == d_frame_len) {
                 if (d_is_ax25) {
 
-                  unpack_ax25_bytes (d_frame_len - 1);
+                  unpack_ax25_bytes (payload_len);
                   status = ax25_decode (d_ax25_buf, &ax25_frame_len,
-                                        d_ax25_tmp_buf, (d_frame_len - 1) * 8);
+                                        d_ax25_tmp_buf, payload_len * 8);
                   if (status == AX25_DEC_OK) {
                     /* Skip the AX.25 header */
                     message_port_pub (
@@ -335,15 +365,14 @@ namespace gr
                 }
 
                 if (d_whitening) {
-                  d_descrambler.descramble (d_pdu + 1, d_pdu + 1,
-                                            d_frame_len - 1);
+                  d_descrambler.descramble (payload, payload, payload_len);
                 }
 
                 if (!d_check_crc) {
                   message_port_pub (
                       pmt::mp ("pdu"),
-                      pmt::make_blob (d_pdu + 1,
-                                      d_frame_len - 1 - sizeof(uint16_t)));
+                      pmt::make_blob (payload,
+                                      payload_len - sizeof(uint16_t)));
                   reset_state ();
                   break;
                 }
@@ -357,8 +386,8 @@ namespace gr
                 if (crc_calc == crc_received) {
                   message_port_pub (
                       pmt::mp ("pdu"),
-                      pmt::make_blob (d_pdu + 1,
-                                      d_frame_len - 1 - sizeof(uint16_t)));
+                      pmt::make_blob (payload,
+                                      payload_len - sizeof(uint16_t)));
                 }
                 else {
                   LOG_WARN("Frame with wrong CRC got 0x%x calc 0x%x",

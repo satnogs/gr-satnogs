@@ -57,6 +57,7 @@ namespace gr
       const bool d_manchester;
       const bool d_check_crc;
       const bool d_is_ax25;
+      const bool d_var_packet_len;
       decoding_state_t d_state;
       uint8_t d_shifting_byte;
       size_t d_decoded_bytes;
@@ -92,7 +93,8 @@ namespace gr
                                         bool check_crc, bool ax25_format,
                                         uint32_t whitening_mask,
                                         uint32_t whitening_seed,
-                                        uint32_t whitening_order);
+                                        uint32_t whitening_order,
+                                        size_t packet_len);
       ~upsat_fsk_frame_acquisition_impl ();
 
       // Where all the action really happens
