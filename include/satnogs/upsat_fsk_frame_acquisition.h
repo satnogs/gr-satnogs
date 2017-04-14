@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017,
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -63,12 +64,19 @@ namespace gr
        * encoded payload. Prior producing the payload, AX.25 decoding
        * will be performed. If set to false, the payload will be pushed
        * as it is.
+       *
+       * @param whitening_mask the polynomial of the scrambler
+       * @param whitening_seed the initial seed of the scrambler
+       * @param whitening_order the size of the scrambler's LFSR
        */
       static sptr
       make (const std::vector<uint8_t> &preamble,
 	    const std::vector<uint8_t> &sync_word, bool whitening = false,
 	    bool manchester = false, bool check_crc = true,
-	    bool ax25_format = false);
+	    bool ax25_format = false,
+	    uint32_t whitening_mask = 0x1001,
+	    uint32_t whitening_seed = 0x1FF,
+	    uint32_t whitening_order = 17);
     };
 
   } // namespace satnogs

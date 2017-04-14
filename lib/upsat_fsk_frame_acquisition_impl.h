@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -39,12 +40,12 @@ namespace gr
        */
       typedef enum
       {
-	SEARCHING,   //!< SEARCHING when searching for the start of the preamble
-	HAVE_PREAMBLE, //!< HAVE_PREAMBLE when the decoder is inside the preamble
-	SEARCHING_SYNC_WORD,
-	HAVE_SYNC_WORD, //!< HAVE_SYNC_WORD when the decoder is inside the sync word
-	HAVE_FRAME_LEN, //!< HAVE_FRAME_LEN when the decoder is inside the frame length field
-	HAVE_PAYLOAD //!< HAVE_PAYLOAD when the decoder process the palyload of the frame
+        SEARCHING,   //!< SEARCHING when searching for the start of the preamble
+        HAVE_PREAMBLE, //!< HAVE_PREAMBLE when the decoder is inside the preamble
+        SEARCHING_SYNC_WORD,
+        HAVE_SYNC_WORD, //!< HAVE_SYNC_WORD when the decoder is inside the sync word
+        HAVE_FRAME_LEN, //!< HAVE_FRAME_LEN when the decoder is inside the frame length field
+        HAVE_PAYLOAD //!< HAVE_PAYLOAD when the decoder process the palyload of the frame
       } decoding_state_t;
 
       const std::vector<uint8_t> d_preamble;
@@ -82,20 +83,22 @@ namespace gr
       inline void
       have_payload ();
       inline void
-      unpack_ax25_bytes(size_t len_bytes);
+      unpack_ax25_bytes (size_t len_bytes);
 
     public:
       upsat_fsk_frame_acquisition_impl (const std::vector<uint8_t> &preamble,
-					const std::vector<uint8_t> &sync_word,
-					bool whitening, bool manchester,
-					bool check_crc,
-					bool ax25_format);
+                                        const std::vector<uint8_t> &sync_word,
+                                        bool whitening, bool manchester,
+                                        bool check_crc, bool ax25_format,
+                                        uint32_t whitening_mask,
+                                        uint32_t whitening_seed,
+                                        uint32_t whitening_order);
       ~upsat_fsk_frame_acquisition_impl ();
 
       // Where all the action really happens
       int
       work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
+            gr_vector_void_star &output_items);
     };
 
   } // namespace satnogs

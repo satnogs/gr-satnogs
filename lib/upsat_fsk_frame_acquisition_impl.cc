@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017,
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,65 +37,70 @@ namespace gr
 
     upsat_fsk_frame_acquisition::sptr
     upsat_fsk_frame_acquisition::make (const std::vector<uint8_t> &preamble,
-				       const std::vector<uint8_t> &sync_word,
-				       bool whitening, bool manchester,
-				       bool check_crc,
-				       bool ax25_format)
+                                       const std::vector<uint8_t> &sync_word,
+                                       bool whitening, bool manchester,
+                                       bool check_crc, bool ax25_format,
+                                       uint32_t whitening_mask,
+                                       uint32_t whitening_seed,
+                                       uint32_t whitening_order)
     {
       return gnuradio::get_initial_sptr (
-	  new upsat_fsk_frame_acquisition_impl (preamble, sync_word, whitening,
-						manchester, check_crc,
-						ax25_format));
+          new upsat_fsk_frame_acquisition_impl (preamble, sync_word, whitening,
+                                                manchester, check_crc,
+                                                ax25_format, whitening_mask,
+                                                whitening_seed,
+                                                whitening_order));
     }
 
     /*
      * The private constructor
      */
     upsat_fsk_frame_acquisition_impl::upsat_fsk_frame_acquisition_impl (
-	const std::vector<uint8_t> &preamble,
-	const std::vector<uint8_t> &sync_word, bool whitening, bool manchester,
-	bool check_crc, bool ax25_format) :
-	    gr::sync_block ("upsat_fsk_frame_acquisition",
-			    gr::io_signature::make (1, 1, sizeof(float)),
-			    gr::io_signature::make (0, 0, 0)),
-	    d_preamble (preamble),
-	    d_preamble_len (preamble.size ()),
-	    d_sync_word (sync_word),
-	    d_sync_word_len (sync_word.size ()),
-	    /*
-	     * Preamble is used only for AGC. The true synchronization is
-	     * performed using the SYNC word. For this reason if some preamble
-	     * symbols are retrieved, the algorithm should immediately start
-	     * searching for the SYNC word.
-	     */
-	    d_search_for_sync_thrhld(d_preamble_len / 3),
-	    d_whitening(whitening),
-	    d_manchester(manchester),
-	    d_check_crc(check_crc),
-	    d_is_ax25(ax25_format),
-	    d_state (SEARCHING),
-	    d_shifting_byte (0x0),
-	    d_decoded_bytes (0),
-	    d_decoded_bits (0),
-	    d_frame_len (0),
-	    d_descrambler(0x1001, 0x1FF, 17)
+        const std::vector<uint8_t> &preamble,
+        const std::vector<uint8_t> &sync_word, bool whitening, bool manchester,
+        bool check_crc, bool ax25_format, uint32_t whitening_mask,
+        uint32_t whitening_seed, uint32_t whitening_order) :
+            gr::sync_block ("upsat_fsk_frame_acquisition",
+                            gr::io_signature::make (1, 1, sizeof(float)),
+                            gr::io_signature::make (0, 0, 0)),
+            d_preamble (preamble),
+            d_preamble_len (preamble.size ()),
+            d_sync_word (sync_word),
+            d_sync_word_len (sync_word.size ()),
+            /*
+             * Preamble is used only for AGC. The true synchronization is
+             * performed using the SYNC word. For this reason if some preamble
+             * symbols are retrieved, the algorithm should immediately start
+             * searching for the SYNC word.
+             */
+            d_search_for_sync_thrhld (d_preamble_len / 3),
+            d_whitening (whitening),
+            d_manchester (manchester),
+            d_check_crc (check_crc),
+            d_is_ax25 (ax25_format),
+            d_state (SEARCHING),
+            d_shifting_byte (0x0),
+            d_decoded_bytes (0),
+            d_decoded_bits (0),
+            d_frame_len (0),
+            d_descrambler (whitening_mask, whitening_seed, whitening_order)
     {
       size_t i;
       message_port_register_out (pmt::mp ("pdu"));
       if (d_preamble_len < 3) {
-	throw std::invalid_argument ("Preamble must be at least 2 bytes long");
+        throw std::invalid_argument ("Preamble must be at least 2 bytes long");
       }
 
       if (d_sync_word_len < 1) {
-	throw std::invalid_argument (
-	    "Synchronization word must be at least 1 byte long");
+        throw std::invalid_argument (
+            "Synchronization word must be at least 1 byte long");
       }
 
-      for(i = 1; i < d_preamble_len; i++){
-	if(d_preamble[i] != d_preamble[0]) {
-	  throw std::invalid_argument (
-	      "The preamble should contain the same bytes");
-	}
+      for (i = 1; i < d_preamble_len; i++) {
+        if (d_preamble[i] != d_preamble[0]) {
+          throw std::invalid_argument (
+              "The preamble should contain the same bytes");
+        }
       }
 
       d_pdu = new uint8_t[UPSAT_MAX_FRAME_LEN];
@@ -163,7 +169,7 @@ namespace gr
     upsat_fsk_frame_acquisition_impl::have_frame_len ()
     {
       LOG_DEBUG("Enter frame len");
-      d_descrambler.reset();
+      d_descrambler.reset ();
       d_state = HAVE_FRAME_LEN;
       d_decoded_bytes = 0;
       d_decoded_bits = 0;
@@ -184,29 +190,29 @@ namespace gr
       size_t i;
       uint8_t *in = d_pdu + 1;
 
-      for(i = 0; i < len_bytes; i++){
-	d_ax25_tmp_buf[8*i] = (in[i] >> 7) & 0x1;
-	d_ax25_tmp_buf[8*i + 1] = (in[i] >> 6) & 0x1;
-	d_ax25_tmp_buf[8*i + 2] = (in[i] >> 5) & 0x1;
-	d_ax25_tmp_buf[8*i + 3] = (in[i] >> 4) & 0x1;
-	d_ax25_tmp_buf[8*i + 4] = (in[i] >> 3) & 0x1;
-	d_ax25_tmp_buf[8*i + 5] = (in[i] >> 2) & 0x1;
-	d_ax25_tmp_buf[8*i + 6] = (in[i] >> 1) & 0x1;
-	d_ax25_tmp_buf[8*i + 7] = in[i]  & 0x1;
+      for (i = 0; i < len_bytes; i++) {
+        d_ax25_tmp_buf[8 * i] = (in[i] >> 7) & 0x1;
+        d_ax25_tmp_buf[8 * i + 1] = (in[i] >> 6) & 0x1;
+        d_ax25_tmp_buf[8 * i + 2] = (in[i] >> 5) & 0x1;
+        d_ax25_tmp_buf[8 * i + 3] = (in[i] >> 4) & 0x1;
+        d_ax25_tmp_buf[8 * i + 4] = (in[i] >> 3) & 0x1;
+        d_ax25_tmp_buf[8 * i + 5] = (in[i] >> 2) & 0x1;
+        d_ax25_tmp_buf[8 * i + 6] = (in[i] >> 1) & 0x1;
+        d_ax25_tmp_buf[8 * i + 7] = in[i] & 0x1;
       }
 
       /* De-white the data if necessary */
       if (d_whitening) {
-	d_descrambler.descramble_one_bit_per_byte (d_ax25_tmp_buf,
-						   d_ax25_tmp_buf,
-						   len_bytes * 8);
+        d_descrambler.descramble_one_bit_per_byte (d_ax25_tmp_buf,
+                                                   d_ax25_tmp_buf,
+                                                   len_bytes * 8);
       }
     }
 
     int
     upsat_fsk_frame_acquisition_impl::work (
-	int noutput_items, gr_vector_const_void_star &input_items,
-	gr_vector_void_star &output_items)
+        int noutput_items, gr_vector_const_void_star &input_items,
+        gr_vector_void_star &output_items)
     {
       int i;
       uint16_t crc_received;
@@ -215,153 +221,156 @@ namespace gr
       ax25_decode_status_t status;
       const float *in = (const float *) input_items[0];
       for (i = 0; i < noutput_items; i++) {
-	slice_and_shift (in[i]);
+        slice_and_shift (in[i]);
 
-	switch (d_state)
-	  {
-	  case SEARCHING:
-	    if (d_shifting_byte == d_preamble[0]) {
-	      have_preamble ();
-	    }
-	    break;
-	  case HAVE_PREAMBLE:
-	    d_decoded_bits++;
+        switch (d_state)
+          {
+          case SEARCHING:
+            if (d_shifting_byte == d_preamble[0]) {
+              have_preamble ();
+            }
+            break;
+          case HAVE_PREAMBLE:
+            d_decoded_bits++;
 
-	    if(d_decoded_bits == 8) {
-	      d_decoded_bits = 0;
-	      if(d_shifting_byte == d_preamble[d_decoded_bytes]){
-		d_decoded_bytes++;
-		if(d_decoded_bytes >= d_search_for_sync_thrhld){
-		  /* End of the preamble. It's time for the sync word */
-		  searching_sync_word();
-		}
-	      }
-	      else{
-		/* Reset the preamble detection */
-		reset_state();
-	      }
-	    }
-	    break;
-	  case SEARCHING_SYNC_WORD:
-	    d_decoded_bits++;
-	    if(d_shifting_byte == d_sync_word[0]){
-	      have_sync();
-	      break;
-	    }
+            if (d_decoded_bits == 8) {
+              d_decoded_bits = 0;
+              if (d_shifting_byte == d_preamble[d_decoded_bytes]) {
+                d_decoded_bytes++;
+                if (d_decoded_bytes >= d_search_for_sync_thrhld) {
+                  /* End of the preamble. It's time for the sync word */
+                  searching_sync_word ();
+                }
+              }
+              else {
+                /* Reset the preamble detection */
+                reset_state ();
+              }
+            }
+            break;
+          case SEARCHING_SYNC_WORD:
+            d_decoded_bits++;
+            if (d_shifting_byte == d_sync_word[0]) {
+              have_sync ();
+              break;
+            }
 
-	    if(d_decoded_bits == 8) {
-	      d_decoded_bits = 0;
-	      d_decoded_bytes++;
-	      /*
-	       * If we decoded bytes have length greater than the preamble and
-	       * the SYNC word, we lost the frame...
-	       */
-	      if (d_decoded_bytes > d_preamble_len
-		  - d_search_for_sync_thrhld + d_sync_word_len) {
-		reset_state ();
-	      }
-	    }
-	    break;
-	  case HAVE_SYNC_WORD:
-	    d_decoded_bits++;
-	    if(d_decoded_bits == 8) {
-	      d_decoded_bits = 0;
-	      if(d_shifting_byte == d_sync_word[d_decoded_bytes]) {
-		d_decoded_bytes++;
-		if(d_decoded_bytes == d_sync_word_len){
-		  have_frame_len();
-		}
-	      }
-	      else{
-		reset_state();
-	      }
-	    }
-	    break;
-	  case HAVE_FRAME_LEN:
-	    d_decoded_bits++;
-	    if(d_decoded_bits == 8) {
+            if (d_decoded_bits == 8) {
+              d_decoded_bits = 0;
+              d_decoded_bytes++;
+              /*
+               * If we decoded bytes have length greater than the preamble and
+               * the SYNC word, we lost the frame...
+               */
+              if (d_decoded_bytes
+                  > d_preamble_len - d_search_for_sync_thrhld
+                      + d_sync_word_len) {
+                reset_state ();
+              }
+            }
+            break;
+          case HAVE_SYNC_WORD:
+            d_decoded_bits++;
+            if (d_decoded_bits == 8) {
+              d_decoded_bits = 0;
+              if (d_shifting_byte == d_sync_word[d_decoded_bytes]) {
+                d_decoded_bytes++;
+                if (d_decoded_bytes == d_sync_word_len) {
+                  have_frame_len ();
+                }
+              }
+              else {
+                reset_state ();
+              }
+            }
+            break;
+          case HAVE_FRAME_LEN:
+            d_decoded_bits++;
+            if (d_decoded_bits == 8) {
 
-	      /* Length field has been whitened if the option is enabled */
-	      if(d_whitening){
-		/* Frame length field is needed for the CRC calculation */
-		d_descrambler.descramble(d_pdu, &d_shifting_byte, 1);
-		/* CRC is not included in the frame length field, but we want it */
-		d_frame_len = 1 + d_pdu[0] + sizeof(uint16_t);
-	      }
-	      else{
-		/* Frame length field is needed for the CRC calculation */
-		d_pdu[0] = d_shifting_byte;
-		/* CRC is not included in the frame length field, but we want it */
-		d_frame_len = 1 + d_shifting_byte + sizeof(uint16_t);
-	      }
-	      have_payload();
-	    }
-	    break;
-	  case HAVE_PAYLOAD:
-	    d_decoded_bits++;
-	    if (d_decoded_bits == 8) {
-	      d_decoded_bits = 0;
-	      d_pdu[d_decoded_bytes] = d_shifting_byte;
-	      d_decoded_bytes++;
+              /* Length field has been whitened if the option is enabled */
+              if (d_whitening) {
+                /* Frame length field is needed for the CRC calculation */
+                d_descrambler.descramble (d_pdu, &d_shifting_byte, 1);
+                /* CRC is not included in the frame length field, but we want it */
+                d_frame_len = 1 + d_pdu[0] + sizeof(uint16_t);
+              }
+              else {
+                /* Frame length field is needed for the CRC calculation */
+                d_pdu[0] = d_shifting_byte;
+                /* CRC is not included in the frame length field, but we want it */
+                d_frame_len = 1 + d_shifting_byte + sizeof(uint16_t);
+              }
+              have_payload ();
+            }
+            break;
+          case HAVE_PAYLOAD:
+            d_decoded_bits++;
+            if (d_decoded_bits == 8) {
+              d_decoded_bits = 0;
+              d_pdu[d_decoded_bytes] = d_shifting_byte;
+              d_decoded_bytes++;
 
-	      if (d_decoded_bytes == d_frame_len) {
-		if(d_is_ax25) {
+              if (d_decoded_bytes == d_frame_len) {
+                if (d_is_ax25) {
 
-		  unpack_ax25_bytes(d_frame_len - 1);
-		  status = ax25_decode(d_ax25_buf, &ax25_frame_len,
-				       d_ax25_tmp_buf, (d_frame_len - 1)*8);
-		  if(status == AX25_DEC_OK){
-		    /* Skip the AX.25 header */
-		    message_port_pub (
-			pmt::mp ("pdu"),
-			pmt::make_blob (d_ax25_buf + AX25_MIN_ADDR_LEN + 2,
-					ax25_frame_len - AX25_MIN_ADDR_LEN - 2));
-		  }
+                  unpack_ax25_bytes (d_frame_len - 1);
+                  status = ax25_decode (d_ax25_buf, &ax25_frame_len,
+                                        d_ax25_tmp_buf, (d_frame_len - 1) * 8);
+                  if (status == AX25_DEC_OK) {
+                    /* Skip the AX.25 header */
+                    message_port_pub (
+                        pmt::mp ("pdu"),
+                        pmt::make_blob (
+                            d_ax25_buf + AX25_MIN_ADDR_LEN + 2,
+                            ax25_frame_len - AX25_MIN_ADDR_LEN - 2));
+                  }
 
-		  /*
-		   * We are done here. Whitening and FSK CRC is not supported
-		   * when transmitting/receiving AX.25 frames
-		   */
-		  reset_state ();
-		  break;
-		}
+                  /*
+                   * We are done here. Whitening and FSK CRC is not supported
+                   * when transmitting/receiving AX.25 frames
+                   */
+                  reset_state ();
+                  break;
+                }
 
-		if(d_whitening){
-		  d_descrambler.descramble(d_pdu+1, d_pdu+1, d_frame_len - 1);
-		}
+                if (d_whitening) {
+                  d_descrambler.descramble (d_pdu + 1, d_pdu + 1,
+                                            d_frame_len - 1);
+                }
 
-		if(!d_check_crc){
-		  message_port_pub (
-		      pmt::mp ("pdu"),
-		      pmt::make_blob (d_pdu + 1,
-				      d_frame_len - 1 - sizeof(uint16_t)));
-		  reset_state ();
-		  break;
-		}
+                if (!d_check_crc) {
+                  message_port_pub (
+                      pmt::mp ("pdu"),
+                      pmt::make_blob (d_pdu + 1,
+                                      d_frame_len - 1 - sizeof(uint16_t)));
+                  reset_state ();
+                  break;
+                }
 
-		/* Retrieve and check the CRC */
-		memcpy(&crc_received, d_pdu + d_frame_len - sizeof(uint16_t),
-		       sizeof(uint16_t));
-		/* The CRC is transmitted in network byte order */
-		crc_received = ntohs(crc_received);
-		crc_calc = crc16_ccitt(d_pdu, d_frame_len - sizeof(uint16_t));
-		if(crc_calc == crc_received) {
-		  message_port_pub (
-		      pmt::mp ("pdu"),
-		      pmt::make_blob (d_pdu + 1,
-				      d_frame_len - 1 - sizeof(uint16_t)));
-		}
-		else{
-		  LOG_WARN("Frame with wrong CRC got 0x%x calc 0x%x",
-			   crc_received, crc_calc);
-		}
-		reset_state ();
-	      }
-	    }
-	    break;
-	  default:
-	    LOG_WARN("Unknown decoding state");
-	  }
+                /* Retrieve and check the CRC */
+                memcpy (&crc_received, d_pdu + d_frame_len - sizeof(uint16_t),
+                        sizeof(uint16_t));
+                /* The CRC is transmitted in network byte order */
+                crc_received = ntohs (crc_received);
+                crc_calc = crc16_ccitt (d_pdu, d_frame_len - sizeof(uint16_t));
+                if (crc_calc == crc_received) {
+                  message_port_pub (
+                      pmt::mp ("pdu"),
+                      pmt::make_blob (d_pdu + 1,
+                                      d_frame_len - 1 - sizeof(uint16_t)));
+                }
+                else {
+                  LOG_WARN("Frame with wrong CRC got 0x%x calc 0x%x",
+                           crc_received, crc_calc);
+                }
+                reset_state ();
+              }
+            }
+            break;
+          default:
+            LOG_WARN("Unknown decoding state");
+          }
       }
 
       return noutput_items;
