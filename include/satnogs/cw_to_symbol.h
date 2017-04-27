@@ -24,17 +24,24 @@
 #include <satnogs/api.h>
 #include <gnuradio/sync_block.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
     /*!
-     * \brief The CW to Symbol block tries to translate the received signal
-     * power time-series into Morse symbols.
+     * \brief The CW to Symbol block tries to translate the input signal
+     * into Morse symbols. The input signal should have been already properly
+     * filtered and processed. A possible DSP on the input signal may be the
+     * squared magnitude or the amplitude of the autocorrelation. Proper filtering
+     * that take cares possible spikes may drastically increase the performance
+     * of this block.
+     *
      * \ingroup satnogs
      */
     class SATNOGS_API cw_to_symbol : virtual public gr::sync_block
     {
-     public:
+    public:
       typedef boost::shared_ptr<cw_to_symbol> sptr;
 
       /*!
@@ -58,18 +65,13 @@ namespace gr {
        * symbols
        *
        * @param wpm Morse code Words per Minute
-       *
-       * @param auto_config if set to true, the block will try first to
-       * automatically adjust the WPM in order to extract the dot and dash
-       * durations. If set to false, the given WPM is used.
        */
       static cw_to_symbol::sptr
       make (double sampling_rate, float threshold, float conf_level = 0.9,
-	    size_t wpm = 20, bool auto_config = false);
+            size_t wpm = 20);
 
-      virtual void set_act_threshold(float thrld) = 0;
-
-      virtual void start_timing_recovery() = 0;
+      virtual void
+      set_act_threshold (float thrld) = 0;
     };
 
   } // namespace satnogs

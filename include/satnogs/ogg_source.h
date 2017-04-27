@@ -47,9 +47,12 @@ namespace gr
        * @param number of channels of the OGG stream. If the actual OGG stream
        * contains a different number of channels than specified an exception
        * is raised
+       * @param repeat if set to true, when EOF is reached the block
+       * will continue to output samples from the beginning of the OGG file.
        */
       static sptr
-      make (const std::string& filename, size_t channels = 1);
+      make (const std::string& filename, size_t channels = 1,
+            bool repeat = false);
     };
 
   } // namespace satnogs

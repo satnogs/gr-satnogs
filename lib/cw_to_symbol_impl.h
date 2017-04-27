@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -31,40 +32,43 @@ namespace gr
 
     class cw_to_symbol_impl : public cw_to_symbol
     {
-      typedef enum {
-	IDLE,
-	SHORT_ON_PERIOD,
-	LONG_ON_PERIOD,
-	SHORT_OFF_PERIOD,
-	LONG_OFF_PERIOD
+      typedef enum
+      {
+        IDLE, TRIGGED
       } cw_state_t;
+
+      typedef enum
+      {
+        NO_SYNC, SEARCH_DOT, SEARCH_DASH, SEARCH_SHORT_OFF, SEARCH_LONG_OFF,
+      } cw_dec_state_t;
 
       /**
        * Different states during the WPM auto synchronization
        */
-      typedef enum {
-	SYNC_TRIGGER_OFF,//!< SYNC_TRIGGER_OFF Signal is below threshold
-	SYNC_TRIGGER_ON  //!< SYNC_TRIGGER_ON Signal is above threshold
+      typedef enum
+      {
+        SYNC_TRIGGER_OFF, //!< SYNC_TRIGGER_OFF Signal is below threshold
+        SYNC_TRIGGER_ON  //!< SYNC_TRIGGER_ON Signal is above threshold
       } sync_state_t;
 
     private:
       const double d_sampling_rate;
       float d_act_thrshld;
       const float d_confidence_level;
-      const size_t d_sync_limit;
-      const bool d_auto_sync;
       size_t d_dot_samples;
-      size_t d_dash_samples;
-      size_t d_short_pause_samples;
-      size_t d_long_pause_samples;
+      size_t d_window_size;
+      size_t d_window_cnt;
+      size_t d_dot_windows_num;
+      size_t d_dash_windows_num;
+      size_t d_short_pause_windows_num;
+      size_t d_long_pause_windows_num;
       cw_state_t d_state;
-      size_t d_state_cnt;
-      size_t d_pause_cnt;
-      size_t d_est_cnt;
-      size_t d_mean_cnt;
-      bool d_have_sync;
-      bool d_seq_started;
+      cw_dec_state_t d_dec_state;
+      bool d_prev_space_symbol;
       sync_state_t d_sync_state;
+      float *d_const_val;
+      float *d_tmp;
+      int32_t *d_out;
 
       inline void
       set_idle ();
@@ -81,32 +85,33 @@ namespace gr
       inline void
       set_long_off ();
 
+      inline int32_t
+      hadd (const int32_t *in, size_t len);
+
+      inline void
+      clamp_input (int32_t *out, const float *in, size_t len);
+
+      inline bool
+      is_triggered (const float *in, size_t len);
+
       inline void
       send_symbol_msg (morse_symbol_t s);
 
-      void set_act_threshold_msg_handler(pmt::pmt_t msg);
-
-      void sync_msg_handler(pmt::pmt_t msg);
-
-      void estimate_dot_duration(size_t estimate);
-
-      void set_symbols_duration();
-
-      void reset_sync();
+      void
+      set_act_threshold_msg_handler (pmt::pmt_t msg);
 
     public:
       cw_to_symbol_impl (double sampling_rate, float threshold,
-			 float conf_level, size_t wpm, bool auto_config);
+                         float conf_level, size_t wpm);
       ~cw_to_symbol_impl ();
 
       // Where all the action really happens
       int
       work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
+            gr_vector_void_star &output_items);
 
-      void set_act_threshold(float thrhld);
-
-      void start_timing_recovery();
+      void
+      set_act_threshold (float thrhld);
     };
 
   } // namespace satnogs

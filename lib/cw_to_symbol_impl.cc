@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,7 +27,9 @@
 #include <gnuradio/io_signature.h>
 #include <satnogs/log.h>
 #include <satnogs/utils.h>
+#include <boost/math/common_factor.hpp>
 #include "cw_to_symbol_impl.h"
+#include <volk/volk.h>
 
 namespace gr
 {
@@ -35,42 +38,41 @@ namespace gr
 
     cw_to_symbol::sptr
     cw_to_symbol::make (double sampling_rate, float threshold, float conf_level,
-                        size_t wpm, bool auto_config)
+                        size_t wpm)
     {
       return gnuradio::get_initial_sptr (
-          new cw_to_symbol_impl (sampling_rate, threshold, conf_level, wpm,
-                                 auto_config));
+          new cw_to_symbol_impl (sampling_rate, threshold, conf_level, wpm));
     }
 
     /*
      * The private constructor
      */
     cw_to_symbol_impl::cw_to_symbol_impl (double sampling_rate, float threshold,
-                                          float conf_level, size_t wpm,
-                                          bool auto_config) :
+                                          float conf_level, size_t wpm) :
             gr::sync_block ("cw_to_symbol",
                             gr::io_signature::make (1, 1, sizeof(float)),
                             gr::io_signature::make (0, 0, 0)),
             d_sampling_rate (sampling_rate),
             d_act_thrshld (threshold),
             d_confidence_level (conf_level),
-            d_sync_limit (15),
-            d_auto_sync (auto_config),
             d_dot_samples ((1.2 / wpm) / (1.0 / sampling_rate)),
-            d_dash_samples (3 * d_dot_samples),
-            d_short_pause_samples (3 * d_dot_samples),
-            d_long_pause_samples (7 * d_dot_samples),
+            d_window_size(0),
+            d_window_cnt(0),
+            d_dot_windows_num(0),
             d_state (IDLE),
-            d_state_cnt (0),
-            d_pause_cnt (0),
-            d_est_cnt (0),
-            d_mean_cnt (0),
-            d_have_sync (!auto_config),
-            d_seq_started (false),
+            d_dec_state (NO_SYNC),
+            d_prev_space_symbol (true),
             d_sync_state (SYNC_TRIGGER_OFF)
     {
+      if(wpm < MIN_WPM){
+        throw std::invalid_argument("Decoder can not handle such low WPM setting");
+      }
+
+      if(wpm > MAX_WPM) {
+        throw std::invalid_argument("Decoder can not handle such high WPM setting");
+      }
+
       message_port_register_in (pmt::mp ("act_threshold"));
-      message_port_register_in (pmt::mp ("sync"));
       message_port_register_out (pmt::mp ("out"));
 
       /* Register the message handlers */
@@ -78,18 +80,60 @@ namespace gr
           pmt::mp ("act_threshold"),
           boost::bind (&cw_to_symbol_impl::set_act_threshold_msg_handler, this,
                        _1));
-      set_msg_handler (
-          pmt::mp ("sync"),
-          boost::bind (&cw_to_symbol_impl::sync_msg_handler, this, _1));
 
-      if (auto_config) {
-        d_dot_samples = (1.2 / MIN_WPM) / (1.0 / d_sampling_rate);
+      /*
+       * Try to split the CW pulses in smaller windows for detecting faster
+       * a false alarm. As we use the window size for setting the history
+       * it should have a reasonably size.
+       */
+      size_t i = 10;
+      d_window_size = d_dot_samples / i;
+      while(d_window_size > 200) {
+        i += 10;
+        d_window_size = d_dot_samples / i;
       }
+
+      /* NOTE: The dot duration should be a perfect multiple of the window */
+      while(d_dot_samples % d_window_size != 0) {
+        d_window_size++;
+      }
+
+      /* Set the duration of each symbol in multiples of the window size */
+      d_dot_windows_num = d_dot_samples / d_window_size;
+      d_dash_windows_num = 3 * d_dot_windows_num;
+      d_short_pause_windows_num = d_dash_windows_num;
+      d_long_pause_windows_num = 7 * d_dot_windows_num;
+
+      const int alignment_multiple = volk_get_alignment ()
+          / (d_window_size * sizeof(float));
+      set_alignment (std::max (1, alignment_multiple));
+
+      d_const_val = (float *) volk_malloc(d_window_size * sizeof(float),
+                                          volk_get_alignment ());
+      d_tmp = (float *) volk_malloc(d_window_size * sizeof(float),
+                                    volk_get_alignment ());
+      d_out = (int32_t *) volk_malloc (d_window_size * sizeof(int32_t),
+                                       volk_get_alignment ());
+
+      if(!d_const_val || !d_tmp || !d_out) {
+        throw std::runtime_error("cw_to_symbol: Could not allocate memory");
+      }
+
+      for(i = 0; i < d_window_size; i++) {
+        d_const_val[i] = threshold;
+      }
+      set_history(d_window_size);
     }
 
     inline void
     cw_to_symbol_impl::send_symbol_msg (morse_symbol_t s)
     {
+      if(s == MORSE_S_SPACE || s == MORSE_L_SPACE) {
+        d_prev_space_symbol = true;
+      }
+      else{
+        d_prev_space_symbol = false;
+      }
       message_port_pub (pmt::mp ("out"), pmt::from_long (s));
     }
 
@@ -98,42 +142,43 @@ namespace gr
      */
     cw_to_symbol_impl::~cw_to_symbol_impl ()
     {
+      volk_free (d_const_val);
+      volk_free (d_tmp);
+      volk_free (d_out);
     }
 
     inline void
     cw_to_symbol_impl::set_idle ()
     {
       d_state = IDLE;
-      d_state_cnt = 0;
-      d_pause_cnt = 0;
+      d_window_cnt = 0;
     }
 
     inline void
     cw_to_symbol_impl::set_short_on ()
     {
-      d_state = SHORT_ON_PERIOD;
-      d_state_cnt = 1;
-      d_pause_cnt = 0;
+      d_state = TRIGGED;
+      d_dec_state = SEARCH_DOT;
+      d_window_cnt = 1;
     }
 
     inline void
     cw_to_symbol_impl::set_long_on ()
     {
-      d_state = LONG_ON_PERIOD;
+      d_dec_state = SEARCH_DASH;
     }
 
     inline void
     cw_to_symbol_impl::set_short_off ()
     {
-      d_state = SHORT_OFF_PERIOD;
-      d_state_cnt = 0;
-      d_pause_cnt = 1;
+      d_dec_state = SEARCH_SHORT_OFF;
+      d_window_cnt = 1;
     }
 
     inline void
     cw_to_symbol_impl::set_long_off ()
     {
-      d_state = LONG_OFF_PERIOD;
+      d_dec_state = SEARCH_LONG_OFF;
     }
 
     void
@@ -144,278 +189,85 @@ namespace gr
       }
     }
 
-    void
-    cw_to_symbol_impl::sync_msg_handler (pmt::pmt_t msg)
-    {
-      if (pmt::is_pair (msg)) {
-        if (pmt::to_bool (pmt::cdr (msg))) {
-          start_timing_recovery ();
-        }
-      }
-    }
-
     int
     cw_to_symbol_impl::work (int noutput_items,
                              gr_vector_const_void_star &input_items,
                              gr_vector_void_star &output_items)
     {
+      int32_t cnt;
+      bool triggered;
       int i;
-      float conf_lvl;
-      const float *in = (const float *) input_items[0];
+      const float *in_old = (const float *) input_items[0];
+      const float *in = in_old + history() - 1;
+      float conf;
 
-      /* The estimation for the WPM has not yet been computed */
-      if (!d_have_sync) {
-        for (i = 0; i < noutput_items; i++) {
-          switch (d_sync_state)
-            {
-            case SYNC_TRIGGER_OFF:
-              if (in[i] > d_act_thrshld) {
-                d_sync_state = SYNC_TRIGGER_ON;
-              }
-              break;
-            case SYNC_TRIGGER_ON:
-              if (in[i] > d_act_thrshld) {
-                d_state_cnt++;
-              }
-              else {
-                /* Trigger is OFF. Extract the best timing information available */
-                d_sync_state = SYNC_TRIGGER_OFF;
-                estimate_dot_duration (d_state_cnt);
-                d_state_cnt = 0;
-
-                /*
-                 * If the sync process was over set the state to idle and
-                 * return for proper decoding
-                 */
-                if (d_have_sync) {
-                  set_idle ();
-                  return i + 1;
-                }
-              }
-              break;
-            }
+      /* During idle state search for a possible trigger */
+      if(d_state == IDLE) {
+        for(i = 0; i < noutput_items; i++) {
+          /*
+           * Clamp the input so the window mean is not affected by strong spikes
+           * Good luck understanding this black magic shit!
+           */
+          triggered = is_triggered(in_old + i, d_window_size);
+          if(triggered) {
+            set_short_on();
+            return i+1;
+          }
         }
-
         return noutput_items;
       }
-
-      for (i = 0; i < noutput_items; i++) {
-        switch (d_state)
-          {
-          case IDLE:
-            if (in[i] > d_act_thrshld) {
-              set_short_on ();
-            }
-            break;
-
-          case SHORT_ON_PERIOD:
-            if (in[i] > d_act_thrshld) {
-              d_state_cnt++;
-
-              if (d_state_cnt > d_dot_samples) {
-                set_long_on ();
-              }
-            }
-            else {
-              /*
-               * Before going to short pause, check the confidence level.
-               *  Perhaps a short symbol should be produced.
-               *
-               *  Otherwise, it was a false alarm.
-               */
-              conf_lvl = ((float) d_state_cnt) / d_dot_samples;
-              if (conf_lvl > d_confidence_level) {
-                LOG_DEBUG("DOT");
-                send_symbol_msg (MORSE_DOT);
-              }
-
-              /* Go find a possible short pause symbol */
-              set_short_off ();
-            }
-            break;
-
-          case LONG_ON_PERIOD:
-            if (in[i] > d_act_thrshld) {
-              d_state_cnt++;
-            }
-            else {
-              conf_lvl = ((float) d_state_cnt) / d_dash_samples;
-              if (conf_lvl > d_confidence_level) {
-                LOG_DEBUG("DASH");
-                send_symbol_msg (MORSE_DASH);
-                set_short_off ();
-                break;
-              }
-
-              /* Perhaps this was a short on symbol */
-              conf_lvl = ((float) d_state_cnt) / d_dot_samples;
-              if (conf_lvl > d_confidence_level) {
-                LOG_DEBUG("DOT");
-                send_symbol_msg (MORSE_DOT);
-                set_short_off ();
-              }
-
-            }
-            break;
-
-          case SHORT_OFF_PERIOD:
-            if (in[i] > d_act_thrshld) {
-              /*
-               * Before going to ON state, again check if a short pause symbol
-               * should be produced
-               */
-              conf_lvl = ((float) d_pause_cnt) / d_short_pause_samples;
-              if (conf_lvl > d_confidence_level) {
-                LOG_DEBUG("Short space");
-                send_symbol_msg (MORSE_S_SPACE);
-              }
-              set_short_on ();
-            }
-            else {
-              d_pause_cnt++;
-              if (d_pause_cnt > d_short_pause_samples) {
-                set_long_off ();
-              }
-            }
-            break;
-
-          case LONG_OFF_PERIOD:
-            if (in[i] > d_act_thrshld) {
-              conf_lvl = ((float) d_pause_cnt) / d_long_pause_samples;
-              if (conf_lvl > d_confidence_level) {
-                LOG_DEBUG("Long space");
-                send_symbol_msg (MORSE_L_SPACE);
-                set_idle ();
-                break;
-              }
-              else {
-                LOG_DEBUG("Short space");
-                send_symbol_msg (MORSE_S_SPACE);
-              }
-              set_short_on ();
-            }
-            else {
-              d_pause_cnt++;
-              /*
-               * If the pause duration is greater than the long pause symbol,
-               * definitely a long pause symbol should be produced
-               */
-              if (d_pause_cnt > d_long_pause_samples) {
-                LOG_DEBUG("Long space");
-                send_symbol_msg (MORSE_L_SPACE);
-                d_seq_started = false;
-                set_idle ();
-              }
-            }
-            break;
-          default:
-            LOG_ERROR("Invalid State.");
-            d_state = IDLE;
-          }
+      else{
+        /* From now one, we handle the input in multiples of a window */
+        for (i = 0; i < noutput_items / d_window_size; i++) {
+          triggered = is_triggered(in + i * d_window_size, d_window_size);
+        }
       }
       return noutput_items;
     }
 
-    void
-    cw_to_symbol_impl::estimate_dot_duration (size_t estimate)
-    {
-      /*
-       * The estimations should be in a logical range of
-       * [MIN_WPM - MAX_WPM] WPM. Otherwise it is considered a false alarm.
-       */
-      if (estimate < (1.2 / MAX_WPM) / (1.0 / d_sampling_rate)
-          || estimate >= (1.2 / MIN_WPM) / (1.0 / d_sampling_rate)) {
-        return;
-      }
-
-      /*
-       * Keep the minimum dot duration. This is only for the sync process.
-       * At the end the resulting dot duration will be a mean value of
-       * possible dot durations
-       */
-      if (estimate < d_dot_samples) {
-        d_dot_samples = estimate;
-        d_mean_cnt += estimate;
-        d_est_cnt++;
-      }
-      else if (mape (d_dot_samples, estimate) < 1 - d_confidence_level) {
-        d_mean_cnt += estimate;
-        d_est_cnt++;
-      }
-      /*
-       * Perhaps the synchronization process was triggered by a dash.
-       * Check this possibility and use MAPE and confidence level to
-       * decide or not to take into consideration the new estimation
-       */
-      else if (mape (d_dot_samples, estimate / 3.0) < 1 - d_confidence_level) {
-        d_mean_cnt += estimate / 3.0;
-        d_est_cnt++;
-      }
-
-      /*
-       * If the synchronization process is over update the dot duration
-       * with an average estimation
-       */
-      if (d_est_cnt == d_sync_limit) {
-        d_have_sync = true;
-        d_dot_samples = d_mean_cnt / d_sync_limit;
-        set_symbols_duration ();
-        std::cout << "Have sync" << d_dot_samples << std::endl;
-      }
-    }
-
     /**
-     * Sets the dash, short and long pause durations based on the dot estimated
-     * duration.
-     */
-    void
-    cw_to_symbol_impl::set_symbols_duration ()
-    {
-      d_dash_samples = 3 * d_dot_samples;
-      d_short_pause_samples = d_dash_samples;
-      d_long_pause_samples = 7 * d_dot_samples;
-    }
-
-    /**
-     * Resets the estimated dot  duration. After the call of this method
-     * the caller MUST initiate a timing recovery procedure.
-     */
-    void
-    cw_to_symbol_impl::reset_sync ()
-    {
-      d_sync_state = SYNC_TRIGGER_OFF;
-      d_est_cnt = 0;
-      set_idle ();
-      d_have_sync = false;
-      d_dot_samples = (1.2 / MIN_WPM) / (1.0 / d_sampling_rate);
-    }
-
-    /**
-     * Sets a new activation threshold. If auto timing recovery is enabled,
-     * the process of finding automatically the WPM is initiated after the
-     * configuration of the new threshold.
+     * Sets a new activation threshold.
      * @param thrhld the new threshold.
      */
     void
     cw_to_symbol_impl::set_act_threshold (float thrhld)
     {
       d_act_thrshld = thrhld;
-      /* When a new activation threshold is set and automatic synchronization
-       * is set, the automatic timing recovery should be again performed
-       */
-      if (d_auto_sync) {
-        reset_sync ();
-      }
     }
 
     /**
-     * Starts the timing recovery process fro automatically retrieving the best
-     * WPM estimation.
+     * Clamps the input and performs at the same time binary slicing.
+     * With this way, a decision based on moving average is not affected
+     * by strong peaks.
+     * @param out the output buffer with the binary sliced output
+     * @param in the input signal
+     * @param len number of samples to process
      */
-    void
-    cw_to_symbol_impl::start_timing_recovery ()
+    inline void
+    cw_to_symbol_impl::clamp_input (int32_t* out, const float* in, size_t len)
     {
-      reset_sync ();
+      volk_32f_x2_subtract_32f(d_tmp, in, d_const_val, len);
+      volk_32f_binary_slicer_32i(d_out, d_tmp, len);
+    }
+
+    inline int32_t
+    cw_to_symbol_impl::hadd (const int32_t* in, size_t len)
+    {
+      size_t i;
+      int32_t cnt = 0;
+      for(i = 0; i < len; i++) {
+        cnt += in[i];
+      }
+      return cnt;
+    }
+
+    inline bool
+    cw_to_symbol_impl::is_triggered (const float* in, size_t len)
+    {
+      int32_t cnt;
+      clamp_input(d_out, in, len);
+      cnt = hadd(d_out, len);
+      return (cnt >= (int32_t)(d_window_size * d_confidence_level)) ? true : false;
     }
 
   } /* namespace satnogs */

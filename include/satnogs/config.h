@@ -24,7 +24,7 @@
 /*!
  * Enable debug messages for the module
  */
-#define ENABLE_DEBUG_MSG 0
+#define ENABLE_DEBUG_MSG 1
 
 /*!
  * Enable debug messages for the CW decoding mechanism

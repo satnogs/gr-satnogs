@@ -33,14 +33,16 @@ namespace gr
     class ogg_source_impl : public ogg_source
     {
     private:
-      const size_t d_channels;
-      OggVorbis_File d_ogvorb_f;
+      const size_t              d_channels;
+      const bool                d_repeat;
+      OggVorbis_File            d_ogvorb_f;
 
-      int16_t *d_in_buffer;
-      float *d_out_buffer;
+      int16_t                   *d_in_buffer;
+      float                     *d_out_buffer;
 
     public:
-      ogg_source_impl (const std::string& filename, size_t channels);
+      ogg_source_impl (const std::string& filename, size_t channels,
+                       bool repeat);
       ~ogg_source_impl ();
 
       // Where all the action really happens
