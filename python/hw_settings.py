@@ -46,5 +46,5 @@ hw_rx_settings = {'usrpb200' : {'rf_gain' : 50.0, 'if_gain' : 0.0,
                               'bb_gain' : 20.0, 'samp_rate' : 8e6,
                               'antenna' : '', 'dev_arg': 'hackrf'},
                   'rtlsdr' : {'rf_gain' : 32.8, 'if_gain' : 0.0,
-                              'bb_gain' : 0.0, 'samp_rate' : 1.5e6,
+                              'bb_gain' : 0.0, 'samp_rate' : 1e6,
                               'antenna' : '', 'dev_arg' : 'rtl'} }
