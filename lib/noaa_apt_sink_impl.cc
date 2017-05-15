@@ -752,15 +752,22 @@ namespace gr
 	std::string fn (d_filename_png);
 	std::string fn_left (d_filename_png);
 	std::string fn_right (d_filename_png);
-	std::size_t found = fn.find (".");
+	std::size_t found = fn.find_last_of(".");
 	if (d_num_images == 0) {
 	  if (found == std::string::npos) {
 	    fn_left.append ("_left");
 	    fn_right.append ("_right");
 	  }
 	  else {
-	    fn_left.insert (found, "_left");
-	    fn_right.insert (found, "_right");
+	    std::size_t found_dir = fn.substr(found).find("/");
+	    if(found_dir == std::string::npos){
+	      fn_left.insert (found, "_left");
+	      fn_right.insert (found, "_right");
+	    }
+	    else{
+	      fn_left.append ("_left");
+	      fn_right.append ("_right");
+	    }
 	  }
 	}
 	else {
@@ -769,10 +776,17 @@ namespace gr
 	    fn_right.append (std::to_string (d_num_images).append ("_right"));
 	  }
 	  else {
-	    fn_left.insert (found,
-			    std::to_string (d_num_images).append ("_left"));
-	    fn_right.insert (found,
+	    std::size_t found_dir = fn.substr(found).find("/");
+	    if (found_dir == std::string::npos) {
+	      fn_left.insert (found,
+			      std::to_string (d_num_images).append ("_left"));
+	      fn_right.insert (found,
 			     std::to_string (d_num_images).append ("_right"));
+	    }
+	    else{
+	      fn_left.append (std::to_string (d_num_images).append ("_left"));
+	      fn_right.append (std::to_string (d_num_images).append ("_right"));
+	    }
 	  }
 	}
 	d_png_fn[0] = fn_left;
