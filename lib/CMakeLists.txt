@@ -78,7 +78,6 @@ add_library(gnuradio-satnogs SHARED ${satnogs_sources})
 target_link_libraries(gnuradio-satnogs 
     ${Boost_LIBRARIES} 
     ${GNURADIO_ALL_LIBRARIES}
-    gnuradio-digital
     ${CMAKE_THREAD_LIBS_INIT}
     ${NOVA_LIBRARIES}
     ${VOLK_LIBRARIES}
