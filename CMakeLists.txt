@@ -153,6 +153,7 @@ endif()
 # API compatible version required.
 set(GR_REQUIRED_COMPONENTS RUNTIME FFT)
 set(GR_REQUIRED_COMPONENTS RUNTIME FILTER)
+set(GR_REQUIRED_COMPONENTS RUNTIME DIGITAL)
 find_package(Gnuradio "3.7.7" REQUIRED)
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 include(GrVersion)
