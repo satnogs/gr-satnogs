@@ -44,27 +44,24 @@ set cbtics scale 0
 set cbtics (-110, -105, -100, -95, -90, -85, -80, -75, -70, -65, -60, -55, -50, -55, -40)
 
 # palette
-set palette defined (0 '#aa00ff',\
-                     1 '#6200ea',\
-                     2 '#2962ff',\
-                     3 '#00b8d4',\
-                     4 '#00bfa5',\
-                     5 '#00c853',\
-                     6 '#64dd17 ',\
-                     7 '#aeea00',\
-                     9 '#ffd600 ',\
-                     10 '#ffab00 ',\
-                     11 '#ff6d00',\
-                     12 '#d50000')
+set palette defined (0 '#000000', \
+                     1 '#0000e7', \
+                     2 '#0094ff', \
+                     3 '#00ffb8', \
+                     4 '#2eff00', \
+                     5 '#ffff00', \
+                     6 '#ff8800', \
+                     7 '#ff0000', \
+                     8 '#ff007c')
 set ylabel 'Time (seconds)'
 set cbrange [-100:-50]
 set cblabel 'Power (dB)'
 
-# Get automatically the axis ranges from the file 
+# Get automatically the axis ranges from the file
 stats inputfile using 1 binary nooutput
 set xrange [STATS_min*1e-3:STATS_max*1e-3 + 1]
 stats inputfile using 2 binary nooutput
 set yrange [0:STATS_max + 1]
 
-# Plot and scale the frequency axis to kHz for readability 
+# Plot and scale the frequency axis to kHz for readability
 plot inputfile using ($1*1e-3):2:3 binary matrix with image
