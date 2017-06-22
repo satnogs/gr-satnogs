@@ -5,7 +5,7 @@
 # Title: NOAA APT Decoder
 # Author: Manolis Surligas, George Vardakis
 # Description: A NOAA APT Decoder with automatic image synchronization
-# Generated: Tue Apr 11 00:15:28 2017
+# Generated: Fri Jun 23 02:28:46 2017
 ##################################################
 
 from gnuradio import analog
@@ -23,26 +23,26 @@ import time
 
 class satnogs_noaa_apt_decoder(gr.top_block):
 
-    def __init__(self, doppler_correction_per_sec=1000, lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=90.4e6, rx_sdr_device='usrpb200', image_file_path='/tmp/noaa.png'):
+    def __init__(self, doppler_correction_per_sec=1000, image_file_path='/tmp/noaa.png', lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=90.4e6, rx_sdr_device='usrpb200'):
         gr.top_block.__init__(self, "NOAA APT Decoder")
 
         ##################################################
         # Parameters
         ##################################################
         self.doppler_correction_per_sec = doppler_correction_per_sec
+        self.image_file_path = image_file_path
         self.lo_offset = lo_offset
         self.ppm = ppm
         self.rigctl_port = rigctl_port
         self.rx_freq = rx_freq
         self.rx_sdr_device = rx_sdr_device
-        self.image_file_path = image_file_path
 
         ##################################################
         # Variables
         ##################################################
         self.samp_rate_rx = samp_rate_rx = satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']
 
-        self.noaa_filter_taps = noaa_filter_taps = firdes.low_pass(1.0, 1.0, 0.17, 0.01, firdes.WIN_HAMMING, 6.76)
+        self.noaa_filter_taps = noaa_filter_taps = firdes.low_pass(1.0, 1.0, 0.17, 0.02, firdes.WIN_HAMMING, 6.76)
 
         self.initial_bandwidth = initial_bandwidth = 100e3
         self.audio_decimation = audio_decimation = 2
@@ -112,6 +112,12 @@ class satnogs_noaa_apt_decoder(gr.top_block):
     def set_doppler_correction_per_sec(self, doppler_correction_per_sec):
         self.doppler_correction_per_sec = doppler_correction_per_sec
 
+    def get_image_file_path(self):
+        return self.image_file_path
+
+    def set_image_file_path(self, image_file_path):
+        self.image_file_path = image_file_path
+
     def get_lo_offset(self):
         return self.lo_offset
 
@@ -151,12 +157,6 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
 
-    def get_image_file_path(self):
-        return self.image_file_path
-
-    def set_image_file_path(self, image_file_path):
-        self.image_file_path = image_file_path
-
     def get_samp_rate_rx(self):
         return self.samp_rate_rx
 
@@ -195,6 +195,9 @@ def argument_parser():
         "", "--doppler-correction-per-sec", dest="doppler_correction_per_sec", type="intx", default=1000,
         help="Set doppler_correction_per_sec [default=%default]")
     parser.add_option(
+        "", "--image-file-path", dest="image_file_path", type="string", default='/tmp/noaa.png',
+        help="Set image_file_path [default=%default]")
+    parser.add_option(
         "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
         help="Set lo_offset [default=%default]")
     parser.add_option(
@@ -209,9 +212,6 @@ def argument_parser():
     parser.add_option(
         "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default='usrpb200',
         help="Set rx_sdr_device [default=%default]")
-    parser.add_option(
-        "", "--image-file-path", dest="image_file_path", type="string", default='/tmp/noaa.png',
-        help="Set image_file_path [default=%default]")
     return parser
 
 
@@ -219,7 +219,7 @@ def main(top_block_cls=satnogs_noaa_apt_decoder, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, lo_offset=options.lo_offset, ppm=options.ppm, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, image_file_path=options.image_file_path)
+    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, image_file_path=options.image_file_path, lo_offset=options.lo_offset, ppm=options.ppm, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device)
     tb.start()
     tb.wait()
 

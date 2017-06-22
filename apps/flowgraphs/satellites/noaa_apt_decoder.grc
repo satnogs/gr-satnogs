@@ -177,7 +177,7 @@ the quadrature demodulation</value>
     </param>
     <param>
       <key>width</key>
-      <value>0.01</value>
+      <value>0.02</value>
     </param>
     <param>
       <key>win</key>
