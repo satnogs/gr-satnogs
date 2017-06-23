@@ -113,6 +113,83 @@ the quadrature demodulation</value>
     <key>variable</key>
     <param>
       <key>comment</key>
+      <value>The first stage decimation tries to decrease 
+the sampling rate of the device in order to keep
+the CPU utilization of the next processing blocks
+in acceptable levels especially for embedded devices.</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1306, 460)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>first_stage_decimation</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>2</value>
+    </param>
+  </block>
+  <block>
+    <key>variable_low_pass_filter_taps</key>
+    <param>
+      <key>beta</key>
+      <value>6.76</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>cutoff_freq</key>
+      <value>0.2</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(16, 689)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>gain</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>first_stage_filter_taps</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>1.0</value>
+    </param>
+    <param>
+      <key>width</key>
+      <value>0.1</value>
+    </param>
+    <param>
+      <key>win</key>
+      <value>firdes.WIN_HAMMING</value>
+    </param>
+  </block>
+  <block>
+    <key>variable</key>
+    <param>
+      <key>comment</key>
       <value>Audio decimation after 
 the quadrature demodulation</value>
     </param>
@@ -177,7 +254,7 @@ the quadrature demodulation</value>
     </param>
     <param>
       <key>width</key>
-      <value>0.01</value>
+      <value>0.02</value>
     </param>
     <param>
       <key>win</key>
@@ -256,7 +333,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>quad_rate</key>
-      <value>samp_rate_rx / int(samp_rate_rx / initial_bandwidth)</value>
+      <value>samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth))</value>
     </param>
   </block>
   <block>
@@ -327,7 +404,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>samp_rate</key>
-      <value>(samp_rate_rx / int(samp_rate_rx / initial_bandwidth)) / audio_decimation</value>
+      <value>samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation</value>
     </param>
     <param>
       <key>width</key>
@@ -440,7 +517,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>decim</key>
-      <value>int(samp_rate_rx / initial_bandwidth)</value>
+      <value>int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -448,7 +525,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(719, 123)</value>
+      <value>(721, 124)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -532,6 +609,65 @@ TX sampling rate</value>
     <param>
       <key>type</key>
       <value>fff</value>
+    </param>
+  </block>
+  <block>
+    <key>freq_xlating_fir_filter_xxx</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>center_freq</key>
+      <value>lo_offset</value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>decim</key>
+      <value>first_stage_decimation</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(296, 312)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>freq_xlating_fir_filter_xxx_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate_rx</value>
+    </param>
+    <param>
+      <key>taps</key>
+      <value>first_stage_filter_taps</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>ccc</value>
     </param>
   </block>
   <block>
@@ -2138,7 +2274,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>decim</key>
-      <value>int(((samp_rate_rx / int(samp_rate_rx / initial_bandwidth)) / audio_decimation) / 2)</value>
+      <value>int((samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation)/2)</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -2409,7 +2545,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>sampling_rate</key>
-      <value>samp_rate_rx</value>
+      <value>samp_rate_rx /first_stage_decimation</value>
     </param>
     <param>
       <key>target_freq</key>
@@ -2561,6 +2697,12 @@ we shift the LO a little further</value>
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>freq_xlating_fir_filter_xxx_0</source_block_id>
+    <sink_block_id>satnogs_coarse_doppler_correction_cc_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>hilbert_fc_0</source_block_id>
     <sink_block_id>blocks_complex_to_mag_0</sink_block_id>
     <source_key>0</source_key>
@@ -2568,7 +2710,7 @@ we shift the LO a little further</value>
   </connection>
   <connection>
     <source_block_id>osmosdr_source_0</source_block_id>
-    <sink_block_id>satnogs_coarse_doppler_correction_cc_0</sink_block_id>
+    <sink_block_id>freq_xlating_fir_filter_xxx_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
