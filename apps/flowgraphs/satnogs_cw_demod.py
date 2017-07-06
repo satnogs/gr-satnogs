@@ -5,7 +5,7 @@
 # Title: FM Generic Demodulation
 # Author: surligas, cshields, csete
 # Description: A generic CW demodulation block
-# Generated: Thu Apr 27 09:58:50 2017
+# Generated: Thu Jul  6 18:29:34 2017
 ##################################################
 
 from gnuradio import analog
@@ -44,9 +44,9 @@ class satnogs_cw_demod(gr.top_block):
         ##################################################
         self.samp_rate_rx = samp_rate_rx = satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']
         self.xlate_filter_taps = xlate_filter_taps = firdes.low_pass(1, samp_rate_rx, 125000, 25000, firdes.WIN_HAMMING, 6.76)
-        
+
         self.taps = taps = firdes.low_pass(12.0, samp_rate_rx, 100e3, 60000, firdes.WIN_HAMMING, 6.76)
-          
+
         self.filter_rate = filter_rate = 250000
         self.deviation = deviation = 5000
         self.audio_samp_rate = audio_samp_rate = 48000
@@ -55,7 +55,7 @@ class satnogs_cw_demod(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 10, 1024, waterfall_file_path, 1)
+        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 8, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
@@ -71,7 +71,7 @@ class satnogs_cw_demod(gr.top_block):
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[rx_sdr_device]['bb_gain'], 0)
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[rx_sdr_device]['antenna'], 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
-          
+
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
         	1, audio_samp_rate, 2000, 1000, firdes.WIN_HAMMING, 6.76))
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(int(samp_rate_rx/filter_rate), (xlate_filter_taps), lo_offset, samp_rate_rx)
@@ -90,17 +90,17 @@ class satnogs_cw_demod(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
-        self.connect((self.analog_agc2_xx_0_0, 0), (self.blocks_multiply_xx_0, 1))    
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 0))    
-        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.low_pass_filter_0, 0))    
-        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))    
-        self.connect((self.blocks_complex_to_real_0, 0), (self.satnogs_ogg_encoder_0, 0))    
-        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_real_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blks2_rational_resampler_xxx_1, 0))    
-        self.connect((self.low_pass_filter_0, 0), (self.analog_agc2_xx_0_0, 0))    
-        self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))    
-        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
+        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
+        self.connect((self.analog_agc2_xx_0_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.low_pass_filter_0, 0))
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))
+        self.connect((self.blocks_complex_to_real_0, 0), (self.satnogs_ogg_encoder_0, 0))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.blocks_complex_to_real_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blks2_rational_resampler_xxx_1, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.analog_agc2_xx_0_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
+        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
 
     def get_cw_offset(self):
         return self.cw_offset

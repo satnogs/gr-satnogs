@@ -64,4 +64,4 @@ stats inputfile using 2 binary nooutput
 set yrange [0:STATS_max + 1]
 
 # Plot and scale the frequency axis to kHz for readability
-plot inputfile using ($1*1e-3):2:3 binary matrix with image
+plot inputfile every 2 using ($1*1e-3):2:3 binary matrix with image

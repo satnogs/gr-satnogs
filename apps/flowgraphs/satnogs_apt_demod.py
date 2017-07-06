@@ -5,7 +5,7 @@
 # Title: APT Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic APT demodulation block
-# Generated: Sun Jun  4 20:52:57 2017
+# Generated: Thu Jul  6 18:29:16 2017
 ##################################################
 
 from gnuradio import analog
@@ -18,6 +18,7 @@ from optparse import OptionParser
 import math
 import osmosdr
 import satnogs
+import time
 
 
 class satnogs_apt_demod(gr.top_block):
@@ -53,7 +54,7 @@ class satnogs_apt_demod(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate*2, 0.0, 10, 1024, waterfall_file_path, 1)
+        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate*2, 0.0, 8, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)

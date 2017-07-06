@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.10'?>
+<?grc format='1' created='3.7.11'?>
 <flow_graph>
   <timestamp>Thu May  5 00:22:45 2016</timestamp>
   <block>
@@ -2764,7 +2764,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>pps</key>
-      <value>10</value>
+      <value>8</value>
     </param>
     <param>
       <key>samp_rate</key>
