@@ -28,6 +28,34 @@ if (!exists("height")) height=800
 if (!exists("width")) width=800
 if (!exists("outfile")) outfile='/tmp/waterfall.png'
 
+################################################################################
+# Get FFT size and maximum number of records so we can plot the waterfall
+# even in case the file was not properly closed and contains data that are
+# not an integer multiple of the FFT size
+################################################################################
+
+# Set terminal to unkown so no ploting is performed.
+set terminal unknown
+
+# Read the first float to get the FFT size 
+# Then, read until the last float to get the number of floats written in the file.
+# For strange reasons the STATS_records returns inconcistent size (always the half)
+plot inputfile binary format='%float32' index 0 every 1:1:0:0:0:0 u (fft_size=$1):1, "" binary format='%float32' using (float_num=$0+1)
+
+
+# The file contains a float specifying the FFT size the x-axis scale 
+# and then each each pixel line
+# starts with the time in seconds from the beginning of the capture. 
+# Based on this info the exact number of the fully filled pixel lines can
+# be retrieved.
+pixel_lines=int((float_num - fft_size - 1)/(fft_size + 1))
+new_size=(4 + fft_size*4 + ( (fft_size+1)*pixel_lines)*4)
+cmd = sprintf("truncate -s %u %s", new_size, inputfile)
+
+# Truncate properly the file
+system(cmd)
+
+set view map
 set terminal pngcairo size width,height enhanced font 'Verdana,14'
 set output outfile
 
@@ -41,6 +69,8 @@ set tics nomirror out scale 0.75
 set xlabel 'Frequency (kHz)'
 set ylabel 'Time'
 set cbtics scale 0
+
+# Spectravue palette and scale
 set cbtics (-110, -105, -100, -95, -90, -85, -80, -75, -70, -65, -60, -55, -50, -55, -40)
 
 # palette
@@ -56,6 +86,7 @@ set palette defined (0 '#000000', \
 set ylabel 'Time (seconds)'
 set cbrange [-100:-50]
 set cblabel 'Power (dB)'
+
 
 # Get automatically the axis ranges from the file
 stats inputfile using 1 binary nooutput
