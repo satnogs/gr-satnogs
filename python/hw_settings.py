@@ -49,3 +49,84 @@ hw_rx_settings = {'usrpb200' : {'rf_gain' : 50.0, 'if_gain' : 0.0,
                   'rtlsdr' : {'rf_gain' : 32.8, 'if_gain' : 0.0,
                               'bb_gain' : 0.0, 'samp_rate' : 1e6,
                               'antenna' : '', 'dev_arg' : 'rtl,buffers=32,buflen=16384' }}
+
+#===============================================================================
+# Default values indicating that the user does not passed any custom value
+#===============================================================================
+not_set_rx_rf_gain = -1.0
+not_set_rx_if_gain = -1.0
+not_set_rx_bb_gain = -1.0
+not_set_antenna = ''
+not_set_dev_args = ''
+
+def handle_rx_dev_args(device, dev_args):
+    """
+    Handles the RX device arguments.
+    :param device: the device name 
+    :type device: string
+    :param dev_args: the device arguments. Emtpy string for no or default 
+    device arguements
+    :type dev_args: string
+    """
+    if(len(dev_args) == 0):
+        return hw_rx_settings[device]['dev_arg']
+    else:
+        return dev_args
+
+def handle_rx_rf_gain(device, gain):
+    """
+    Handles the RX RF gain. If this parameter is not set from the user
+    the default settings are returned, otherwise the user setting itself
+    :param device: the device name
+    :type device: string
+    :param gain: the user defined gain value
+    :type gain: float
+    """
+    if(gain == not_set_rx_rf_gain):
+        return hw_rx_settings[device]['rf_gain']
+    else:
+        return gain
+    
+def handle_rx_if_gain(device, gain):
+    """
+    Handles the IF RF gain. If this parameter is not set from the user
+    the default settings are returned, otherwise the user setting itself
+    :param device: the device name
+    :type device: string
+    :param gain: the user defined gain value
+    :type gain: float
+    """
+    if(gain == not_set_rx_if_gain):
+        return hw_rx_settings[device]['if_gain']
+    else:
+        return gain
+    
+
+def handle_rx_bb_gain(device, gain):
+    """
+    Handles the RX BB gain. If this parameter is not set from the user
+    the default settings are returned, otherwise the user setting itself
+    :param device: the device name
+    :type device: string
+    :param gain: the user defined gain value
+    :type gain: float
+    """
+    if(gain == not_set_rx_bb_gain):
+        return hw_rx_settings[device]['bb_gain']
+    else:
+        return gain
+    
+def handle_rx_antenna(device, antenna):
+    """
+    Handles the RX antenna. If this parameter is not set from the user
+    the default settings are returned, otherwise the user setting itself
+    :param device: the device name
+    :type device: string
+    :param gain: the user defined antenna
+    :type gain: string
+    """
+    if(len(antenna) == 0):
+        return hw_rx_settings[device]['antenna']
+    else:
+        return antenna
+    

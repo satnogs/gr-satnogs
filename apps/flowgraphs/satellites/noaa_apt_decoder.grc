@@ -337,6 +337,49 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(518, 634)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>antenna</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_antenna</value>
+    </param>
+  </block>
+  <block>
     <key>band_pass_filter</key>
     <param>
       <key>beta</key>
@@ -416,6 +459,49 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(430, 634)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>bb_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_bb_gain</value>
+    </param>
+  </block>
+  <block>
     <key>blocks_complex_to_mag</key>
     <param>
       <key>alias</key>
@@ -456,6 +542,49 @@ TX sampling rate</value>
     <param>
       <key>vlen</key>
       <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(183, 634)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>dev_args</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_dev_args</value>
     </param>
   </block>
   <block>
@@ -639,7 +768,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(296, 312)</value>
+      <value>(295, 295)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -737,6 +866,49 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
+      <value>(351, 634)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>if_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_if_gain</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
       <value>(183, 547)</value>
     </param>
     <param>
@@ -816,11 +988,11 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>ant0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['antenna']</value>
+      <value>satnogs.handle_rx_antenna(rx_sdr_device, antenna)</value>
     </param>
     <param>
       <key>bb_gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['bb_gain']</value>
+      <value>satnogs.handle_rx_bb_gain(rx_sdr_device, bb_gain)</value>
     </param>
     <param>
       <key>bw0</key>
@@ -844,7 +1016,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>if_gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['if_gain']</value>
+      <value>satnogs.handle_rx_if_gain(rx_sdr_device, if_gain)</value>
     </param>
     <param>
       <key>iq_balance_mode0</key>
@@ -852,7 +1024,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['rf_gain']</value>
+      <value>satnogs.handle_rx_rf_gain(rx_sdr_device, rf_gain)</value>
     </param>
     <param>
       <key>ant10</key>
@@ -2104,7 +2276,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>args</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['dev_arg']</value>
+      <value>satnogs.handle_rx_dev_args(rx_sdr_device, dev_args)</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -2112,7 +2284,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(55, 243)</value>
+      <value>(15, 223)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2374,6 +2546,49 @@ we shift the LO a little further</value>
     <param>
       <key>type</key>
       <value>fff</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(279, 634)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rf_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_rf_gain</value>
     </param>
   </block>
   <block>

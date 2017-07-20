@@ -178,7 +178,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1480, 988)</value>
+      <value>(805, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -476,6 +476,92 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(398, 1081)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>antenna</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_antenna</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(311, 1081)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>bb_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_bb_gain</value>
+    </param>
+  </block>
+  <block>
     <key>rational_resampler_xxx</key>
     <param>
       <key>alias</key>
@@ -689,6 +775,49 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
+      <value>(63, 1081)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>dev_args</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_dev_args</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
       <value>(64, 984)</value>
     </param>
     <param>
@@ -732,7 +861,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(744, 988)</value>
+      <value>(494, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -816,6 +945,49 @@ tone. This tone is typically 500-800 Hz.</value>
     <param>
       <key>type</key>
       <value>ccc</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(231, 1081)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>if_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_if_gain</value>
     </param>
   </block>
   <block>
@@ -945,11 +1117,11 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>ant0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['antenna']</value>
+      <value>satnogs.handle_rx_antenna(rx_sdr_device, antenna)</value>
     </param>
     <param>
       <key>bb_gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['bb_gain']</value>
+      <value>satnogs.handle_rx_bb_gain(rx_sdr_device, bb_gain)</value>
     </param>
     <param>
       <key>bw0</key>
@@ -973,7 +1145,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>if_gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['if_gain']</value>
+      <value>satnogs.handle_rx_if_gain(rx_sdr_device, if_gain)</value>
     </param>
     <param>
       <key>iq_balance_mode0</key>
@@ -981,7 +1153,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['rf_gain']</value>
+      <value>satnogs.handle_rx_rf_gain(rx_sdr_device, rf_gain)</value>
     </param>
     <param>
       <key>ant10</key>
@@ -2233,7 +2405,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>args</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['dev_arg']</value>
+      <value>satnogs.handle_rx_dev_args(rx_sdr_device, dev_args)</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -2241,7 +2413,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 376)</value>
+      <value>(15, 335)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2360,7 +2532,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1104, 996)</value>
+      <value>(726, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2403,7 +2575,50 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(472, 984)</value>
+      <value>(159, 1081)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rf_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_rf_gain</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(327, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2446,7 +2661,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(616, 984)</value>
+      <value>(414, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2489,7 +2704,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(312, 984)</value>
+      <value>(223, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2787,7 +3002,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(872, 988)</value>
+      <value>(590, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2865,12 +3080,6 @@ we shift the LO a little further</value>
   <connection>
     <source_block_id>osmosdr_source_0</source_block_id>
     <sink_block_id>satnogs_coarse_doppler_correction_cc_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>osmosdr_source_0</source_block_id>
-    <sink_block_id>satnogs_doppler_correction_cc_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
