@@ -2,7 +2,8 @@
 #
 # gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
 #
-#  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+#  Copyright (C) 2016,2017
+#  Libre Space Foundation <http://librespacefoundation.org/>
 #
 #  This program is free software: you can redistribute it and/or modify
 #  it under the terms of the GNU General Public License as published by
@@ -47,4 +48,4 @@ hw_rx_settings = {'usrpb200' : {'rf_gain' : 50.0, 'if_gain' : 0.0,
                               'antenna' : '', 'dev_arg': 'hackrf'},
                   'rtlsdr' : {'rf_gain' : 32.8, 'if_gain' : 0.0,
                               'bb_gain' : 0.0, 'samp_rate' : 1e6,
-                              'antenna' : '', 'dev_arg' : 'rtl'} }
+                              'antenna' : '', 'dev_arg' : 'rtl,buffers=32,buflen=16384' }}
