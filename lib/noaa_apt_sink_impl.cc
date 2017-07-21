@@ -307,11 +307,12 @@ namespace gr
         }
         png_write_end (d_png_ptr[i], NULL);
         fclose (d_png_fd[i]);
+
+        for (size_t y = 0; y < d_height; y++) {
+          delete[] row_pointers[y];
+        }
+        delete[] row_pointers;
       }
-      for (size_t y = 0; y < d_height; y++) {
-        delete[] row_pointers[y];
-      }
-      delete[] row_pointers;
 
     }
 
