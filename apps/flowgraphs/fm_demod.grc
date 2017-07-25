@@ -620,7 +620,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>value</key>
-      <value>1000</value>
+      <value>20</value>
     </param>
   </block>
   <block>
@@ -2580,7 +2580,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>interval</key>
-      <value>1000</value>
+      <value>1000/doppler_correction_per_sec</value>
     </param>
   </block>
   <block>
