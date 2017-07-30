@@ -62,7 +62,8 @@ list(APPEND satnogs_sources
     qb50_deframer_impl.cc
     waterfall_sink_impl.cc
     ogg_source_impl.cc
-    noaa_apt_sink_impl.cc)
+    noaa_apt_sink_impl.cc
+    frame_file_sink_impl.cc)
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND satnogs_sources ${satnogs_debug_sources})
