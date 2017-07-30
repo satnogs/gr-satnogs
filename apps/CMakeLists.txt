@@ -29,5 +29,6 @@ GR_PYTHON_INSTALL(
     flowgraphs/satnogs_generic_iq_receiver.py
     flowgraphs/satnogs_bpsk_demod.py
     flowgraphs/satnogs_apt_demod.py
+    flowgraphs/satnogs_fsk9600_ax25.py
     DESTINATION bin
 )

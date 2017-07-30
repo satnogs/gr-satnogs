@@ -5,7 +5,7 @@
 # Title: FSK9600 AX.25 decoder with G3RUH support
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: FSK9600 AX.25 decoder with G3RUH support
-# Generated: Sun Jul 30 00:21:32 2017
+# Generated: Sun Jul 30 19:43:50 2017
 ##################################################
 
 from gnuradio import analog
@@ -61,8 +61,10 @@ class satnogs_fsk9600_ax25(gr.top_block):
         self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 8, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
-        self.satnogs_multi_format_msg_sink_0_0 = satnogs.multi_format_msg_sink(1)
-        self.satnogs_multi_format_msg_sink_0 = satnogs.multi_format_msg_sink(1)
+        self.satnogs_frame_file_sink_0_1_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_ok', 1)
+        self.satnogs_frame_file_sink_0_1 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 1)
+        self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_ok', 0)
+        self.satnogs_frame_file_sink_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, True, True, 1024, 3)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
@@ -97,8 +99,10 @@ class satnogs_fsk9600_ax25(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_multi_format_msg_sink_0, 'in'))
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_multi_format_msg_sink_0_0, 'in'))
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0, 'frame'))
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_0, 'frame'))
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0_1, 'frame'))
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_1_0, 'frame'))
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
         self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.dc_blocker_xx_0, 0))
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.analog_quadrature_demod_cf_0_0, 0))
