@@ -5,7 +5,7 @@
 # Title: NOAA APT Decoder
 # Author: Manolis Surligas, George Vardakis
 # Description: A NOAA APT Decoder with automatic image synchronization
-# Generated: Tue Jul 25 21:49:29 2017
+# Generated: Wed Aug  2 19:39:04 2017
 ##################################################
 
 from gnuradio import analog
@@ -23,7 +23,7 @@ import time
 
 class satnogs_noaa_apt_decoder(gr.top_block):
 
-    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=20, file_path='/tmp/test.ogg', if_gain=satnogs.not_set_rx_if_gain, image_file_path='/tmp/noaa.png', lo_offset=100e3, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=90.4e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
+    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=20, file_path='/tmp/test.ogg', flip_images=0, if_gain=satnogs.not_set_rx_if_gain, image_file_path='/tmp/noaa.png', lo_offset=100e3, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=90.4e6, rx_sdr_device='usrpb200', split_images=0, sync=0, waterfall_file_path='/tmp/waterfall.dat'):
         gr.top_block.__init__(self, "NOAA APT Decoder")
 
         ##################################################
@@ -34,6 +34,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.dev_args = dev_args
         self.doppler_correction_per_sec = doppler_correction_per_sec
         self.file_path = file_path
+        self.flip_images = flip_images
         self.if_gain = if_gain
         self.image_file_path = image_file_path
         self.lo_offset = lo_offset
@@ -42,20 +43,22 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.rigctl_port = rigctl_port
         self.rx_freq = rx_freq
         self.rx_sdr_device = rx_sdr_device
+        self.split_images = split_images
+        self.sync = sync
         self.waterfall_file_path = waterfall_file_path
 
         ##################################################
         # Variables
         ##################################################
         self.samp_rate_rx = samp_rate_rx = satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']
+        self.first_stage_decimation = first_stage_decimation = 2
 
-        self.noaa_filter_taps = noaa_filter_taps = firdes.low_pass(1.0, 1.0, 0.17, 0.02, firdes.WIN_HAMMING, 6.76)
+        self.noaa_filter_taps = noaa_filter_taps = firdes.low_pass(1.0, samp_rate_rx /first_stage_decimation, 17e3, 1e3, firdes.WIN_HAMMING, 6.76)
 
         self.initial_bandwidth = initial_bandwidth = 100e3
 
         self.first_stage_filter_taps = first_stage_filter_taps = firdes.low_pass(1.0, 1.0, 0.2, 0.1, firdes.WIN_HAMMING, 6.76)
 
-        self.first_stage_decimation = first_stage_decimation = 2
         self.audio_decimation = audio_decimation = 2
 
         ##################################################
@@ -64,7 +67,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)), 0.0, 8, 1024, waterfall_file_path, 0)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000/doppler_correction_per_sec, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, 48000, 0.8)
-        self.satnogs_noaa_apt_sink_0 = satnogs.noaa_apt_sink(image_file_path, 2080, 1500, True, False, False)
+        self.satnogs_noaa_apt_sink_0 = satnogs.noaa_apt_sink(image_file_path, 2080, 1500, bool(split_images), bool(sync), bool(flip_images))
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx /first_stage_decimation)
         self.rational_resampler_xxx_1 = filter.rational_resampler_fff(
                 interpolation=48000,
@@ -162,6 +165,12 @@ class satnogs_noaa_apt_decoder(gr.top_block):
     def set_file_path(self, file_path):
         self.file_path = file_path
 
+    def get_flip_images(self):
+        return self.flip_images
+
+    def set_flip_images(self, flip_images):
+        self.flip_images = flip_images
+
     def get_if_gain(self):
         return self.if_gain
 
@@ -222,6 +231,18 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
         self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
 
+    def get_split_images(self):
+        return self.split_images
+
+    def set_split_images(self, split_images):
+        self.split_images = split_images
+
+    def get_sync(self):
+        return self.sync
+
+    def set_sync(self, sync):
+        self.sync = sync
+
     def get_waterfall_file_path(self):
         return self.waterfall_file_path
 
@@ -235,6 +256,13 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.samp_rate_rx = samp_rate_rx
         self.osmosdr_source_0.set_sample_rate(self.samp_rate_rx)
         self.osmosdr_source_0.set_bandwidth(self.samp_rate_rx, 0)
+        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
+
+    def get_first_stage_decimation(self):
+        return self.first_stage_decimation
+
+    def set_first_stage_decimation(self, first_stage_decimation):
+        self.first_stage_decimation = first_stage_decimation
         self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
 
     def get_noaa_filter_taps(self):
@@ -257,13 +285,6 @@ class satnogs_noaa_apt_decoder(gr.top_block):
     def set_first_stage_filter_taps(self, first_stage_filter_taps):
         self.first_stage_filter_taps = first_stage_filter_taps
         self.freq_xlating_fir_filter_xxx_0.set_taps((self.first_stage_filter_taps))
-
-    def get_first_stage_decimation(self):
-        return self.first_stage_decimation
-
-    def set_first_stage_decimation(self, first_stage_decimation):
-        self.first_stage_decimation = first_stage_decimation
-        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
 
     def get_audio_decimation(self):
         return self.audio_decimation
@@ -292,6 +313,9 @@ def argument_parser():
         "", "--file-path", dest="file_path", type="string", default='/tmp/test.ogg',
         help="Set file_path [default=%default]")
     parser.add_option(
+        "", "--flip-images", dest="flip_images", type="intx", default=0,
+        help="Set flip_images [default=%default]")
+    parser.add_option(
         "", "--if-gain", dest="if_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_if_gain),
         help="Set if_gain [default=%default]")
     parser.add_option(
@@ -316,6 +340,12 @@ def argument_parser():
         "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default='usrpb200',
         help="Set rx_sdr_device [default=%default]")
     parser.add_option(
+        "", "--split-images", dest="split_images", type="intx", default=0,
+        help="Set split_images [default=%default]")
+    parser.add_option(
+        "", "--sync", dest="sync", type="intx", default=0,
+        help="Set sync [default=%default]")
+    parser.add_option(
         "", "--waterfall-file-path", dest="waterfall_file_path", type="string", default='/tmp/waterfall.dat',
         help="Set waterfall_file_path [default=%default]")
     return parser
@@ -325,7 +355,7 @@ def main(top_block_cls=satnogs_noaa_apt_decoder, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(antenna=options.antenna, bb_gain=options.bb_gain, dev_args=options.dev_args, doppler_correction_per_sec=options.doppler_correction_per_sec, file_path=options.file_path, if_gain=options.if_gain, image_file_path=options.image_file_path, lo_offset=options.lo_offset, ppm=options.ppm, rf_gain=options.rf_gain, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path)
+    tb = top_block_cls(antenna=options.antenna, bb_gain=options.bb_gain, dev_args=options.dev_args, doppler_correction_per_sec=options.doppler_correction_per_sec, file_path=options.file_path, flip_images=options.flip_images, if_gain=options.if_gain, image_file_path=options.image_file_path, lo_offset=options.lo_offset, ppm=options.ppm, rf_gain=options.rf_gain, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, split_images=options.split_images, sync=options.sync, waterfall_file_path=options.waterfall_file_path)
     tb.start()
     tb.wait()
 
