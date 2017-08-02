@@ -28,7 +28,6 @@
 		<key>split</key>
 		<value>False</value>
 		<type>bool</type>
-		<hide>part</hide>
 		<option>
 			<name>Yes</name>
 			<key>True</key>
@@ -43,7 +42,6 @@
 		<key>sync</key>
 		<value>False</value>
 		<type>bool</type>
-		<hide>part</hide>
 		<option>
 			<name>Yes</name>
 			<key>False</key>
@@ -58,7 +56,6 @@
 		<key>flip</key>
 		<value>False</value>
 		<type>bool</type>
-		<hide>part</hide>
 		<option>
 			<name>Yes</name>
 			<key>True</key>

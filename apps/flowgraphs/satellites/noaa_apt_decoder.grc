@@ -226,7 +226,7 @@ the quadrature demodulation</value>
     </param>
     <param>
       <key>cutoff_freq</key>
-      <value>0.17</value>
+      <value>17e3</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -250,11 +250,11 @@ the quadrature demodulation</value>
     </param>
     <param>
       <key>samp_rate</key>
-      <value>1.0</value>
+      <value>samp_rate_rx /first_stage_decimation</value>
     </param>
     <param>
       <key>width</key>
-      <value>0.02</value>
+      <value>1e3</value>
     </param>
     <param>
       <key>win</key>
@@ -781,6 +781,49 @@ TX sampling rate</value>
     <param>
       <key>type</key>
       <value>fff</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(472, 716)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>flip_images</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>intx</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>0</value>
     </param>
   </block>
   <block>
@@ -2889,7 +2932,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>flip</key>
-      <value>False</value>
+      <value>bool(flip_images)</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2917,11 +2960,11 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>split</key>
-      <value>True</value>
+      <value>bool(split_images)</value>
     </param>
     <param>
       <key>sync</key>
-      <value>False</value>
+      <value>bool(sync)</value>
     </param>
   </block>
   <block>
@@ -3079,6 +3122,92 @@ we shift the LO a little further</value>
     <param>
       <key>samp_rate</key>
       <value>samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth))</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(304, 716)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>split_images</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>intx</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(400, 716)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>sync</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>intx</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>0</value>
     </param>
   </block>
   <block>
