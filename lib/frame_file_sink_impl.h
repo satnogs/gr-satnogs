@@ -22,6 +22,9 @@
 #define INCLUDED_SATNOGS_FRAME_FILE_SINK_IMPL_H
 
 #include <satnogs/frame_file_sink.h>
+#include <chrono>
+#include <fstream>
+
 
 namespace gr
 {
@@ -33,6 +36,8 @@ namespace gr
     private:
       const std::string d_prefix_name;
       int d_output_type;
+      std::string d_filename_prev;
+      int d_counter;
 
     public:
       frame_file_sink_impl (const std::string& prefix_name, int output_type);
