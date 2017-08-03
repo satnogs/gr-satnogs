@@ -86,12 +86,12 @@ namespace gr
       filename.append (buffer);
 
 
-      if (!filename.compare(d_filename_prev))
+      if (filename.compare(d_filename_prev)==0)
       {
+        d_filename_prev.assign(filename);
         filename.append ("_");
         d_counter++;
         filename.append(std::to_string(d_counter));
-        d_filename_prev.assign(filename);
       }
       else
       {
