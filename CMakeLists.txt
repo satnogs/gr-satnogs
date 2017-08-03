@@ -123,7 +123,7 @@ endif(APPLE)
 find_package (Threads REQUIRED)
 
 ########################################################################
-# Find gnuradio build dependencies
+# Find gr-satnogs build dependencies
 ########################################################################
 find_package(CppUnit)
 find_package(Doxygen)
@@ -134,7 +134,8 @@ find_package(PNG REQUIRED)
 ########################################################################
 # Include or not into the module blocks for debugging
 ########################################################################
-option(INCLUDE_DEBUG_BLOCKS "Enable/Disable blocks that are used for debugging purposes" ON)
+option(INCLUDE_DEBUG_BLOCKS 
+    "Enable/Disable blocks that are used for debugging purposes" ON)
 
 
 ########################################################################
@@ -151,9 +152,7 @@ endif()
 # components required to the list of GR_REQUIRED_COMPONENTS (in all
 # caps such as FILTER or FFT) and change the version to the minimum
 # API compatible version required.
-set(GR_REQUIRED_COMPONENTS RUNTIME FFT)
-set(GR_REQUIRED_COMPONENTS RUNTIME FILTER)
-set(GR_REQUIRED_COMPONENTS RUNTIME DIGITAL)
+set(GR_REQUIRED_COMPONENTS RUNTIME FFT FILTER DIGITAL)
 find_package(Gnuradio "3.7.7" REQUIRED)
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 include(GrVersion)
