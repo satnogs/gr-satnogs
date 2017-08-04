@@ -5,7 +5,7 @@
 # Title: NOAA APT Decoder
 # Author: Manolis Surligas, George Vardakis
 # Description: A NOAA APT Decoder with automatic image synchronization
-# Generated: Wed Aug  2 19:39:04 2017
+# Generated: Fri Aug  4 19:19:48 2017
 ##################################################
 
 from gnuradio import analog
@@ -23,7 +23,7 @@ import time
 
 class satnogs_noaa_apt_decoder(gr.top_block):
 
-    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=20, file_path='/tmp/test.ogg', flip_images=0, if_gain=satnogs.not_set_rx_if_gain, image_file_path='/tmp/noaa.png', lo_offset=100e3, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=90.4e6, rx_sdr_device='usrpb200', split_images=0, sync=0, waterfall_file_path='/tmp/waterfall.dat'):
+    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=20, file_path='/tmp/test.ogg', flip_images=0, if_gain=satnogs.not_set_rx_if_gain, image_file_path='/tmp/noaa.png', lo_offset=100e3, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=90.4e6, rx_sdr_device='usrpb200', split_images=0, sync=1, waterfall_file_path='/tmp/waterfall.dat'):
         gr.top_block.__init__(self, "NOAA APT Decoder")
 
         ##################################################
@@ -51,9 +51,9 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         # Variables
         ##################################################
         self.samp_rate_rx = samp_rate_rx = satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']
-        self.first_stage_decimation = first_stage_decimation = 2
+        self.first_stage_decimation = first_stage_decimation = 4
 
-        self.noaa_filter_taps = noaa_filter_taps = firdes.low_pass(1.0, samp_rate_rx /first_stage_decimation, 17e3, 1e3, firdes.WIN_HAMMING, 6.76)
+        self.noaa_filter_taps = noaa_filter_taps = firdes.low_pass(1.0, samp_rate_rx /first_stage_decimation, 16.5e3, 4e3, firdes.WIN_HAMMING, 6.76)
 
         self.initial_bandwidth = initial_bandwidth = 100e3
 
@@ -76,13 +76,13 @@ class satnogs_noaa_apt_decoder(gr.top_block):
                 fractional_bw=None,
         )
         self.rational_resampler_xxx_0_0 = filter.rational_resampler_fff(
-                interpolation=4160,
-                decimation=9600,
+                interpolation=1,
+                decimation=4,
                 taps=None,
                 fractional_bw=None,
         )
         self.rational_resampler_xxx_0 = filter.rational_resampler_fff(
-                interpolation=9600,
+                interpolation=4*4160,
                 decimation=int((samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation)/2),
                 taps=None,
                 fractional_bw=None,
@@ -104,8 +104,8 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(first_stage_decimation, (first_stage_filter_taps), lo_offset, samp_rate_rx)
         self.fir_filter_xxx_1 = filter.fir_filter_fff(2, ([0.5, 0.5]))
         self.fir_filter_xxx_1.declare_sample_delay(0)
-        self.fir_filter_xxx_0 = filter.fir_filter_ccc(int(samp_rate_rx/ first_stage_decimation / initial_bandwidth), (noaa_filter_taps))
-        self.fir_filter_xxx_0.declare_sample_delay(0)
+        self.fft_filter_xxx_0 = filter.fft_filter_ccc(int(samp_rate_rx/ first_stage_decimation / initial_bandwidth), (noaa_filter_taps), 1)
+        self.fft_filter_xxx_0.declare_sample_delay(0)
         self.blocks_complex_to_mag_0 = blocks.complex_to_mag(1)
         self.band_pass_filter_0 = filter.fir_filter_fff(1, firdes.band_pass(
         	6, samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
@@ -122,8 +122,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.connect((self.analog_wfm_rcv_0, 0), (self.rational_resampler_xxx_1, 0))
         self.connect((self.band_pass_filter_0, 0), (self.fir_filter_xxx_1, 0))
         self.connect((self.blocks_complex_to_mag_0, 0), (self.rational_resampler_xxx_0_0, 0))
-        self.connect((self.fir_filter_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
-        self.connect((self.fir_filter_xxx_0, 0), (self.satnogs_waterfall_sink_0, 0))
+        self.connect((self.fft_filter_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
         self.connect((self.fir_filter_xxx_1, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
         self.connect((self.hilbert_fc_0, 0), (self.blocks_complex_to_mag_0, 0))
@@ -131,7 +130,8 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.connect((self.rational_resampler_xxx_0, 0), (self.hilbert_fc_0, 0))
         self.connect((self.rational_resampler_xxx_0_0, 0), (self.satnogs_noaa_apt_sink_0, 0))
         self.connect((self.rational_resampler_xxx_1, 0), (self.satnogs_ogg_encoder_0, 0))
-        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.fir_filter_xxx_0, 0))
+        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.fft_filter_xxx_0, 0))
+        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.satnogs_waterfall_sink_0, 0))
 
     def get_antenna(self):
         return self.antenna
@@ -270,7 +270,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
 
     def set_noaa_filter_taps(self, noaa_filter_taps):
         self.noaa_filter_taps = noaa_filter_taps
-        self.fir_filter_xxx_0.set_taps((self.noaa_filter_taps))
+        self.fft_filter_xxx_0.set_taps((self.noaa_filter_taps))
 
     def get_initial_bandwidth(self):
         return self.initial_bandwidth
@@ -343,7 +343,7 @@ def argument_parser():
         "", "--split-images", dest="split_images", type="intx", default=0,
         help="Set split_images [default=%default]")
     parser.add_option(
-        "", "--sync", dest="sync", type="intx", default=0,
+        "", "--sync", dest="sync", type="intx", default=1,
         help="Set sync [default=%default]")
     parser.add_option(
         "", "--waterfall-file-path", dest="waterfall_file_path", type="string", default='/tmp/waterfall.dat',
