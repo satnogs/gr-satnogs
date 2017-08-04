@@ -213,7 +213,7 @@ namespace gr
         }
       }
       else {
-        png_write_row (d_png_ptr[0], d_row_buffer);
+       png_write_row (d_png_ptr[0], d_row_buffer);
       }
       d_row_counter++;
     }
@@ -370,10 +370,22 @@ namespace gr
             }
           }
           else {
+            if (d_sample_counter < d_norm_window) {
+              if (in[i] < d_min_value) {
+                d_min_value = in[i];
+              }
+              if (in[i] > d_max_value) {
+                d_max_value = in[i];
+              }
+              d_sample_counter++;
+              d_slicer_threshold = (d_max_value + d_min_value)/2.0;
+              continue;
+            }
             b = in[i] > d_slicer_threshold ? 1 : 0;
             d_constructed_word = (d_constructed_word << 1) | b;
             if (d_constructed_word == d_sync_word) {
               d_sync_found = true;
+              d_sample_counter =0;
               for (size_t j = i - (d_history_length - 1); j <= i; j++) {
                 if (in[j] < d_min_value) {
                   d_min_value = in[i];
