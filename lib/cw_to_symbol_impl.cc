@@ -59,17 +59,22 @@ namespace gr
             d_window_size(0),
             d_window_cnt(0),
             d_dot_windows_num(0),
-            d_state (IDLE),
             d_dec_state (NO_SYNC),
-            d_prev_space_symbol (true),
-            d_sync_state (SYNC_TRIGGER_OFF)
+            d_prev_space_symbol (true)
     {
-      if(wpm < MIN_WPM){
-        throw std::invalid_argument("Decoder can not handle such low WPM setting");
+      if (wpm < MIN_WPM) {
+        throw std::invalid_argument (
+            "Decoder can not handle such low WPM setting");
       }
 
-      if(wpm > MAX_WPM) {
-        throw std::invalid_argument("Decoder can not handle such high WPM setting");
+      if (wpm > MAX_WPM) {
+        throw std::invalid_argument (
+            "Decoder can not handle such high WPM setting");
+      }
+
+      if (conf_level > 1.0 || conf_level < 0.5) {
+        throw std::invalid_argument (
+            "Confidence level should be in the range [0.5, 1.0]");
       }
 
       message_port_register_in (pmt::mp ("act_threshold"));
@@ -137,6 +142,12 @@ namespace gr
       message_port_pub (pmt::mp ("out"), pmt::from_long (s));
     }
 
+    inline bool
+    cw_to_symbol_impl::check_conf_level(size_t cnt, size_t target)
+    {
+      return ((float)cnt > target * d_confidence_level);
+    }
+
     /*
      * Our virtual destructor.
      */
@@ -150,14 +161,13 @@ namespace gr
     inline void
     cw_to_symbol_impl::set_idle ()
     {
-      d_state = IDLE;
+      d_dec_state = NO_SYNC;
       d_window_cnt = 0;
     }
 
     inline void
     cw_to_symbol_impl::set_short_on ()
     {
-      d_state = TRIGGED;
       d_dec_state = SEARCH_DOT;
       d_window_cnt = 1;
     }
@@ -169,16 +179,10 @@ namespace gr
     }
 
     inline void
-    cw_to_symbol_impl::set_short_off ()
+    cw_to_symbol_impl::set_search_space ()
     {
-      d_dec_state = SEARCH_SHORT_OFF;
+      d_dec_state = SEARCH_SPACE;
       d_window_cnt = 1;
-    }
-
-    inline void
-    cw_to_symbol_impl::set_long_off ()
-    {
-      d_dec_state = SEARCH_LONG_OFF;
     }
 
     void
@@ -194,15 +198,13 @@ namespace gr
                              gr_vector_const_void_star &input_items,
                              gr_vector_void_star &output_items)
     {
-      int32_t cnt;
       bool triggered;
       int i;
       const float *in_old = (const float *) input_items[0];
       const float *in = in_old + history() - 1;
-      float conf;
 
       /* During idle state search for a possible trigger */
-      if(d_state == IDLE) {
+      if(d_dec_state == NO_SYNC) {
         for(i = 0; i < noutput_items; i++) {
           /*
            * Clamp the input so the window mean is not affected by strong spikes
@@ -210,19 +212,76 @@ namespace gr
            */
           triggered = is_triggered(in_old + i, d_window_size);
           if(triggered) {
+            LOG_DEBUG("Triggered!");
             set_short_on();
             return i+1;
           }
         }
         return noutput_items;
       }
-      else{
-        /* From now one, we handle the input in multiples of a window */
-        for (i = 0; i < noutput_items / d_window_size; i++) {
-          triggered = is_triggered(in + i * d_window_size, d_window_size);
+
+      /* From now one, we handle the input in multiples of a window */
+      for (i = 0; i < noutput_items / d_window_size; i++) {
+        triggered = is_triggered(in + i * d_window_size, d_window_size);
+        switch(d_dec_state) {
+          case SEARCH_DOT:
+            if(triggered) {
+              d_window_cnt++;
+              if(d_window_cnt > d_dot_windows_num) {
+                set_long_on();
+              }
+            }
+            else {
+              if(check_conf_level(d_window_cnt, d_dot_windows_num)) {
+                LOG_DEBUG("DOT");
+                send_symbol_msg(MORSE_DOT);
+              }
+              set_search_space ();
+            }
+            break;
+          case SEARCH_DASH:
+            if(triggered) {
+              d_window_cnt++;
+            }
+            else{
+              if(check_conf_level(d_window_cnt, d_dash_windows_num)) {
+                LOG_DEBUG("DASH");
+                send_symbol_msg(MORSE_DASH);
+              }
+              else{
+                LOG_DEBUG("DOT");
+                send_symbol_msg(MORSE_DOT);
+              }
+              set_search_space ();
+            }
+            break;
+          case SEARCH_SPACE:
+            if (triggered) {
+              if(check_conf_level(d_window_cnt, d_long_pause_windows_num)) {
+                LOG_DEBUG("LONG SPACE");
+                send_symbol_msg(MORSE_L_SPACE);
+              }
+              else if(check_conf_level(d_window_cnt, d_short_pause_windows_num)){
+                LOG_DEBUG("SHORT SPACE");
+                send_symbol_msg(MORSE_S_SPACE);
+              }
+              set_short_on();
+            }
+            else{
+              d_window_cnt++;
+              if(d_window_cnt > d_long_pause_windows_num) {
+                LOG_DEBUG("LONG SPACE");
+                send_symbol_msg(MORSE_L_SPACE);
+                set_idle();
+                return (i + 1) * d_window_size;
+              }
+            }
+            break;
+          default:
+            LOG_ERROR("Invalid decoder state");
         }
       }
-      return noutput_items;
+      return i * d_window_size;
     }
 
     /**

@@ -32,24 +32,11 @@ namespace gr
 
     class cw_to_symbol_impl : public cw_to_symbol
     {
-      typedef enum
-      {
-        IDLE, TRIGGED
-      } cw_state_t;
 
       typedef enum
       {
-        NO_SYNC, SEARCH_DOT, SEARCH_DASH, SEARCH_SHORT_OFF, SEARCH_LONG_OFF,
+        NO_SYNC, SEARCH_DOT, SEARCH_DASH, SEARCH_SPACE
       } cw_dec_state_t;
-
-      /**
-       * Different states during the WPM auto synchronization
-       */
-      typedef enum
-      {
-        SYNC_TRIGGER_OFF, //!< SYNC_TRIGGER_OFF Signal is below threshold
-        SYNC_TRIGGER_ON  //!< SYNC_TRIGGER_ON Signal is above threshold
-      } sync_state_t;
 
     private:
       const double d_sampling_rate;
@@ -62,10 +49,8 @@ namespace gr
       size_t d_dash_windows_num;
       size_t d_short_pause_windows_num;
       size_t d_long_pause_windows_num;
-      cw_state_t d_state;
       cw_dec_state_t d_dec_state;
       bool d_prev_space_symbol;
-      sync_state_t d_sync_state;
       float *d_const_val;
       float *d_tmp;
       int32_t *d_out;
@@ -80,10 +65,7 @@ namespace gr
       set_long_on ();
 
       inline void
-      set_short_off ();
-
-      inline void
-      set_long_off ();
+      set_search_space ();
 
       inline int32_t
       hadd (const int32_t *in, size_t len);
@@ -96,6 +78,9 @@ namespace gr
 
       inline void
       send_symbol_msg (morse_symbol_t s);
+
+      inline bool
+      check_conf_level(size_t cnt, size_t target);
 
       void
       set_act_threshold_msg_handler (pmt::pmt_t msg);
