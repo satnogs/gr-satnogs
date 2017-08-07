@@ -24,6 +24,7 @@
 #include <satnogs/noaa_apt_sink.h>
 #define PNG_DEBUG 3
 #include <png.h>
+#include <chrono>
 
 namespace gr
 {

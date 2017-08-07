@@ -92,14 +92,27 @@ namespace gr
     void
     noaa_apt_sink_impl::init_png ()
     {
+      /* check for the current UTC time */
+      std::chrono::system_clock::time_point p2 =
+          std::chrono::system_clock::now ();
+
+      char buffer[30];
+      std::time_t t2 = std::chrono::system_clock::to_time_t (p2);
+      struct tm * timeinfo;
+      timeinfo = std::gmtime (&t2);
+
+      std::strftime (buffer, 30, "%FT%H-%M-%S", timeinfo);
+      std::string fn (d_filename_png);
+      fn.append("_");
+      fn.append(buffer);
+      fn.append(".png");
       if (d_split) {
         d_images_per_frame = 2;
         d_png_fd = new FILE*[2];
         d_png_ptr = new png_structp[2];
         d_info_ptr = new png_infop[2];
-        std::string fn (d_filename_png);
-        std::string fn_left (d_filename_png);
-        std::string fn_right (d_filename_png);
+        std::string fn_left = fn;
+        std::string fn_right = fn;
         std::size_t found = fn.find_last_of (".");
         if (d_num_images == 0) {
           if (found == std::string::npos) {
@@ -162,11 +175,11 @@ namespace gr
         d_png_ptr = new png_structp[2];
         d_info_ptr = new png_infop[2];
         if (d_num_images == 0) {
-          d_png_fd[0] = fopen (d_filename_png, "wb");
-          d_png_fn[0] = std::string (d_filename_png);
+          d_png_fd[0] = fopen (fn.c_str (), "wb");
+          d_png_fn[0] = fn;//std::string (d_filename_png);
         }
         else {
-          std::string fn (d_filename_png);
+          //std::string fn (d_filename_png);
           std::size_t found = fn.find (".");
           if (found == std::string::npos) {
             fn.append (std::to_string (d_num_images));
