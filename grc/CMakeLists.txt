@@ -51,5 +51,6 @@ install(FILES
 	${enabled_blocks}
     satnogs_ogg_source.xml
     satnogs_noaa_apt_sink.xml
-    satnogs_frame_file_sink.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_frame_file_sink.xml
+    satnogs_iq_sink.xml DESTINATION share/gnuradio/grc/blocks
 )

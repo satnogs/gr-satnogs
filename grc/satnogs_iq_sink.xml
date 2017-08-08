@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<block>
+  <name>IQ Sink</name>
+  <key>satnogs_iq_sink</key>
+  <category>[SatNOGS]</category>
+  <import>import satnogs</import>
+  <make>satnogs.iq_sink($scale, $filename, $append, $status)</make>
+  <callback>open($file)</callback>
+
+  <param>
+    <name>File</name>
+    <key>filename</key>
+    <value></value>
+    <type>file_save</type>
+  </param>
+  
+  <param>
+    <name>Status</name>
+    <key>status</key>
+    <value>0</value>
+    <type>int</type>
+    <hide>part</hide>
+  </param>
+  
+  <param>
+    <name>Scale</name>
+    <key>scale</key>
+    <value>32767</value>
+    <type>float</type>
+  </param>
+  
+  <param>
+    <name>Append file</name>
+    <key>append</key>
+    <value>False</value>
+    <type>bool</type>
+    <option>
+        <name>Append</name>
+        <key>True</key>
+    </option>
+    <option>
+        <name>Overwrite</name>
+        <key>False</key>
+    </option>
+  </param>
+  
+  <sink>
+    <name>in</name>
+    <type>complex</type>
+  </sink>
+
+</block>

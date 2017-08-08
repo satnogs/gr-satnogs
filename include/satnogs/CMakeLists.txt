@@ -65,5 +65,6 @@ install(FILES
     ${HEADER_FILES}
     ogg_source.h
     noaa_apt_sink.h
-    frame_file_sink.h DESTINATION include/satnogs
+    frame_file_sink.h
+    iq_sink.h DESTINATION include/satnogs
 )
