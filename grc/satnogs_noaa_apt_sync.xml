@@ -2,7 +2,7 @@
 <block>
   <name>noaa_apt_sync</name>
   <key>satnogs_noaa_apt_sync</key>
-  <category>[satnogs]</category>
+  <category>[SatNOGS]</category>
   <import>import satnogs</import>
   <make>satnogs.noaa_apt_sync($*filename,$*filename_png, $width, $height, $split)</make>
   <param>

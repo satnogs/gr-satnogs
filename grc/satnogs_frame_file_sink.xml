@@ -2,7 +2,7 @@
 <block>
 	<name>Frame File Sink</name>
 	<key>satnogs_frame_file_sink</key>
-	<category>[satnogs]</category>
+	<category>[SatNOGS]</category>
 	<import>import satnogs</import>
 	<make>satnogs.frame_file_sink($prefix_name, $output_type)</make>
 	<!-- Make one 'param' node for every Parameter you want settable from the 
