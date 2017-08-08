@@ -22,7 +22,7 @@
     </param>
     <param>
       <key>description</key>
-      <value>FSK9600 AX.25 decoder</value>
+      <value>FSK9600 AX.25 decoder with G3RUH support</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -46,7 +46,7 @@
     </param>
     <param>
       <key>id</key>
-      <value>satnogs_fsk9600_ax25</value>
+      <value>satnogs_fsk9600_g3ruh_ax25</value>
     </param>
     <param>
       <key>max_nouts</key>
@@ -78,7 +78,7 @@
     </param>
     <param>
       <key>title</key>
-      <value>FSK9600 AX.25 decoder </value>
+      <value>FSK9600 AX.25 decoder with G3RUH support</value>
     </param>
   </block>
   <block>
@@ -2563,7 +2563,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>descrambling</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>

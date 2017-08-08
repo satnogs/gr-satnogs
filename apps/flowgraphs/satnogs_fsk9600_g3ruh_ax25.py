@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 ##################################################
 # GNU Radio Python Flow Graph
-# Title: FSK9600 AX.25 decoder
+# Title: FSK9600 AX.25 decoder with G3RUH support
 # Author: Manolis Surligas (surligas@gmail.com)
-# Description: FSK9600 AX.25 decoder
-# Generated: Tue Aug  8 23:36:43 2017
+# Description: FSK9600 AX.25 decoder with G3RUH support
+# Generated: Tue Aug  8 23:36:51 2017
 ##################################################
 
 from gnuradio import analog
@@ -22,10 +22,10 @@ import satnogs
 import time
 
 
-class satnogs_fsk9600_ax25(gr.top_block):
+class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
 
     def __init__(self, doppler_correction_per_sec=1000, enable_iq_dump=0, file_path='test.wav', lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
-        gr.top_block.__init__(self, "FSK9600 AX.25 decoder ")
+        gr.top_block.__init__(self, "FSK9600 AX.25 decoder with G3RUH support")
 
         ##################################################
         # Parameters
@@ -67,7 +67,7 @@ class satnogs_fsk9600_ax25(gr.top_block):
         self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_ok', 0)
         self.satnogs_frame_file_sink_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
-        self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, True, False, 1024, 3)
+        self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, True, True, 1024, 3)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_freq - lo_offset, 0)
@@ -249,7 +249,7 @@ class satnogs_fsk9600_ax25(gr.top_block):
 
 
 def argument_parser():
-    description = 'FSK9600 AX.25 decoder'
+    description = 'FSK9600 AX.25 decoder with G3RUH support'
     parser = OptionParser(usage="%prog: [options]", option_class=eng_option, description=description)
     parser.add_option(
         "", "--doppler-correction-per-sec", dest="doppler_correction_per_sec", type="intx", default=1000,
@@ -281,7 +281,7 @@ def argument_parser():
     return parser
 
 
-def main(top_block_cls=satnogs_fsk9600_ax25, options=None):
+def main(top_block_cls=satnogs_fsk9600_g3ruh_ax25, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
