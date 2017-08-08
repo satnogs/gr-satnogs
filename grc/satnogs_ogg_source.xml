@@ -4,7 +4,7 @@
   <key>satnogs_ogg_source</key>
   <category>[satnogs]</category>
   <import>import satnogs</import>
-  <make>satnogs.ogg_source($filename, $channels)</make>
+  <make>satnogs.ogg_source($filename, $repeat, $channels)</make>
 
 	<param>
 		<name>File</name>
@@ -18,6 +18,21 @@
 		<key>channels</key>
 		<value>1</value>
 		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Repeat</name>
+		<key>repeat</key>
+		<value>True</value>
+		<type>bool</type>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
 	</param>
 	
   <source>

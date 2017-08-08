@@ -44,12 +44,13 @@ namespace gr
       /*!
        *
        * @param filename the OGG audio file path
+       * @param repeat file after EOF
        * @param number of channels of the OGG stream. If the actual OGG stream
        * contains a different number of channels than specified an exception
        * is raised
        */
       static sptr
-      make (const std::string& filename, size_t channels = 1);
+      make (const std::string& filename, bool repeat, size_t channels = 1);
     };
 
   } // namespace satnogs

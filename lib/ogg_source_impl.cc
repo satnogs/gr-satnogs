@@ -35,21 +35,23 @@ namespace gr {
   namespace satnogs {
 
     ogg_source::sptr
-    ogg_source::make(const std::string& filename, size_t channels)
+    ogg_source::make(const std::string& filename, bool repeat, size_t channels)
     {
       return gnuradio::get_initial_sptr
-        (new ogg_source_impl(filename, channels));
+        (new ogg_source_impl(filename, repeat, channels));
     }
 
     /*
      * The private constructor
      */
     ogg_source_impl::ogg_source_impl (const std::string& filename,
+                                      bool repeat,
                                       size_t channels) :
             gr::sync_block (
                 "ogg_source", gr::io_signature::make (0, 0, 0),
                 gr::io_signature::make (channels, channels, sizeof(float))),
-            d_channels (channels)
+            d_channels (channels),
+            d_repeat(repeat)
     {
       if (channels < 1) {
         throw std::invalid_argument ("At least one output channels should"
@@ -95,6 +97,7 @@ namespace gr {
         gr_vector_void_star &output_items)
     {
       long int ret;
+      int is_seekable;
       int section = 0;
       int available = (noutput_items / d_channels);
       int produced = 0;
@@ -103,7 +106,15 @@ namespace gr {
                      available * sizeof(int16_t),
                      0, sizeof(int16_t), 1, &section);
       if(ret < sizeof(int16_t)) {
-        return WORK_DONE;
+        if(d_repeat){
+          is_seekable = ov_pcm_seek(&d_ogvorb_f,0);
+          if(is_seekable == OV_ENOSEEK){
+        	  return WORK_DONE;
+          }
+        }
+        else{
+          return WORK_DONE;
+        }
       }
 
       /* Convert to float the signed-short audio samples */

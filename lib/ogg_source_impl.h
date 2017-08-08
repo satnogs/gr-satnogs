@@ -35,12 +35,13 @@ namespace gr
     private:
       const size_t d_channels;
       OggVorbis_File d_ogvorb_f;
+      bool d_repeat;
 
       int16_t *d_in_buffer;
       float *d_out_buffer;
 
     public:
-      ogg_source_impl (const std::string& filename, size_t channels);
+      ogg_source_impl (const std::string& filename,bool repeat, size_t channels);
       ~ogg_source_impl ();
 
       // Where all the action really happens
