@@ -521,7 +521,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1014, 263)</value>
+      <value>(1040, 360)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -542,6 +542,49 @@ TX sampling rate</value>
     <param>
       <key>vlen</key>
       <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(183, 547)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>decoded_data_file_path</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>/tmp/.satnogs/data/noaa</value>
     </param>
   </block>
   <block>
@@ -631,6 +674,49 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(184, 796)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>enable_iq_dump</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>intx</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
     <key>fft_filter_xxx</key>
     <param>
       <key>alias</key>
@@ -650,7 +736,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -854,7 +940,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -913,7 +999,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1262, 259)</value>
+      <value>(1264, 356)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -999,7 +1085,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(183, 547)</value>
+      <value>(296, 796)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1007,7 +1093,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>id</key>
-      <value>image_file_path</value>
+      <value>iq_file_path</value>
     </param>
     <param>
       <key>label</key>
@@ -1023,7 +1109,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>value</key>
-      <value>/tmp/noaa.png</value>
+      <value>/tmp/iq.dat</value>
     </param>
   </block>
   <block>
@@ -2607,7 +2693,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(815, 239)</value>
+      <value>(824, 336)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2658,7 +2744,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>fbw</key>
@@ -2695,6 +2781,65 @@ we shift the LO a little further</value>
     <param>
       <key>type</key>
       <value>fff</value>
+    </param>
+  </block>
+  <block>
+    <key>rational_resampler_xxx</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>decim</key>
+      <value>int(samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation)</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>fbw</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(896, 232)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rational_resampler_xxx_2</value>
+    </param>
+    <param>
+      <key>interp</key>
+      <value>48000</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>taps</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>ccc</value>
     </param>
   </block>
   <block>
@@ -2917,6 +3062,53 @@ we shift the LO a little further</value>
     </param>
   </block>
   <block>
+    <key>satnogs_iq_sink</key>
+    <param>
+      <key>append</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>filename</key>
+      <value>iq_file_path</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1112, 236)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_iq_sink_0</value>
+    </param>
+    <param>
+      <key>scale</key>
+      <value>32767</value>
+    </param>
+    <param>
+      <key>status</key>
+      <value>enable_iq_dump</value>
+    </param>
+  </block>
+  <block>
     <key>satnogs_noaa_apt_sink</key>
     <param>
       <key>alias</key>
@@ -2940,7 +3132,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(575, 243)</value>
+      <value>(520, 320)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2952,7 +3144,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>filename_png</key>
-      <value>image_file_path</value>
+      <value>decoded_data_file_path</value>
     </param>
     <param>
       <key>height</key>
@@ -2987,7 +3179,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>filename</key>
@@ -3093,7 +3285,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>fft_size</key>
@@ -3288,6 +3480,12 @@ we shift the LO a little further</value>
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>fft_filter_xxx_0</source_block_id>
+    <sink_block_id>rational_resampler_xxx_2</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>fir_filter_xxx_1</source_block_id>
     <sink_block_id>rational_resampler_xxx_0</sink_block_id>
     <source_key>0</source_key>
@@ -3326,6 +3524,12 @@ we shift the LO a little further</value>
   <connection>
     <source_block_id>rational_resampler_xxx_1</source_block_id>
     <sink_block_id>satnogs_ogg_encoder_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>rational_resampler_xxx_2</source_block_id>
+    <sink_block_id>satnogs_iq_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
