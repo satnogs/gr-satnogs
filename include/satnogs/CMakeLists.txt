@@ -21,10 +21,11 @@
 # Install public header files
 ########################################################################
 list(APPEND DEBUG_HEADER_FILES
-	morse_debug_source.h
-	debug_msg_source_raw.h
-	debug_msg_source.h
-	leo_channel.h
+    morse_debug_source.h
+    debug_msg_source_raw.h
+    debug_msg_source.h
+    leo_channel.h
+    cw_encoder.h 
 )
 
 list(APPEND HEADER_FILES
@@ -64,7 +65,6 @@ install(FILES
     ${HEADER_FILES}
     ogg_source.h
     noaa_apt_sink.h
-    frame_file_sink.h
+    frame_file_sink.h DESTINATION include/satnogs
     iq_sink.h DESTINATION
-    cw_encoder.h DESTINATION include/satnogs
 )

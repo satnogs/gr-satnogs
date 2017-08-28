@@ -24,21 +24,11 @@
 #endif
 
 #include <gnuradio/io_signature.h>
+#include <satnogs/log.h>
 #include "cw_encoder_impl.h"
 
 namespace gr {
   namespace satnogs {
-
-    const std::vector<char> cw_encoder_impl::cw_chars (
-      { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N',
-          'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '1', '2',
-          '3', '4', '5', '6', '7', '8', '9', '0' });
-    const std::vector<std::string> cw_encoder_impl::cw_symbols (
-          { ".-", "-...", "-.-.", "-..", ".", "..-.", "--.", "....", "..",
-              ".---", "-.-", ".-..", "--", "-.", "---", ".--.", "--.-", ".-.",
-              "...", "-", "..-", "...-", ".--", "-..-", "-.--", "--..", ".----",
-              "..---", "...--", "....-", ".....", "-....", "--...", "---..",
-              "----.", "-----" });
 
     cw_encoder::sptr
     cw_encoder::make(double samp_rate, double cw_freq, size_t wpm)
@@ -60,11 +50,11 @@ namespace gr {
               d_wpm (wpm),
               d_dot_samples ((1.2 / wpm) / (1.0 / samp_rate)),
               d_window_size (0),
-              d_nco (),
-              d_word (new uint8_t[2048]),
-              d_remaining (0)
+              d_windows_remaining (0),
+              d_cw_symbol (MORSE_L_SPACE),
+              d_nco ()
     {
-      message_port_register_in(pmt::mp("word"));
+      message_port_register_in(pmt::mp("symbol"));
 
       /*
        * Try to split the CW pulses in smaller windows for dealing efficiently
@@ -82,6 +72,7 @@ namespace gr {
         d_window_size++;
       }
 
+      set_output_multiple(d_window_size);
       d_nco.set_freq ((2 * M_PI * cw_freq) / samp_rate);
     }
 
@@ -90,31 +81,6 @@ namespace gr {
      */
     cw_encoder_impl::~cw_encoder_impl()
     {
-      delete [] d_word;
-    }
-
-    static inline size_t
-    find_char_idx(const char* characters, size_t len, char c)
-    {
-      size_t i;
-      for(i = 0; i < len; i++) {
-        if(characters[i] == c){
-          return i;
-        }
-      }
-      return len;
-    }
-
-    std::string
-    cw_encoder_impl::get_cw_symbol (char c)
-    {
-      size_t i;
-      for(i = 0; i < cw_chars.size(); i++) {
-        if(cw_chars[i] == c) {
-          return cw_symbols[i];
-        }
-      }
-      return "";
     }
 
     int
@@ -122,19 +88,56 @@ namespace gr {
         gr_vector_const_void_star &input_items,
         gr_vector_void_star &output_items)
     {
-      gr_complex *out = (gr_complex *) output_items[0];
       size_t available;
+      size_t i;
+      gr_complex *out = (gr_complex *) output_items[0];
 
-      if(d_remaining == 0) {
-        pmt::pmt_t w = delete_head_blocking(pmt::mp("word"));
-        if(pmt::blob_length(w) > 2048) {
-          return 0;
-        }
-        d_word = (uint8_t *) pmt::blob_data(w);
-        d_remaining = pmt::blob_length(w);
+      if(noutput_items < 0) {
+        return noutput_items;
       }
 
-      return noutput_items;
+      if(d_windows_remaining == 0) {
+        pmt::pmt_t symbol = delete_head_blocking(pmt::mp("symbol"));
+        d_cw_symbol = (morse_symbol_t) pmt::to_long(symbol);
+        /* Reset NCO so the amplitude starts from zero */
+        d_nco.set_freq ((2 * M_PI * d_cw_freq) / d_samp_rate);
+        switch(d_cw_symbol) {
+          case MORSE_DOT:
+          case MORSE_INTRA_SPACE:
+            d_windows_remaining = d_dot_samples / d_window_size;
+            break;
+          case MORSE_DASH:
+          case MORSE_S_SPACE:
+            d_windows_remaining = (d_dot_samples / d_window_size) * 3;
+            break;
+          case MORSE_L_SPACE:
+            d_windows_remaining = (d_dot_samples / d_window_size) * 7;
+            break;
+          default:
+            LOG_WARN("Unrecognized CW symbol");
+            return 0;
+        }
+      }
+
+      for(i = 0; i < (size_t)noutput_items / d_window_size; i++) {
+        switch(d_cw_symbol){
+          case MORSE_S_SPACE:
+          case MORSE_L_SPACE:
+          case MORSE_INTRA_SPACE:
+            memset (out + i * d_window_size, 0,
+                    d_window_size * sizeof(gr_complex));
+            break;
+          case MORSE_DOT:
+          case MORSE_DASH:
+            d_nco.sincos(out + i * d_window_size, d_window_size, 1.0);
+            break;
+        }
+        d_windows_remaining--;
+        if(d_windows_remaining == 0) {
+          return (i + 1) * d_window_size;
+        }
+      }
+      return i * d_window_size;
     }
 
   } /* namespace satnogs */

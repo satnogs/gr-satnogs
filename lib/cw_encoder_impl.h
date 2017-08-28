@@ -25,6 +25,7 @@
 #include <vector>
 #include <string>
 #include <satnogs/cw_encoder.h>
+#include <satnogs/morse.h>
 #include <gnuradio/fxpt_nco.h>
 
 namespace gr
@@ -40,16 +41,16 @@ namespace gr
       const size_t d_wpm;
       const size_t d_dot_samples;
       size_t d_window_size;
+      size_t d_windows_remaining;
+      morse_symbol_t d_cw_symbol;
       gr::fxpt_nco d_nco;
-      uint8_t *d_word;
-      size_t d_remaining;
+
+
 
       std::string
       get_cw_symbol(char c);
 
     public:
-      static const std::vector<char> cw_chars;
-      static const std::vector<std::string> cw_symbols;
       cw_encoder_impl (double samp_rate, double cw_freq, size_t wpm);
       ~cw_encoder_impl ();
 

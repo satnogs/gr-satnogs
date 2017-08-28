@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -27,10 +28,11 @@
  * The different Morse symbols
  */
 typedef enum {
-  MORSE_DOT = 0,//!< MORSE_DOT Morse dot (.) symbol
-  MORSE_DASH,   //!< MORSE_DASH Morse dash (-) symbol
-  MORSE_S_SPACE,//!< MORSE_S_SPACE Morse short space between characters
-  MORSE_L_SPACE //!< MORSE_L_SPACE Morse long space between words
+  MORSE_DOT = 0,        //!< Morse dot (.) symbol
+  MORSE_DASH,           //!< Morse dash (-) symbol
+  MORSE_INTRA_SPACE,    //!< Space between dot and dash symbols
+  MORSE_S_SPACE,        //!< Morse short space between characters
+  MORSE_L_SPACE         //!<Morse long space between words
 } morse_symbol_t;
 
 
