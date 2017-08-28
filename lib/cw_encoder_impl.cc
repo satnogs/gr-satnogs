@@ -58,11 +58,30 @@ namespace gr {
               d_samp_rate (samp_rate),
               d_cw_freq (cw_freq),
               d_wpm (wpm),
+              d_dot_samples ((1.2 / wpm) / (1.0 / samp_rate)),
+              d_window_size (0),
               d_nco (),
               d_word (new uint8_t[2048]),
               d_remaining (0)
     {
       message_port_register_in(pmt::mp("word"));
+
+      /*
+       * Try to split the CW pulses in smaller windows for dealing efficiently
+       * with the available buffer size
+       */
+      size_t i = 10;
+      d_window_size = d_dot_samples / i;
+      while(d_window_size > 200) {
+        i += 10;
+        d_window_size = d_dot_samples / i;
+      }
+
+      /* NOTE: The dot duration should be a perfect multiple of the window */
+      while(d_dot_samples % d_window_size != 0) {
+        d_window_size++;
+      }
+
       d_nco.set_freq ((2 * M_PI * cw_freq) / samp_rate);
     }
 
@@ -104,8 +123,17 @@ namespace gr {
         gr_vector_void_star &output_items)
     {
       gr_complex *out = (gr_complex *) output_items[0];
+      size_t available;
 
-      // Tell runtime system how many output items we produced.
+      if(d_remaining == 0) {
+        pmt::pmt_t w = delete_head_blocking(pmt::mp("word"));
+        if(pmt::blob_length(w) > 2048) {
+          return 0;
+        }
+        d_word = (uint8_t *) pmt::blob_data(w);
+        d_remaining = pmt::blob_length(w);
+      }
+
       return noutput_items;
     }
 

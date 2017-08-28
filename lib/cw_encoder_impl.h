@@ -38,6 +38,8 @@ namespace gr
       const double d_samp_rate;
       const double d_cw_freq;
       const size_t d_wpm;
+      const size_t d_dot_samples;
+      size_t d_window_size;
       gr::fxpt_nco d_nco;
       uint8_t *d_word;
       size_t d_remaining;
