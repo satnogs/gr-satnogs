@@ -41,7 +41,7 @@ namespace gr
     void
     morse_decoder_impl::symbol_msg_handler (pmt::pmt_t msg)
     {
-      bool res;
+      bool res = false;
       std::string str;
       morse_symbol_t s;
       s = (morse_symbol_t) pmt::to_long (msg);
@@ -85,15 +85,13 @@ namespace gr
        * If the decoding return false, it means that either an non decode-able
        * character situation occurred or the maximum word limit reached
        */
-      if (!s) {
+      if (!res) {
         if (d_morse_tree.get_max_word_len () == d_morse_tree.get_word_len ()) {
           str = d_morse_tree.get_word ();
           d_morse_tree.reset ();
-          std::cout << "Received word: " << str << std::endl;
+          message_port_pub (pmt::mp ("out"),
+                            pmt::make_blob (str.c_str (), str.length ()));
         }
-      }
-      else {
-        LOG_DEBUG("Something went wrong");
       }
     }
 

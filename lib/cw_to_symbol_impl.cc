@@ -91,10 +91,10 @@ namespace gr
        * a false alarm. As we use the window size for setting the history
        * it should have a reasonably size.
        */
-      size_t i = 10;
+      size_t i = 1;
       d_window_size = d_dot_samples / i;
-      while(d_window_size > 200) {
-        i += 10;
+      while(d_window_size > 256) {
+        i++;
         d_window_size = d_dot_samples / i;
       }
 
@@ -102,6 +102,9 @@ namespace gr
       while(d_dot_samples % d_window_size != 0) {
         d_window_size++;
       }
+
+      LOG_DEBUG("Dot samples: %lu", d_dot_samples);
+      LOG_DEBUG("Window size: %lu", d_window_size);
 
       /* Set the duration of each symbol in multiples of the window size */
       d_dot_windows_num = d_dot_samples / d_window_size;

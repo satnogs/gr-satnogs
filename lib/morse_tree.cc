@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -36,12 +37,12 @@ namespace gr
      * Constructs a Morse code tree for Morse code decoding
      */
     morse_tree::morse_tree () :
-	d_unrecognized_symbol('#'),
-	d_root (new tree_node(0)),
-	d_current (d_root),
-	d_buff_len(4096),
-	d_word_len(0),
-	d_word_buffer(new char[d_buff_len])
+            d_unrecognized_symbol ('#'),
+            d_root (new tree_node (0)),
+            d_current (d_root),
+            d_buff_len (4096),
+            d_word_len (0),
+            d_word_buffer (new char[d_buff_len])
     {
       construct_tree ();
     }
@@ -52,12 +53,12 @@ namespace gr
      * in the place of unrecognized symbols
      */
     morse_tree::morse_tree (char unrecognized) :
-	d_unrecognized_symbol(unrecognized),
-	d_root (new tree_node(0)),
-	d_current (d_root),
-	d_buff_len(4096),
-	d_word_len(0),
-	d_word_buffer(new char[d_buff_len])
+            d_unrecognized_symbol (unrecognized),
+            d_root (new tree_node (0)),
+            d_current (d_root),
+            d_buff_len (4096),
+            d_word_len (0),
+            d_word_buffer (new char[d_buff_len])
     {
       construct_tree ();
     }
@@ -200,46 +201,46 @@ namespace gr
       bool ret = false;
       /* Check for overflow */
       if (d_word_len == d_buff_len) {
-	return false;
+        return false;
       }
       switch (s)
-	{
-	case MORSE_DOT:
-	  if (d_current->get_left_child ()) {
-	    d_current = d_current->get_left_child ();
-	    ret = true;
-	  }
-	  break;
-	case MORSE_DASH:
-	  if (d_current->get_right_child ()) {
-	    d_current = d_current->get_right_child ();
-	    ret = true;
-	  }
-	  break;
-	case MORSE_S_SPACE:
-	  /*
-	   * A short space received, but the decoder is still at the root.
-	   * This is not in general an error so we return true
-	   */
-	  if(d_current == d_root){
-	    return true;
-	  }
-	  c = d_current->get_char ();
-	  d_current = d_root;
-	  /*
-	   * Some nodes are null transitions and do not correspond to
-	   * a specific character
-	   */
-	  if (c != 0) {
-	    d_word_buffer[d_word_len] = c;
-	    d_word_len++;
-	    ret = true;
-	  }
-	  break;
-	default:
-	  LOG_ERROR("Unsupported Morse symbol");
-	  return false;
-	}
+        {
+        case MORSE_DOT:
+          if (d_current->get_left_child ()) {
+            d_current = d_current->get_left_child ();
+            ret = true;
+          }
+          break;
+        case MORSE_DASH:
+          if (d_current->get_right_child ()) {
+            d_current = d_current->get_right_child ();
+            ret = true;
+          }
+          break;
+        case MORSE_S_SPACE:
+          /*
+           * A short space received, but the decoder is still at the root.
+           * This is not in general an error so we return true
+           */
+          if (d_current == d_root) {
+            return true;
+          }
+          c = d_current->get_char ();
+          d_current = d_root;
+          /*
+           * Some nodes are null transitions and do not correspond to
+           * a specific character
+           */
+          if (c != 0) {
+            d_word_buffer[d_word_len] = c;
+            d_word_len++;
+            ret = true;
+          }
+          break;
+        default:
+          LOG_ERROR("Unsupported Morse symbol");
+          return false;
+        }
       return ret;
     }
 
@@ -265,7 +266,7 @@ namespace gr
     morse_tree::delete_tree (tree_node *node)
     {
       if (!node) {
-	return;
+        return;
       }
       delete_tree (node->get_left_child ());
       delete_tree (node->get_right_child ());
@@ -273,7 +274,9 @@ namespace gr
     }
 
     tree_node::tree_node (char c) :
-	d_char (c), d_left (NULL), d_right (NULL)
+            d_char (c),
+            d_left (NULL),
+            d_right (NULL)
     {
     }
 
