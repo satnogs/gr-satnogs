@@ -41,7 +41,11 @@ list(APPEND enabled_blocks
     satnogs_coarse_doppler_correction_cc.xml
     satnogs_ax25_encoder_mb.xml
     satnogs_ax25_decoder_bm.xml
-    satnogs_waterfall_sink.xml	
+    satnogs_waterfall_sink.xml
+    satnogs_ogg_source.xml
+    satnogs_noaa_apt_sink.xml
+    satnogs_frame_file_sink.xml
+    satnogs_iq_sink.xml 
 )
 
 if(${INCLUDE_DEBUG_BLOCKS})
@@ -49,8 +53,5 @@ if(${INCLUDE_DEBUG_BLOCKS})
 endif()
 install(FILES
     ${enabled_blocks}
-    satnogs_ogg_source.xml
-    satnogs_noaa_apt_sink.xml
-    satnogs_frame_file_sink.xml DESTINATION share/gnuradio/grc/blocks
-    satnogs_iq_sink.xml
+    DESTINATION share/gnuradio/grc/blocks
 )

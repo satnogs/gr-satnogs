@@ -67,9 +67,6 @@ namespace gr
       inline void
       set_search_space ();
 
-      inline int32_t
-      hadd (const int32_t *in, size_t len);
-
       inline void
       clamp_input (int32_t *out, const float *in, size_t len);
 

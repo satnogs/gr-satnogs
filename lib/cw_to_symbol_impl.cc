@@ -93,7 +93,7 @@ namespace gr
        */
       size_t i = 1;
       d_window_size = d_dot_samples / i;
-      while(d_window_size > 256) {
+      while(d_window_size > 64) {
         i++;
         d_window_size = d_dot_samples / i;
       }
@@ -202,13 +202,17 @@ namespace gr
                              gr_vector_void_star &output_items)
     {
       bool triggered;
-      int i;
+      size_t i;
       const float *in_old = (const float *) input_items[0];
       const float *in = in_old + history() - 1;
 
+      if(noutput_items < 0) {
+        return noutput_items;
+      }
+
       /* During idle state search for a possible trigger */
       if(d_dec_state == NO_SYNC) {
-        for(i = 0; i < noutput_items; i++) {
+        for(i = 0; i < (size_t)noutput_items; i++) {
           /*
            * Clamp the input so the window mean is not affected by strong spikes
            * Good luck understanding this black magic shit!
@@ -224,7 +228,7 @@ namespace gr
       }
 
       /* From now one, we handle the input in multiples of a window */
-      for (i = 0; i < noutput_items / d_window_size; i++) {
+      for (i = 0; i < (size_t)noutput_items / d_window_size; i++) {
         triggered = is_triggered(in + i * d_window_size, d_window_size);
         switch(d_dec_state) {
           case SEARCH_DOT:
@@ -312,8 +316,8 @@ namespace gr
       volk_32f_binary_slicer_32i(d_out, d_tmp, len);
     }
 
-    inline int32_t
-    cw_to_symbol_impl::hadd (const int32_t* in, size_t len)
+    static inline int32_t
+    hadd (const int32_t* in, size_t len)
     {
       size_t i;
       int32_t cnt = 0;

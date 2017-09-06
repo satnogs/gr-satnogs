@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016, 2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -26,26 +27,31 @@
 #include <algorithm>
 #include <vector>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
     class morse_debug_source_impl : public morse_debug_source
     {
-     private:
+    private:
+      const size_t d_wpm;
       const bool d_inject_errors;
       const float d_p;
+      const size_t d_seq_pause_ms;
       bool d_run;
       const char d_chars[36];
       const std::vector<std::string> d_symbols;
       std::thread d_thread;
 
       void
-      send_debug_msg(std::string sentence);
+      send_debug_msg (std::string sentence);
 
-     public:
-      morse_debug_source_impl(std::string debug_seq, bool inject_errors,
-			      float error_prob);
-      ~morse_debug_source_impl();
+    public:
+      morse_debug_source_impl (const size_t wpm, std::string debug_seq,
+                               bool inject_errors,
+                               float error_prob, size_t seq_pause_ms);
+      ~morse_debug_source_impl ();
     };
 
   } // namespace satnogs

@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -24,8 +25,10 @@
 #include <satnogs/api.h>
 #include <gnuradio/block.h>
 
-namespace gr {
-  namespace satnogs {
+namespace gr
+{
+  namespace satnogs
+  {
 
     /*!
      * \brief A Morse debug source block that supports injection of random
@@ -36,7 +39,7 @@ namespace gr {
      */
     class SATNOGS_API morse_debug_source : virtual public gr::block
     {
-     public:
+    public:
       typedef boost::shared_ptr<morse_debug_source> sptr;
 
       /*!
@@ -45,13 +48,21 @@ namespace gr {
        * This block can also inject random errors, based on a Bernoulli
        * distribution.
        *
+       * @param wpm words per minute
        * @param debug_seq A string containing the debug sentence
        * @param inject_errors if set the debug source block will produce
        * errors that follow a Bernoulli distribution
        * @param error_prob the probability p of error for the Bernulli distribution
+       * @param seq_pause_ms pause in milliseconds between concecutive debug
+       * sequences. For simplicity the pause duration will be scaled to multiple
+       * dot durations.
        */
-      static sptr make(const std::string& debug_seq, bool inject_errors = false,
-		       float error_prob = 0.1);
+      static sptr
+      make (const size_t wpm,
+            const std::string& debug_seq,
+            bool inject_errors = false,
+            float error_prob = 0.1,
+            size_t seq_pause_ms = 1000);
     };
 
   } // namespace satnogs

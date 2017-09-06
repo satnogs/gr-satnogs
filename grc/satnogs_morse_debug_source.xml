@@ -4,7 +4,14 @@
 	<key>satnogs_morse_debug_source</key>
 	<category>[SatNOGS]/Debug</category>
 	<import>import satnogs</import>
-	<make>satnogs.morse_debug_source($debug_seq, $errors, $p)</make>
+	<make>satnogs.morse_debug_source($wpm, $debug_seq, $errors, $p, $seq_pause_ms)</make>
+	
+	<param>
+		<name>WPM</name>
+		<key>wpm</key>
+		<value>20</value>
+		<type>int</type>
+	</param>
 
 	<param>
 		<name>Sentence</name>
@@ -32,6 +39,13 @@
 		<key>p</key>
 		<value>0.1</value>
 		<type>real</type>
+	</param>
+	
+	<param>
+		<name>Sequence Pause (millis)</name>
+		<key>seq_pause_ms</key>
+		<value>1000</value>
+		<type>int</type>
 	</param>
 
 	<source>

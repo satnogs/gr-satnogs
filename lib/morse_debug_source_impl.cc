@@ -34,24 +34,31 @@ namespace gr
   {
 
     morse_debug_source::sptr
-    morse_debug_source::make (const std::string& debug_seq, bool inject_errors,
-                              float error_prob)
+    morse_debug_source::make (const size_t wpm,
+                              const std::string& debug_seq, bool inject_errors,
+                              float error_prob,
+                              size_t seq_pause_ms)
     {
       return gnuradio::get_initial_sptr (
-          new morse_debug_source_impl (debug_seq, inject_errors, error_prob));
+          new morse_debug_source_impl (wpm, debug_seq, inject_errors,
+                                       error_prob, seq_pause_ms));
     }
 
     /*
      * The private constructor
      */
-    morse_debug_source_impl::morse_debug_source_impl (std::string debug_seq,
+    morse_debug_source_impl::morse_debug_source_impl (const size_t wpm,
+                                                      std::string debug_seq,
                                                       bool inject_errors,
-                                                      float error_prob) :
+                                                      float error_prob,
+                                                      size_t seq_pause_ms) :
             gr::block ("morse_debug_source",
                        gr::io_signature::make (0, 0, 0),
                        gr::io_signature::make (0, 0, 0)),
+            d_wpm (wpm),
             d_inject_errors (inject_errors),
             d_p (error_prob),
+            d_seq_pause_ms (seq_pause_ms),
             d_run (true),
             d_chars
               { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M',
@@ -142,7 +149,13 @@ namespace gr
           }
         }
         message_port_pub (port, pmt::from_long (MORSE_L_SPACE));
-        std::this_thread::sleep_for (std::chrono::milliseconds (1000));
+
+        for(i = 0; i < d_seq_pause_ms / (1200/d_wpm); i++) {
+          message_port_pub (port, pmt::from_long (MORSE_INTRA_SPACE));
+        }
+
+        /* Perform a true sleep, to avoid message overload */
+        std::this_thread::sleep_for (std::chrono::milliseconds (d_seq_pause_ms));
       }
     }
 
