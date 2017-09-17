@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.11'?>
+<?grc format='1' created='3.7.10'?>
 <flow_graph>
   <timestamp>Mon Apr 10 23:26:02 2017</timestamp>
   <block>
@@ -136,7 +136,7 @@ in acceptable levels especially for embedded devices.</value>
     </param>
     <param>
       <key>value</key>
-      <value>4</value>
+      <value>2</value>
     </param>
   </block>
   <block>
@@ -151,7 +151,7 @@ in acceptable levels especially for embedded devices.</value>
     </param>
     <param>
       <key>cutoff_freq</key>
-      <value>0.2</value>
+      <value>0.4</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -286,7 +286,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>value</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']</value>
+      <value>250e3</value>
     </param>
   </block>
   <block>
@@ -313,7 +313,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(935, 123)</value>
+      <value>(968, 124)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -423,7 +423,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>high_cutoff_freq</key>
-      <value>4.2e3</value>
+      <value>3.7e3</value>
     </param>
     <param>
       <key>id</key>
@@ -435,7 +435,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>low_cutoff_freq</key>
-      <value>500</value>
+      <value>700</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -451,7 +451,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>width</key>
-      <value>200</value>
+      <value>1e3</value>
     </param>
     <param>
       <key>win</key>
@@ -740,7 +740,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(718, 115)</value>
+      <value>(760, 116)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -838,7 +838,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2626,7 +2626,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>fbw</key>
@@ -2685,7 +2685,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>fbw</key>
@@ -2799,11 +2799,11 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>decim</key>
-      <value>int(samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation)</value>
+      <value>int(samp_rate_rx /first_stage_decimation)</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>fbw</key>
@@ -2811,7 +2811,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(896, 232)</value>
+      <value>(992, 232)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3034,7 +3034,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(471, 119)</value>
+      <value>(528, 120)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3081,7 +3081,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>filename</key>
@@ -3089,7 +3089,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1112, 236)</value>
+      <value>(1224, 236)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3124,7 +3124,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>True</value>
+      <value>1</value>
     </param>
     <param>
       <key>flip</key>
@@ -3132,7 +3132,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(520, 320)</value>
+      <value>(568, 320)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3226,7 +3226,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(223, 47)</value>
+      <value>(176, 88)</value>
     </param>
     <param>
       <key>_rotation</key>
