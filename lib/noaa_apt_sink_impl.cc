@@ -92,19 +92,7 @@ namespace gr
     void
     noaa_apt_sink_impl::init_png ()
     {
-      /* check for the current UTC time */
-      std::chrono::system_clock::time_point p2 =
-          std::chrono::system_clock::now ();
-
-      char buffer[30];
-      std::time_t t2 = std::chrono::system_clock::to_time_t (p2);
-      struct tm * timeinfo;
-      timeinfo = std::gmtime (&t2);
-
-      std::strftime (buffer, 30, "%FT%H-%M-%S", timeinfo);
       std::string fn (d_filename_png);
-      fn.append("_");
-      fn.append(buffer);
       fn.append(".png");
       if (d_split) {
         d_images_per_frame = 2;
