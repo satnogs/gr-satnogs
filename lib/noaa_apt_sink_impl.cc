@@ -93,7 +93,6 @@ namespace gr
     noaa_apt_sink_impl::init_png ()
     {
       std::string fn (d_filename_png);
-      fn.append(".png");
       if (d_split) {
         d_images_per_frame = 2;
         d_png_fd = new FILE*[2];
@@ -101,42 +100,13 @@ namespace gr
         d_info_ptr = new png_infop[2];
         std::string fn_left = fn;
         std::string fn_right = fn;
-        std::size_t found = fn.find_last_of (".");
         if (d_num_images == 0) {
-          if (found == std::string::npos) {
-            fn_left.append ("_left");
-            fn_right.append ("_right");
-          }
-          else {
-            std::size_t found_dir = fn.substr (found).find ("/");
-            if (found_dir == std::string::npos) {
-              fn_left.insert (found, "_left");
-              fn_right.insert (found, "_right");
-            }
-            else {
-              fn_left.append ("_left");
-              fn_right.append ("_right");
-            }
-          }
+          fn_left.append ("_left");
+          fn_right.append ("_right");
         }
         else {
-          if (found == std::string::npos) {
-            fn_left.append (std::to_string (d_num_images).append ("_left"));
-            fn_right.append (std::to_string (d_num_images).append ("_right"));
-          }
-          else {
-            std::size_t found_dir = fn.substr (found).find ("/");
-            if (found_dir == std::string::npos) {
-              fn_left.insert (found,
-                              std::to_string (d_num_images).append ("_left"));
-              fn_right.insert (found,
-                               std::to_string (d_num_images).append ("_right"));
-            }
-            else {
-              fn_left.append (std::to_string (d_num_images).append ("_left"));
-              fn_right.append (std::to_string (d_num_images).append ("_right"));
-            }
-          }
+          fn_left.append (std::to_string (d_num_images).append ("_left"));
+          fn_right.append (std::to_string (d_num_images).append ("_right"));
         }
         d_png_fn[0] = fn_left;
         d_png_fn[1] = fn_right;
@@ -164,17 +134,10 @@ namespace gr
         d_info_ptr = new png_infop[2];
         if (d_num_images == 0) {
           d_png_fd[0] = fopen (fn.c_str (), "wb");
-          d_png_fn[0] = fn;//std::string (d_filename_png);
+          d_png_fn[0] = fn;
         }
         else {
-          //std::string fn (d_filename_png);
-          std::size_t found = fn.find (".");
-          if (found == std::string::npos) {
-            fn.append (std::to_string (d_num_images));
-          }
-          else {
-            fn.insert (found, std::to_string (d_num_images));
-          }
+          fn.append (std::to_string (d_num_images));
           d_png_fd[0] = fopen (fn.c_str (), "wb");
           d_png_fn[0] = fn;
         }

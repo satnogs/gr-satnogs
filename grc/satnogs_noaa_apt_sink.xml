@@ -44,11 +44,11 @@
 		<type>bool</type>
 		<option>
 			<name>Yes</name>
-			<key>False</key>
+			<key>True</key>
 		</option>
 		<option>
 			<name>No</name>
-			<key>True</key>
+			<key>False</key>
 		</option>
 	</param>
 	<param>
