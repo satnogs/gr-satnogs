@@ -5,11 +5,10 @@
 # Title: FM Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Sun Sep 17 05:13:50 2017
+# Generated: Thu Sep 21 10:50:12 2017
 ##################################################
 
 from gnuradio import analog
-from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
 from gnuradio import gr
@@ -55,6 +54,7 @@ class satnogs_fm_demod(gr.top_block):
         
         self.taps = taps = firdes.low_pass(12.0, samp_rate_rx, 100e3, 60000, firdes.WIN_HAMMING, 6.76)
           
+        self.max_modulation_freq = max_modulation_freq = 3000
         self.filter_rate = filter_rate = 250000
         self.deviation = deviation = 5000
         self.audio_samp_rate = audio_samp_rate = 48000
@@ -82,10 +82,8 @@ class satnogs_fm_demod(gr.top_block):
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
           
         self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
-        	1, audio_samp_rate, 8000, 3000, firdes.WIN_HAMMING, 6.76))
+        	1, audio_samp_rate, deviation+max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(int(samp_rate_rx/filter_rate), (xlate_filter_taps), lo_offset, samp_rate_rx)
-        self.blocks_udp_sink_0 = blocks.udp_sink(gr.sizeof_short*1, '127.0.0.1', 7355, 1472, False)
-        self.blocks_float_to_short_0 = blocks.float_to_short(1, 32767)
         self.blks2_rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=24,
                 decimation=125,
@@ -98,12 +96,10 @@ class satnogs_fm_demod(gr.top_block):
         # Connections
         ##################################################
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
-        self.connect((self.analog_quadrature_demod_cf_0, 0), (self.blocks_float_to_short_0, 0))    
         self.connect((self.analog_quadrature_demod_cf_0, 0), (self.satnogs_ogg_encoder_0, 0))    
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.low_pass_filter_0, 0))    
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_iq_sink_0, 0))    
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))    
-        self.connect((self.blocks_float_to_short_0, 0), (self.blocks_udp_sink_0, 0))    
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blks2_rational_resampler_xxx_1, 0))    
         self.connect((self.low_pass_filter_0, 0), (self.analog_quadrature_demod_cf_0, 0))    
         self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))    
@@ -242,6 +238,13 @@ class satnogs_fm_demod(gr.top_block):
     def set_taps(self, taps):
         self.taps = taps
 
+    def get_max_modulation_freq(self):
+        return self.max_modulation_freq
+
+    def set_max_modulation_freq(self, max_modulation_freq):
+        self.max_modulation_freq = max_modulation_freq
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.deviation+self.max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
+
     def get_filter_rate(self):
         return self.filter_rate
 
@@ -253,6 +256,7 @@ class satnogs_fm_demod(gr.top_block):
 
     def set_deviation(self, deviation):
         self.deviation = deviation
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.deviation+self.max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
         self.analog_quadrature_demod_cf_0.set_gain((2*math.pi*self.deviation)/self.audio_samp_rate)
 
     def get_audio_samp_rate(self):
@@ -260,7 +264,7 @@ class satnogs_fm_demod(gr.top_block):
 
     def set_audio_samp_rate(self, audio_samp_rate):
         self.audio_samp_rate = audio_samp_rate
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, 8000, 3000, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.deviation+self.max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
         self.analog_quadrature_demod_cf_0.set_gain((2*math.pi*self.deviation)/self.audio_samp_rate)
 
     def get_audio_gain(self):
