@@ -5,7 +5,7 @@
 # Title: NOAA APT Decoder
 # Author: Manolis Surligas, George Vardakis
 # Description: A NOAA APT Decoder with automatic image synchronization
-# Generated: Sun Sep 17 04:44:10 2017
+# Generated: Wed Aug  9 18:06:52 2017
 ##################################################
 
 from gnuradio import analog
@@ -52,15 +52,15 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         ##################################################
         # Variables
         ##################################################
-        self.samp_rate_rx = samp_rate_rx = 250e3
-        self.first_stage_decimation = first_stage_decimation = 2
-        
+        self.samp_rate_rx = samp_rate_rx = satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']
+        self.first_stage_decimation = first_stage_decimation = 4
+
         self.noaa_filter_taps = noaa_filter_taps = firdes.low_pass(1.0, samp_rate_rx /first_stage_decimation, 16.5e3, 4e3, firdes.WIN_HAMMING, 6.76)
-          
+
         self.initial_bandwidth = initial_bandwidth = 100e3
-        
-        self.first_stage_filter_taps = first_stage_filter_taps = firdes.low_pass(1.0, 1.0, 0.4, 0.1, firdes.WIN_HAMMING, 6.76)
-          
+
+        self.first_stage_filter_taps = first_stage_filter_taps = firdes.low_pass(1.0, 1.0, 0.2, 0.1, firdes.WIN_HAMMING, 6.76)
+
         self.audio_decimation = audio_decimation = 2
 
         ##################################################
@@ -74,7 +74,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx /first_stage_decimation)
         self.rational_resampler_xxx_2 = filter.rational_resampler_ccc(
                 interpolation=48000,
-                decimation=int(samp_rate_rx /first_stage_decimation),
+                decimation=int(samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation),
                 taps=None,
                 fractional_bw=None,
         )
@@ -108,7 +108,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(rx_sdr_device, bb_gain), 0)
         self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(rx_sdr_device, antenna), 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
-          
+
         self.hilbert_fc_0 = filter.hilbert_fc(65, firdes.WIN_HAMMING, 6.76)
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(first_stage_decimation, (first_stage_filter_taps), lo_offset, samp_rate_rx)
         self.fir_filter_xxx_1 = filter.fir_filter_fff(2, ([0.5, 0.5]))
@@ -117,7 +117,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.fft_filter_xxx_0.declare_sample_delay(0)
         self.blocks_complex_to_mag_0 = blocks.complex_to_mag(1)
         self.band_pass_filter_0 = filter.fir_filter_fff(1, firdes.band_pass(
-        	6, samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation, 700, 3.7e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        	6, samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)) / audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
         self.analog_wfm_rcv_0 = analog.wfm_rcv(
         	quad_rate=samp_rate_rx/ ( first_stage_decimation  * int(samp_rate_rx/ first_stage_decimation / initial_bandwidth)),
         	audio_decimation=audio_decimation,
@@ -126,23 +126,23 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
-        self.connect((self.analog_wfm_rcv_0, 0), (self.band_pass_filter_0, 0))    
-        self.connect((self.analog_wfm_rcv_0, 0), (self.rational_resampler_xxx_1, 0))    
-        self.connect((self.band_pass_filter_0, 0), (self.fir_filter_xxx_1, 0))    
-        self.connect((self.blocks_complex_to_mag_0, 0), (self.rational_resampler_xxx_0_0, 0))    
-        self.connect((self.fft_filter_xxx_0, 0), (self.analog_wfm_rcv_0, 0))    
-        self.connect((self.fft_filter_xxx_0, 0), (self.rational_resampler_xxx_2, 0))    
-        self.connect((self.fir_filter_xxx_1, 0), (self.rational_resampler_xxx_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))    
-        self.connect((self.hilbert_fc_0, 0), (self.blocks_complex_to_mag_0, 0))    
-        self.connect((self.osmosdr_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
-        self.connect((self.rational_resampler_xxx_0, 0), (self.hilbert_fc_0, 0))    
-        self.connect((self.rational_resampler_xxx_0_0, 0), (self.satnogs_noaa_apt_sink_0, 0))    
-        self.connect((self.rational_resampler_xxx_1, 0), (self.satnogs_ogg_encoder_0, 0))    
-        self.connect((self.rational_resampler_xxx_2, 0), (self.satnogs_iq_sink_0, 0))    
-        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.fft_filter_xxx_0, 0))    
-        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.satnogs_waterfall_sink_0, 0))    
+        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
+        self.connect((self.analog_wfm_rcv_0, 0), (self.band_pass_filter_0, 0))
+        self.connect((self.analog_wfm_rcv_0, 0), (self.rational_resampler_xxx_1, 0))
+        self.connect((self.band_pass_filter_0, 0), (self.fir_filter_xxx_1, 0))
+        self.connect((self.blocks_complex_to_mag_0, 0), (self.rational_resampler_xxx_0_0, 0))
+        self.connect((self.fft_filter_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
+        self.connect((self.fft_filter_xxx_0, 0), (self.rational_resampler_xxx_2, 0))
+        self.connect((self.fir_filter_xxx_1, 0), (self.rational_resampler_xxx_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
+        self.connect((self.hilbert_fc_0, 0), (self.blocks_complex_to_mag_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.hilbert_fc_0, 0))
+        self.connect((self.rational_resampler_xxx_0_0, 0), (self.satnogs_noaa_apt_sink_0, 0))
+        self.connect((self.rational_resampler_xxx_1, 0), (self.satnogs_ogg_encoder_0, 0))
+        self.connect((self.rational_resampler_xxx_2, 0), (self.satnogs_iq_sink_0, 0))
+        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.fft_filter_xxx_0, 0))
+        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.satnogs_waterfall_sink_0, 0))
 
     def get_antenna(self):
         return self.antenna
@@ -248,6 +248,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
 
     def set_rx_sdr_device(self, rx_sdr_device):
         self.rx_sdr_device = rx_sdr_device
+        self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
         self.osmosdr_source_0.set_gain(satnogs.handle_rx_rf_gain(self.rx_sdr_device, self.rf_gain), 0)
         self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
         self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
@@ -278,14 +279,14 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.samp_rate_rx = samp_rate_rx
         self.osmosdr_source_0.set_sample_rate(self.samp_rate_rx)
         self.osmosdr_source_0.set_bandwidth(self.samp_rate_rx, 0)
-        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 700, 3.7e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
 
     def get_first_stage_decimation(self):
         return self.first_stage_decimation
 
     def set_first_stage_decimation(self, first_stage_decimation):
         self.first_stage_decimation = first_stage_decimation
-        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 700, 3.7e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
 
     def get_noaa_filter_taps(self):
         return self.noaa_filter_taps
@@ -299,7 +300,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
 
     def set_initial_bandwidth(self, initial_bandwidth):
         self.initial_bandwidth = initial_bandwidth
-        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 700, 3.7e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
 
     def get_first_stage_filter_taps(self):
         return self.first_stage_filter_taps
@@ -313,7 +314,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
 
     def set_audio_decimation(self, audio_decimation):
         self.audio_decimation = audio_decimation
-        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 700, 3.7e3, 1e3, firdes.WIN_HAMMING, 6.76))
+        self.band_pass_filter_0.set_taps(firdes.band_pass(6, self.samp_rate_rx/ ( self.first_stage_decimation  * int(self.samp_rate_rx/ self.first_stage_decimation / self.initial_bandwidth)) / self.audio_decimation, 500, 4.2e3, 200, firdes.WIN_HAMMING, 6.76))
 
 
 def argument_parser():
