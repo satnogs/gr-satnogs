@@ -5,7 +5,7 @@
 # Title: FSK9600 AX.25 decoder with G3RUH support
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: FSK9600 AX.25 decoder with G3RUH support
-# Generated: Tue Aug  8 23:36:51 2017
+# Generated: Sun Sep 24 11:56:08 2017
 ##################################################
 
 from gnuradio import analog
@@ -24,12 +24,13 @@ import time
 
 class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
 
-    def __init__(self, doppler_correction_per_sec=1000, enable_iq_dump=0, file_path='test.wav', lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
+    def __init__(self, decoded_data_file_path='/tmp/.satnogs/data/data', doppler_correction_per_sec=1000, enable_iq_dump=0, file_path='test.wav', lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
         gr.top_block.__init__(self, "FSK9600 AX.25 decoder with G3RUH support")
 
         ##################################################
         # Parameters
         ##################################################
+        self.decoded_data_file_path = decoded_data_file_path
         self.doppler_correction_per_sec = doppler_correction_per_sec
         self.enable_iq_dump = enable_iq_dump
         self.file_path = file_path
@@ -47,9 +48,9 @@ class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
         self.deviation = deviation = 5000
         self.baud_rate = baud_rate = 9600
         self.xlate_filter_taps = xlate_filter_taps = firdes.low_pass(1, samp_rate_rx, 125000, 25000, firdes.WIN_HAMMING, 6.76)
-
+        
         self.taps = taps = firdes.low_pass(12.0, samp_rate_rx, 100e3, 60000, firdes.WIN_HAMMING, 6.76)
-
+          
         self.modulation_index = modulation_index = deviation / (baud_rate / 2.0)
         self.filter_rate = filter_rate = 250000
         self.audio_samp_rate = audio_samp_rate = 48000
@@ -62,9 +63,9 @@ class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(16768, '/tmp/iq.bin', False, enable_iq_dump)
-        self.satnogs_frame_file_sink_0_1_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_ok', 1)
+        self.satnogs_frame_file_sink_0_1_0 = satnogs.frame_file_sink(decoded_data_file_path, 1)
         self.satnogs_frame_file_sink_0_1 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 1)
-        self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_ok', 0)
+        self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink(decoded_data_file_path, 0)
         self.satnogs_frame_file_sink_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, True, True, 1024, 3)
@@ -80,7 +81,7 @@ class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[rx_sdr_device]['bb_gain'], 0)
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[rx_sdr_device]['antenna'], 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
-
+          
         self.low_pass_filter_0 = filter.fir_filter_fff(1, firdes.low_pass(
         	1, audio_samp_rate, 7850, audio_samp_rate * 0.15, firdes.WIN_HAMMING, 6.76))
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(int(samp_rate_rx/filter_rate), (xlate_filter_taps), lo_offset, samp_rate_rx)
@@ -99,24 +100,30 @@ class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0, 'frame'))
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_0, 'frame'))
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0_1, 'frame'))
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_1_0, 'frame'))
-        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
-        self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.dc_blocker_xx_0, 0))
-        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.analog_quadrature_demod_cf_0_0, 0))
-        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_iq_sink_0, 0))
-        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))
-        self.connect((self.dc_blocker_xx_0, 0), (self.low_pass_filter_0, 0))
-        self.connect((self.digital_binary_slicer_fb_0, 0), (self.satnogs_ax25_decoder_bm_0, 0))
-        self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))
-        self.connect((self.digital_costas_loop_cc_0, 0), (self.blks2_rational_resampler_xxx_1, 0))
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.digital_costas_loop_cc_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.satnogs_ogg_encoder_0, 0))
-        self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
-        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0, 'frame'))    
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_0, 'frame'))    
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0_1, 'frame'))    
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_1_0, 'frame'))    
+        self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))    
+        self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.dc_blocker_xx_0, 0))    
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.analog_quadrature_demod_cf_0_0, 0))    
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_iq_sink_0, 0))    
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))    
+        self.connect((self.dc_blocker_xx_0, 0), (self.low_pass_filter_0, 0))    
+        self.connect((self.digital_binary_slicer_fb_0, 0), (self.satnogs_ax25_decoder_bm_0, 0))    
+        self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))    
+        self.connect((self.digital_costas_loop_cc_0, 0), (self.blks2_rational_resampler_xxx_1, 0))    
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.digital_costas_loop_cc_0, 0))    
+        self.connect((self.low_pass_filter_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))    
+        self.connect((self.low_pass_filter_0, 0), (self.satnogs_ogg_encoder_0, 0))    
+        self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))    
+        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
+
+    def get_decoded_data_file_path(self):
+        return self.decoded_data_file_path
+
+    def set_decoded_data_file_path(self, decoded_data_file_path):
+        self.decoded_data_file_path = decoded_data_file_path
 
     def get_doppler_correction_per_sec(self):
         return self.doppler_correction_per_sec
@@ -252,6 +259,9 @@ def argument_parser():
     description = 'FSK9600 AX.25 decoder with G3RUH support'
     parser = OptionParser(usage="%prog: [options]", option_class=eng_option, description=description)
     parser.add_option(
+        "", "--decoded-data-file-path", dest="decoded_data_file_path", type="string", default='/tmp/.satnogs/data/data',
+        help="Set decoded_data_file_path [default=%default]")
+    parser.add_option(
         "", "--doppler-correction-per-sec", dest="doppler_correction_per_sec", type="intx", default=1000,
         help="Set doppler_correction_per_sec [default=%default]")
     parser.add_option(
@@ -285,7 +295,7 @@ def main(top_block_cls=satnogs_fsk9600_g3ruh_ax25, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, enable_iq_dump=options.enable_iq_dump, file_path=options.file_path, lo_offset=options.lo_offset, ppm=options.ppm, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path)
+    tb = top_block_cls(decoded_data_file_path=options.decoded_data_file_path, doppler_correction_per_sec=options.doppler_correction_per_sec, enable_iq_dump=options.enable_iq_dump, file_path=options.file_path, lo_offset=options.lo_offset, ppm=options.ppm, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path)
     tb.start()
     tb.wait()
 
