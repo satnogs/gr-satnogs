@@ -38,19 +38,15 @@ if (!exists("outfile")) outfile='/tmp/waterfall.png'
 set terminal unknown
 
 # Read the first float to get the FFT size 
-# Then, read until the last float to get the number of floats written in the file.
-# For strange reasons the STATS_records returns inconcistent size (always the half)
-plot inputfile binary format='%float32' index 0 every 1:1:0:0:0:0 u (fft_size=$1):1, "" binary format='%float32' using (float_num=$0+1)
-
-
 # The file contains a float specifying the FFT size the x-axis scale 
 # and then each each pixel line
 # starts with the time in seconds from the beginning of the capture. 
-# Based on this info the exact number of the fully filled pixel lines can
-# be retrieved.
-pixel_lines=int((float_num - fft_size - 1)/(fft_size + 1))
-new_size=(4 + fft_size*4 + ( (fft_size+1)*pixel_lines)*4)
-cmd = sprintf("truncate -s %u %s", new_size, inputfile)
+# Then, read until the last float of a fully filled pixel line to get the number
+# of floats that should be in the file.
+# For strange reasons the STATS_records returns inconcistent size (always the half)
+plot inputfile binary format='%float32' index 0 every ::0:0:0:0 using (fft_size = $1), \
+     "" binary format='%float32' every fft_size + 1::fft_size using (float_num = $0 + 1)
+cmd = sprintf("truncate -s %u %s", float_num * 4, inputfile)
 
 # Truncate properly the file
 system(cmd)
