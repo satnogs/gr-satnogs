@@ -95,7 +95,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(911, 1034)</value>
+      <value>(1128, 948)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -122,7 +122,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(743, 971)</value>
+      <value>(960, 884)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -149,7 +149,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(823, 1034)</value>
+      <value>(1040, 948)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -176,7 +176,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(743, 1034)</value>
+      <value>(960, 948)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -203,7 +203,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1014, 971)</value>
+      <value>(1232, 884)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -230,7 +230,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1014, 1034)</value>
+      <value>(1232, 948)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -258,7 +258,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(743, 843)</value>
+      <value>(960, 756)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -332,7 +332,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(863, 971)</value>
+      <value>(1080, 876)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -388,6 +388,92 @@ TX sampling rate</value>
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(376, 1116)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>antenna</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value></value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(224, 1104)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>bb_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_bb_gain</value>
     </param>
   </block>
   <block>
@@ -541,6 +627,49 @@ TX sampling rate</value>
     <param>
       <key>value</key>
       <value>/tmp/.satnogs/data/data</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(744, 992)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>dev_args</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_dev_args</value>
     </param>
   </block>
   <block>
@@ -755,7 +884,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1110, 843)</value>
+      <value>(512, 1112)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -798,7 +927,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(743, 755)</value>
+      <value>(272, 1216)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -892,6 +1021,92 @@ TX sampling rate</value>
     </param>
     <param>
       <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(144, 1104)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>if_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_if_gain</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(720, 1112)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>iq_file_path</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>string</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>/tmp/iq.dat</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
       <value>To avoid the SDR carrier at the DC
 we shift the LO a little further</value>
     </param>
@@ -901,7 +1116,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(863, 843)</value>
+      <value>(432, 1224)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1011,11 +1226,11 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>ant0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['antenna']</value>
+      <value>antenna</value>
     </param>
     <param>
       <key>bb_gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['bb_gain']</value>
+      <value>bb_gain</value>
     </param>
     <param>
       <key>bw0</key>
@@ -1039,7 +1254,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>if_gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['if_gain']</value>
+      <value>if_gain</value>
     </param>
     <param>
       <key>iq_balance_mode0</key>
@@ -1047,7 +1262,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>gain0</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['rf_gain']</value>
+      <value>rf_gain</value>
     </param>
     <param>
       <key>ant10</key>
@@ -2299,7 +2514,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>args</key>
-      <value>satnogs.hw_rx_settings[rx_sdr_device]['dev_arg']</value>
+      <value>dev_args</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -2426,7 +2641,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(975, 755)</value>
+      <value>(568, 1224)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2469,7 +2684,50 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1054, 755)</value>
+      <value>(72, 1104)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>rf_gain</value>
+    </param>
+    <param>
+      <key>label</key>
+      <value></value>
+    </param>
+    <param>
+      <key>short_id</key>
+      <value></value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>eng_float</value>
+    </param>
+    <param>
+      <key>value</key>
+      <value>satnogs.not_set_rx_rf_gain</value>
+    </param>
+  </block>
+  <block>
+    <key>parameter</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(600, 984)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2512,7 +2770,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(959, 843)</value>
+      <value>(464, 992)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2872,7 +3130,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>filename</key>
-      <value>/tmp/iq.bin</value>
+      <value>iq_file_path</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -3068,7 +3326,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(839, 755)</value>
+      <value>(56, 1216)</value>
     </param>
     <param>
       <key>_rotation</key>
