@@ -19,7 +19,7 @@ for decoding signals from various scientific and academic sattelites.
 
 ### Installation
 
-1. `git clone https://github.com/satnogs/gr-satnogs.git`
+1. `git clone https://gitlab.com/librespacefoundation/satnogs/gr-satnogs.git`
 2. `cd gr-satnogs`
 3. `mkdir build`
 4. `cmake ..`
