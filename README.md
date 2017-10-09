@@ -11,6 +11,7 @@ for decoding signals from various scientific and academic sattelites.
 * VOLK
 * libogg 
 * libvorbis
+* libpng
 * git
 
 **Optional**
@@ -61,6 +62,6 @@ For more indormation about SatNOGS please visit our [site](https://satnogs.org/)
 
 ## License
 
-&copy; 2016 [Libre Space Foundation](http://librespacefoundation.org).
+&copy; 2016,2017 [Libre Space Foundation](http://librespacefoundation.org).
 
 Licensed under the [GPLv3](LICENSE).
