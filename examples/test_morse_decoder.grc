@@ -78,65 +78,7 @@
     </param>
     <param>
       <key>title</key>
-      <value></value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(8, 160)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>samp_rate</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>32000</value>
-    </param>
-  </block>
-  <block>
-    <key>satnogs_clear_text_msg_sink</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(960, 168)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>satnogs_clear_text_msg_sink_0</value>
+      <value>Morse Decoder Simple Example</value>
     </param>
   </block>
   <block>
@@ -187,7 +129,7 @@
     </param>
     <param>
       <key>debug_seq</key>
-      <value>"XPGOLIAT HELLO EARTH WORLD 123456789"</value>
+      <value>"SATNOGS HELLO EARTH WORLD 123456789"</value>
     </param>
   </block>
   <block>
@@ -233,6 +175,53 @@
       <value>ord('#')</value>
     </param>
   </block>
+  <block>
+    <key>satnogs_multi_format_msg_sink</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>filename</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(968, 148)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_multi_format_msg_sink_0</value>
+    </param>
+    <param>
+      <key>outstream</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>timestamp</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>format</key>
+      <value>0</value>
+    </param>
+  </block>
   <connection>
     <source_block_id>satnogs_morse_debug_source_0</source_block_id>
     <sink_block_id>satnogs_morse_decoder_0</sink_block_id>
@@ -241,7 +230,7 @@
   </connection>
   <connection>
     <source_block_id>satnogs_morse_decoder_0</source_block_id>
-    <sink_block_id>satnogs_clear_text_msg_sink_0</sink_block_id>
+    <sink_block_id>satnogs_multi_format_msg_sink_0</sink_block_id>
     <source_key>out</source_key>
     <sink_key>in</sink_key>
   </connection>

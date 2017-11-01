@@ -28,6 +28,7 @@ GR_PYTHON_INSTALL(
     flowgraphs/satnogs_cw_demod.py
     flowgraphs/satnogs_generic_iq_receiver.py
     flowgraphs/satnogs_bpsk_demod.py
+    flowgraphs/satnogs_cw_decoder.py
     flowgraphs/satnogs_apt_demod.py
     flowgraphs/satnogs_fsk9600_ax25.py
     flowgraphs/satnogs_fsk9600_g3ruh_ax25.py

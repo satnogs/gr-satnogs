@@ -21,17 +21,17 @@
 # Install public header files
 ########################################################################
 list(APPEND DEBUG_HEADER_FILES
-	morse_debug_source.h
-	debug_msg_source_raw.h
-	debug_msg_source.h
-	leo_channel.h
+    morse_debug_source.h
+    debug_msg_source_raw.h
+    debug_msg_source.h
+    leo_channel.h
+    cw_encoder.h 
 )
 
 list(APPEND HEADER_FILES
     api.h
     ax25.h
     config.h
-    cw_matched_filter_ff.h
     log.h
     morse_tree.h
     morse.h
@@ -55,16 +55,18 @@ list(APPEND HEADER_FILES
     ax25_encoder_mb.h
     ax25_decoder_bm.h
     qb50_deframer.h
-    waterfall_sink.h 
+    waterfall_sink.h
+    ogg_source.h
+    noaa_apt_sink.h
+    frame_file_sink.h
+    iq_sink.h
 )
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND HEADER_FILES ${DEBUG_HEADER_FILES})
 endif()
+
 install(FILES
     ${HEADER_FILES}
-    ogg_source.h
-    noaa_apt_sink.h
-    frame_file_sink.h
-    iq_sink.h DESTINATION include/satnogs
+     DESTINATION include/satnogs
 )

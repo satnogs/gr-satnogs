@@ -3,7 +3,7 @@
 	<name>Multi Format Message Sink</name>
 	<key>satnogs_multi_format_msg_sink</key>
 	<import>import satnogs</import>
-	<make>satnogs.multi_format_msg_sink($format)</make>
+	<make>satnogs.multi_format_msg_sink($format, $timestamp, $outstream, $filename)</make>
 
 	<param>
 		<name>Output format</name>
@@ -22,6 +22,41 @@
 			<key>2</key>
 		</option>
 		
+	</param>
+		<param>
+		<name>Output Timestamp</name>
+		<key>timestamp</key>
+		<type>enum</type>
+		<option>
+			<name>No</name>
+			<key>False</key>
+		</option>
+		<option>
+			<name>Yes</name>
+			<key>True</key>
+		</option>
+	</param>
+	<param>
+		<name>Output Result</name>
+		<key>outstream</key>
+		<type>enum</type>
+		<option>
+			<name>STDOUT</name>
+			<key>True</key>
+			<opt>t:stdout</opt>
+		</option>
+		<option>
+			<name>File</name>
+			<key>False</key>
+			<opt>t:file</opt>
+		</option>
+	</param>
+	<param>
+		<name>File</name>
+		<key>filename</key>
+		<value></value>
+		<type>file_save</type>
+		<hide>#if $outstream.t == "file" then 'none' else 'all'#</hide>
 	</param>
 	<sink>
 		<name>in</name>

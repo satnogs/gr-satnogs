@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<block>
+  <name>CW Encoder</name>
+  <key>satnogs_cw_encoder</key>
+  <category>[SatNOGS]/Debug</category>
+  <import>import satnogs</import>
+  <make>satnogs.cw_encoder($samp_rate, $cw_freq, $wpm)</make>
+
+  <param>
+    <name>Sample Rate</name>
+    <key>samp_rate</key>
+    <value>samp_rate</value>
+    <type>real</type>
+  </param>
+  
+  <param>
+    <name>CW Frequency</name>
+    <key>cw_freq</key>
+    <value>700</value>
+    <type>real</type>
+  </param>
+  
+  <param>
+    <name>Words per minute</name>
+    <key>wpm</key>
+    <value>20</value>
+    <type>int</type>
+  </param>
+
+  <sink>
+    <name>symbol</name>
+    <type>message</type>
+  </sink>
+
+  <source>
+    <name>out</name>
+    <type>complex</type>
+  </source>
+</block>

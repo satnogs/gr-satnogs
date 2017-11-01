@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016, 2017
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,61 +35,63 @@ namespace gr
     morse_decoder::make (char unrecognized_char)
     {
       return gnuradio::get_initial_sptr (
-	  new morse_decoder_impl (unrecognized_char));
+          new morse_decoder_impl (unrecognized_char));
     }
 
     void
     morse_decoder_impl::symbol_msg_handler (pmt::pmt_t msg)
     {
-      bool res;
+      bool res = false;
       std::string str;
       morse_symbol_t s;
       s = (morse_symbol_t) pmt::to_long (msg);
 
-      switch(s) {
-	case MORSE_DOT:
-	case MORSE_DASH:
-	case MORSE_S_SPACE:
-	  res = d_morse_tree.received_symbol(s);
-	  break;
-	/*
-	 * If a word separator occurs it is a good time to retrieve the decoded
-	 * word
-	 */
-	case MORSE_L_SPACE:
-	  /*
-	   * Inject a character separator, for the morse decoder to commit
-	   * the outstanding character
-	   */
-	  res = d_morse_tree.received_symbol(MORSE_S_SPACE);
-	  /* Just ignore the word separator if no word is yet decoded */
-	  if (d_morse_tree.get_word_len() == 0) {
-	    res = true;
-	    break;
-	  }
-	  str = d_morse_tree.get_word();
-	  d_morse_tree.reset();
-	  message_port_pub(pmt::mp("out"), pmt::make_blob(str.c_str(),
-							  str.length()));
-	  break;
-	default:
-	  LOG_ERROR("Unknown Morse symbol");
-	  return;
-      }
+      switch (s)
+        {
+        case MORSE_DOT:
+        case MORSE_DASH:
+        case MORSE_S_SPACE:
+          res = d_morse_tree.received_symbol (s);
+          break;
+          /*
+           * If a word separator occurs it is a good time to retrieve the decoded
+           * word
+           */
+        case MORSE_L_SPACE:
+          /*
+           * Inject a character separator, for the morse decoder to commit
+           * the outstanding character
+           */
+          res = d_morse_tree.received_symbol (MORSE_S_SPACE);
+          /* Just ignore the word separator if no word is yet decoded */
+          if (d_morse_tree.get_word_len () == 0) {
+            res = true;
+            break;
+          }
+          str = d_morse_tree.get_word ();
+          d_morse_tree.reset ();
+          message_port_pub (pmt::mp ("out"),
+                            pmt::make_blob (str.c_str (), str.length ()));
+          break;
+        case MORSE_INTRA_SPACE:
+          /*Ignore it */
+          break;
+        default:
+          LOG_ERROR("Unknown Morse symbol");
+          return;
+        }
 
       /*
        * If the decoding return false, it means that either an non decode-able
        * character situation occurred or the maximum word limit reached
        */
-      if (!s) {
-	if(d_morse_tree.get_max_word_len() == d_morse_tree.get_word_len()){
-	  str = d_morse_tree.get_word();
-	  d_morse_tree.reset();
-	  std::cout << "Received word: " << str << std::endl;
-	}
-      }
-      else{
-	LOG_DEBUG("Something went wrong");
+      if (!res) {
+        if (d_morse_tree.get_max_word_len () == d_morse_tree.get_word_len ()) {
+          str = d_morse_tree.get_word ();
+          d_morse_tree.reset ();
+          message_port_pub (pmt::mp ("out"),
+                            pmt::make_blob (str.c_str (), str.length ()));
+        }
       }
     }
 
@@ -96,17 +99,16 @@ namespace gr
      * The private constructor
      */
     morse_decoder_impl::morse_decoder_impl (char unrecognized_char) :
-	gr::block ("morse_decoder",
-		   gr::io_signature::make (0, 0, 0),
-		   gr::io_signature::make (0, 0, 0)),
-		   d_morse_tree (unrecognized_char)
+            gr::block ("morse_decoder", gr::io_signature::make (0, 0, 0),
+                       gr::io_signature::make (0, 0, 0)),
+            d_morse_tree (unrecognized_char)
     {
       /* Register the input and output msg handler */
       message_port_register_in (pmt::mp ("in"));
-      message_port_register_out(pmt::mp("out"));
+      message_port_register_out (pmt::mp ("out"));
       set_msg_handler (
-	  pmt::mp ("in"),
-	  boost::bind (&morse_decoder_impl::symbol_msg_handler, this, _1));
+          pmt::mp ("in"),
+          boost::bind (&morse_decoder_impl::symbol_msg_handler, this, _1));
     }
 
   } /* namespace satnogs */

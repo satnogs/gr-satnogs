@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, 2017
+ *  Copyright (C) 2017
  *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -19,43 +19,49 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
-#define INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
+#ifndef INCLUDED_SATNOGS_CW_ENCODER_IMPL_H
+#define INCLUDED_SATNOGS_CW_ENCODER_IMPL_H
 
-#include <satnogs/morse_debug_source.h>
-#include <thread>
-#include <algorithm>
 #include <vector>
+#include <string>
+#include <satnogs/cw_encoder.h>
+#include <satnogs/morse.h>
+#include <gnuradio/fxpt_nco.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class morse_debug_source_impl : public morse_debug_source
+    class cw_encoder_impl : public cw_encoder
     {
     private:
+      const double d_samp_rate;
+      const double d_cw_freq;
       const size_t d_wpm;
-      const bool d_inject_errors;
-      const float d_p;
-      const size_t d_seq_pause_ms;
-      bool d_run;
-      const char d_chars[36];
-      const std::vector<std::string> d_symbols;
-      std::thread d_thread;
+      const size_t d_dot_samples;
+      size_t d_window_size;
+      size_t d_windows_remaining;
+      morse_symbol_t d_cw_symbol;
+      gr::fxpt_nco d_nco;
 
-      void
-      send_debug_msg (std::string sentence);
+
+
+      std::string
+      get_cw_symbol(char c);
 
     public:
-      morse_debug_source_impl (const size_t wpm, std::string debug_seq,
-                               bool inject_errors,
-                               float error_prob, size_t seq_pause_ms);
-      ~morse_debug_source_impl ();
+      cw_encoder_impl (double samp_rate, double cw_freq, size_t wpm);
+      ~cw_encoder_impl ();
+
+      // Where all the action really happens
+      int
+      work (int noutput_items, gr_vector_const_void_star &input_items,
+            gr_vector_void_star &output_items);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H */
+#endif /* INCLUDED_SATNOGS_CW_ENCODER_IMPL_H */
 

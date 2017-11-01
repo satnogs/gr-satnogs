@@ -33,13 +33,13 @@ include_directories(
 link_directories(${Boost_LIBRARY_DIRS})
 
 list(APPEND satnogs_debug_sources
-	morse_debug_source_impl.cc
-	debug_msg_source_impl.cc
-	debug_msg_source_raw_impl.cc
-	leo_channel_impl.cc 
+    morse_debug_source_impl.cc
+    debug_msg_source_impl.cc
+    debug_msg_source_raw_impl.cc
+    leo_channel_impl.cc 
+    cw_encoder_impl.cc
 )
 list(APPEND satnogs_sources
-    cw_matched_filter_ff_impl.cc
     morse_tree.cc
     morse_decoder_impl.cc
     multi_format_msg_sink_impl.cc

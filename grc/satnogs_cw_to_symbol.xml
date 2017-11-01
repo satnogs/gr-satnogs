@@ -3,7 +3,7 @@
 	<name>CW to Symbols</name>
 	<key>satnogs_cw_to_symbol</key>
 	<import>import satnogs</import>
-	<make>satnogs.cw_to_symbol($sampling_rate, $threshold, $conf_level, $wpm, $auto_config)</make>
+	<make>satnogs.cw_to_symbol($sampling_rate, $threshold, $conf_level, $wpm)</make>
 	<callback>set_act_threshold($threshold)</callback>
 	
 	<param>
@@ -32,29 +32,9 @@
 		<value>20</value>
 		<type>int</type>
 	</param>
-	
-	<param>
-		<name>Automatic timing recovery</name>
-		<key>auto_config</key>
-		<type>enum</type>
-		<option>
-			<name>No</name>
-			<key>False</key>
-		</option>
-		<option>
-			<name>Yes</name>
-			<key>True</key>
-		</option>
-	</param>
 
 	<sink>
 		<name>act_threshold</name>
-		<type>message</type>
-		<optional>1</optional>
-	</sink>
-	
-	<sink>
-		<name>sync</name>
 		<type>message</type>
 		<optional>1</optional>
 	</sink>

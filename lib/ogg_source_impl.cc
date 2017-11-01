@@ -27,6 +27,7 @@
 #include <vorbis/vorbisfile.h>
 #include <volk/volk.h>
 
+#include <satnogs/log.h>
 #include "ogg_source_impl.h"
 
 #define PCM_BUF_SIZE 4096
@@ -35,21 +36,22 @@ namespace gr {
   namespace satnogs {
 
     ogg_source::sptr
-    ogg_source::make(const std::string& filename, size_t channels)
+    ogg_source::make (const std::string& filename, size_t channels, bool repeat)
     {
-      return gnuradio::get_initial_sptr
-        (new ogg_source_impl(filename, channels));
+      return gnuradio::get_initial_sptr (
+          new ogg_source_impl (filename, channels, repeat));
     }
 
     /*
      * The private constructor
      */
     ogg_source_impl::ogg_source_impl (const std::string& filename,
-                                      size_t channels) :
+                                      size_t channels, bool repeat) :
             gr::sync_block (
                 "ogg_source", gr::io_signature::make (0, 0, 0),
                 gr::io_signature::make (channels, channels, sizeof(float))),
-            d_channels (channels)
+            d_channels (channels),
+            d_repeat (repeat)
     {
       if (channels < 1) {
         throw std::invalid_argument ("At least one output channels should"
@@ -60,8 +62,8 @@ namespace gr {
         throw std::invalid_argument ("Invalid .ogg file");
       }
 
-      vorbis_info *vi = ov_info(&d_ogvorb_f,-1);
-      if(vi->channels != (int) channels) {
+      vorbis_info *vi = ov_info (&d_ogvorb_f, -1);
+      if (vi->channels != (int) channels) {
         throw std::invalid_argument (
             std::string ("Channels number specified (")
                 + std::to_string (channels)
@@ -69,14 +71,17 @@ namespace gr {
                     "the ogg stream (" + std::to_string (vi->channels) + ")");
       }
 
-      const int alignment_multiple = volk_get_alignment() / sizeof(float);
-      set_alignment(std::max(1,alignment_multiple));
-      set_max_noutput_items(PCM_BUF_SIZE);
+      const int alignment_multiple = volk_get_alignment () / sizeof(float);
+      set_alignment (std::max (1, alignment_multiple));
+      set_max_noutput_items (PCM_BUF_SIZE);
 
-      d_in_buffer = (int16_t *)volk_malloc(PCM_BUF_SIZE * sizeof(int16_t),
-                                volk_get_alignment());
-      d_out_buffer = (float *)volk_malloc(PCM_BUF_SIZE * sizeof(float),
-                                volk_get_alignment());
+      d_in_buffer = (int16_t *) volk_malloc (PCM_BUF_SIZE * sizeof(int16_t),
+                                             volk_get_alignment ());
+      d_out_buffer = (float *) volk_malloc (PCM_BUF_SIZE * sizeof(float),
+                                            volk_get_alignment ());
+      if(!d_in_buffer || !d_out_buffer) {
+        throw std::runtime_error("Could not allocate memory");
+      }
     }
 
     /*
@@ -103,6 +108,17 @@ namespace gr {
                      available * sizeof(int16_t),
                      0, sizeof(int16_t), 1, &section);
       if(ret < sizeof(int16_t)) {
+        /*
+         * If return value is EOF and the repeat mode is set seek back to the
+         * start of the ogg stream
+         */
+        if(ret == 0 && d_repeat) {
+          if(ov_seekable(&d_ogvorb_f)){
+            ov_time_seek(&d_ogvorb_f, 0);
+            return 0;
+          }
+          LOG_WARN("File is not seakable.");
+        }
         return WORK_DONE;
       }
 

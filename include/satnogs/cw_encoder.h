@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, 2017
+ *  Copyright (C) 2017
  *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -19,43 +19,41 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
-#define INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H
+#ifndef INCLUDED_SATNOGS_CW_ENCODER_H
+#define INCLUDED_SATNOGS_CW_ENCODER_H
 
-#include <satnogs/morse_debug_source.h>
-#include <thread>
-#include <algorithm>
-#include <vector>
+#include <satnogs/api.h>
+#include <gnuradio/sync_block.h>
 
 namespace gr
 {
   namespace satnogs
   {
 
-    class morse_debug_source_impl : public morse_debug_source
+    /*!
+     * \brief CW encoder block, mainly for debugging and testing purposes.
+     * It accepts a CW word via a message source port and transmits the
+     * corresponding CW symbols.
+     * \ingroup satnogs
+     *
+     */
+    class SATNOGS_API cw_encoder : virtual public gr::sync_block
     {
-    private:
-      const size_t d_wpm;
-      const bool d_inject_errors;
-      const float d_p;
-      const size_t d_seq_pause_ms;
-      bool d_run;
-      const char d_chars[36];
-      const std::vector<std::string> d_symbols;
-      std::thread d_thread;
-
-      void
-      send_debug_msg (std::string sentence);
-
     public:
-      morse_debug_source_impl (const size_t wpm, std::string debug_seq,
-                               bool inject_errors,
-                               float error_prob, size_t seq_pause_ms);
-      ~morse_debug_source_impl ();
+      typedef boost::shared_ptr<cw_encoder> sptr;
+
+      /*!
+       * \brief Return a shared_ptr to a new instance of satnogs::cw_encoder.
+       * @param samp_rate the sampling rate
+       * @param cw_freq the CW tone frequency
+       * @param wpm words per minute (WPM)
+       */
+      static sptr
+      make (double samp_rate, double cw_freq = 700, size_t wpm = 20);
     };
 
   } // namespace satnogs
 } // namespace gr
 
-#endif /* INCLUDED_SATNOGS_MORSE_DEBUG_SOURCE_IMPL_H */
+#endif /* INCLUDED_SATNOGS_CW_ENCODER_H */
 
