@@ -55,7 +55,7 @@ namespace gr
             d_sampling_rate (sampling_rate),
             d_act_thrshld (threshold),
             d_confidence_level (conf_level),
-            d_dot_samples ((1.2 / wpm) / (1.0 / sampling_rate)),
+            d_dot_samples ((1.2 / wpm) * sampling_rate),
             d_window_size(0),
             d_window_cnt(0),
             d_dot_windows_num(0),
@@ -103,8 +103,8 @@ namespace gr
         d_window_size++;
       }
 
-      LOG_DEBUG("Dot samples: %lu", d_dot_samples);
-      LOG_DEBUG("Window size: %lu", d_window_size);
+      LOG_WARN("Dot symbol samples: %lu", d_dot_samples);
+      LOG_WARN("Window size: %lu", d_window_size);
 
       /* Set the duration of each symbol in multiples of the window size */
       d_dot_windows_num = d_dot_samples / d_window_size;
@@ -236,6 +236,7 @@ namespace gr
               d_window_cnt++;
               if(d_window_cnt > d_dot_windows_num) {
                 set_long_on();
+                LOG_DEBUG("Going to search for long sequence");
               }
             }
             else {
@@ -243,6 +244,7 @@ namespace gr
                 LOG_DEBUG("DOT");
                 send_symbol_msg(MORSE_DOT);
               }
+              LOG_DEBUG("Going to search for space: win cnt %lu", d_window_cnt);
               set_search_space ();
             }
             break;
@@ -260,6 +262,7 @@ namespace gr
                 send_symbol_msg(MORSE_DOT);
               }
               set_search_space ();
+              LOG_DEBUG("Going to search for space");
             }
             break;
           case SEARCH_SPACE:
@@ -273,6 +276,7 @@ namespace gr
                 send_symbol_msg(MORSE_S_SPACE);
               }
               set_short_on();
+              LOG_DEBUG("Going to search for dot");
             }
             else{
               d_window_cnt++;
@@ -280,6 +284,7 @@ namespace gr
                 LOG_DEBUG("LONG SPACE");
                 send_symbol_msg(MORSE_L_SPACE);
                 set_idle();
+                LOG_DEBUG("Going to idle");
                 return (i + 1) * d_window_size;
               }
             }

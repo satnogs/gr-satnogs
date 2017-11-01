@@ -5,7 +5,7 @@
 # Title: CW Decoder
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A CW (Morse) Decoder
-# Generated: Tue Apr 25 21:28:22 2017
+# Generated: Wed Nov  1 21:56:56 2017
 ##################################################
 
 if __name__ == '__main__':
@@ -24,13 +24,11 @@ from gnuradio import blocks
 from gnuradio import eng_notation
 from gnuradio import filter
 from gnuradio import gr
-from gnuradio import qtgui
 from gnuradio.eng_option import eng_option
 from gnuradio.filter import firdes
 from optparse import OptionParser
 import osmosdr
 import satnogs
-import sip
 import sys
 import time
 from gnuradio import qtgui
@@ -38,7 +36,7 @@ from gnuradio import qtgui
 
 class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
 
-    def __init__(self, cw_offset=700, doppler_correction_per_sec=1000, file_path='test.txt', lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat', wpm=20):
+    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, cw_offset=700, decoded_data_file_path='/tmp/.satnogs/data/data', dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=1000, enable_iq_dump=0, file_path='test.txt', if_gain=satnogs.not_set_rx_if_gain, iq_file_path='/tmp/iq.dat', lo_offset=100e3, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat', wpm=20):
         gr.top_block.__init__(self, "CW Decoder")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("CW Decoder")
@@ -65,11 +63,19 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
         ##################################################
         # Parameters
         ##################################################
+        self.antenna = antenna
+        self.bb_gain = bb_gain
         self.cw_offset = cw_offset
+        self.decoded_data_file_path = decoded_data_file_path
+        self.dev_args = dev_args
         self.doppler_correction_per_sec = doppler_correction_per_sec
+        self.enable_iq_dump = enable_iq_dump
         self.file_path = file_path
+        self.if_gain = if_gain
+        self.iq_file_path = iq_file_path
         self.lo_offset = lo_offset
         self.ppm = ppm
+        self.rf_gain = rf_gain
         self.rigctl_port = rigctl_port
         self.rx_freq = rx_freq
         self.rx_sdr_device = rx_sdr_device
@@ -87,116 +93,36 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
 
         self.ndelay = ndelay = 250
         self.lpf_decimation = lpf_decimation = 5
+        self.audio_samp_rate = audio_samp_rate = 48000
 
         ##################################################
         # Blocks
         ##################################################
+        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink((samp_rate_rx/xlating_decimation), 0.0, 10, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
-        self.satnogs_multi_format_msg_sink_0 = satnogs.multi_format_msg_sink(0, True, True, 'test.txt')
+        self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_morse_decoder_0 = satnogs.morse_decoder(ord('#'))
-        self.satnogs_cw_to_symbol_0 = satnogs.cw_to_symbol(int((samp_rate_rx/xlating_decimation)/lpf_decimation), 300000, 0.9, wpm, False)
+        self.satnogs_iq_sink_0 = satnogs.iq_sink(16768, iq_file_path, False, enable_iq_dump)
+        self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink(decoded_data_file_path, 0)
+        self.satnogs_cw_to_symbol_0 = satnogs.cw_to_symbol(int((samp_rate_rx/xlating_decimation)/lpf_decimation), 300000, 0.9, wpm)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
-        self.qtgui_time_sink_x_0 = qtgui.time_sink_f(
-        	1024, #size
-        	int((samp_rate_rx/xlating_decimation)/lpf_decimation), #samp_rate
-        	"", #name
-        	1 #number of inputs
+        self.rational_resampler_xxx_0 = filter.rational_resampler_ccc(
+                interpolation=audio_samp_rate,
+                decimation=int((samp_rate_rx/xlating_decimation)/lpf_decimation),
+                taps=None,
+                fractional_bw=None,
         )
-        self.qtgui_time_sink_x_0.set_update_time(0.10)
-        self.qtgui_time_sink_x_0.set_y_axis(-1, 1)
-
-        self.qtgui_time_sink_x_0.set_y_label('Amplitude', "")
-
-        self.qtgui_time_sink_x_0.enable_tags(-1, True)
-        self.qtgui_time_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, qtgui.TRIG_SLOPE_POS, 0.0, 0, 0, "")
-        self.qtgui_time_sink_x_0.enable_autoscale(False)
-        self.qtgui_time_sink_x_0.enable_grid(False)
-        self.qtgui_time_sink_x_0.enable_axis_labels(True)
-        self.qtgui_time_sink_x_0.enable_control_panel(False)
-
-        if not True:
-          self.qtgui_time_sink_x_0.disable_legend()
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-                  "magenta", "yellow", "dark red", "dark green", "blue"]
-        styles = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        markers = [-1, -1, -1, -1, -1,
-                   -1, -1, -1, -1, -1]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_time_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_time_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_time_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_time_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_time_sink_x_0.set_line_style(i, styles[i])
-            self.qtgui_time_sink_x_0.set_line_marker(i, markers[i])
-            self.qtgui_time_sink_x_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_time_sink_x_0_win = sip.wrapinstance(self.qtgui_time_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_time_sink_x_0_win)
-        self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
-        	1024, #size
-        	firdes.WIN_BLACKMAN_hARRIS, #wintype
-        	0, #fc
-        	samp_rate_rx/xlating_decimation, #bw
-        	"", #name
-        	1 #number of inputs
-        )
-        self.qtgui_freq_sink_x_0.set_update_time(0.10)
-        self.qtgui_freq_sink_x_0.set_y_axis(-140, 10)
-        self.qtgui_freq_sink_x_0.set_y_label('Relative Gain', 'dB')
-        self.qtgui_freq_sink_x_0.set_trigger_mode(qtgui.TRIG_MODE_FREE, 0.0, 0, "")
-        self.qtgui_freq_sink_x_0.enable_autoscale(False)
-        self.qtgui_freq_sink_x_0.enable_grid(False)
-        self.qtgui_freq_sink_x_0.set_fft_average(1.0)
-        self.qtgui_freq_sink_x_0.enable_axis_labels(True)
-        self.qtgui_freq_sink_x_0.enable_control_panel(False)
-
-        if not True:
-          self.qtgui_freq_sink_x_0.disable_legend()
-
-        if "complex" == "float" or "complex" == "msg_float":
-          self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
-
-        labels = ['', '', '', '', '',
-                  '', '', '', '', '']
-        widths = [1, 1, 1, 1, 1,
-                  1, 1, 1, 1, 1]
-        colors = ["blue", "red", "green", "black", "cyan",
-                  "magenta", "yellow", "dark red", "dark green", "dark blue"]
-        alphas = [1.0, 1.0, 1.0, 1.0, 1.0,
-                  1.0, 1.0, 1.0, 1.0, 1.0]
-        for i in xrange(1):
-            if len(labels[i]) == 0:
-                self.qtgui_freq_sink_x_0.set_line_label(i, "Data {0}".format(i))
-            else:
-                self.qtgui_freq_sink_x_0.set_line_label(i, labels[i])
-            self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
-            self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
-            self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
-
-        self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
-        self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
-        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
+        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.handle_rx_dev_args(rx_sdr_device, dev_args) )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_freq - lo_offset, 0)
         self.osmosdr_source_0.set_freq_corr(ppm, 0)
         self.osmosdr_source_0.set_dc_offset_mode(2, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
         self.osmosdr_source_0.set_gain_mode(False, 0)
-        self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[rx_sdr_device]['rf_gain'], 0)
-        self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[rx_sdr_device]['if_gain'], 0)
-        self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[rx_sdr_device]['bb_gain'], 0)
-        self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[rx_sdr_device]['antenna'], 0)
+        self.osmosdr_source_0.set_gain(satnogs.handle_rx_rf_gain(rx_sdr_device, rf_gain), 0)
+        self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(rx_sdr_device, if_gain), 0)
+        self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(rx_sdr_device, bb_gain), 0)
+        self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(rx_sdr_device, antenna), 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
 
         self.low_pass_filter_0 = filter.fir_filter_ccf(lpf_decimation, firdes.low_pass(
@@ -205,8 +131,9 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
         self.fir_filter_xxx_0 = filter.fir_filter_ccc(1, ([1,] * ndelay))
         self.fir_filter_xxx_0.declare_sample_delay(0)
         self.blocks_multiply_conjugate_cc_0 = blocks.multiply_conjugate_cc(1)
-        self.blocks_moving_average_xx_0 = blocks.moving_average_ff(ndelay, 1, 4000)
+        self.blocks_moving_average_xx_0 = blocks.moving_average_ff(ndelay, 1, 40)
         self.blocks_delay_0 = blocks.delay(gr.sizeof_gr_complex*1, ndelay)
+        self.blocks_complex_to_real_0 = blocks.complex_to_real(1)
         self.blocks_complex_to_mag_squared_0 = blocks.complex_to_mag_squared(1)
         self.analog_agc2_xx_0 = analog.agc2_cc(0.1, 0.8, 0.6, 0.0)
         self.analog_agc2_xx_0.set_max_gain(1e3)
@@ -215,26 +142,43 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
         # Connections
         ##################################################
         self.msg_connect((self.satnogs_cw_to_symbol_0, 'out'), (self.satnogs_morse_decoder_0, 'in'))
-        self.msg_connect((self.satnogs_morse_decoder_0, 'out'), (self.satnogs_multi_format_msg_sink_0, 'in'))
+        self.msg_connect((self.satnogs_morse_decoder_0, 'out'), (self.satnogs_frame_file_sink_0_0, 'frame'))
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
         self.connect((self.analog_agc2_xx_0, 0), (self.blocks_delay_0, 0))
         self.connect((self.analog_agc2_xx_0, 0), (self.blocks_multiply_conjugate_cc_0, 0))
         self.connect((self.blocks_complex_to_mag_squared_0, 0), (self.blocks_moving_average_xx_0, 0))
+        self.connect((self.blocks_complex_to_real_0, 0), (self.satnogs_ogg_encoder_0, 0))
         self.connect((self.blocks_delay_0, 0), (self.blocks_multiply_conjugate_cc_0, 1))
-        self.connect((self.blocks_moving_average_xx_0, 0), (self.qtgui_time_sink_x_0, 0))
         self.connect((self.blocks_moving_average_xx_0, 0), (self.satnogs_cw_to_symbol_0, 0))
         self.connect((self.blocks_multiply_conjugate_cc_0, 0), (self.fir_filter_xxx_0, 0))
         self.connect((self.fir_filter_xxx_0, 0), (self.blocks_complex_to_mag_squared_0, 0))
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.low_pass_filter_0, 0))
         self.connect((self.low_pass_filter_0, 0), (self.analog_agc2_xx_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.blocks_complex_to_real_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.satnogs_iq_sink_0, 0))
+        self.connect((self.rational_resampler_xxx_0, 0), (self.satnogs_waterfall_sink_0, 0))
         self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "satnogs_cw_decoder")
         self.settings.setValue("geometry", self.saveGeometry())
         event.accept()
+
+    def get_antenna(self):
+        return self.antenna
+
+    def set_antenna(self, antenna):
+        self.antenna = antenna
+        self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
+
+    def get_bb_gain(self):
+        return self.bb_gain
+
+    def set_bb_gain(self, bb_gain):
+        self.bb_gain = bb_gain
+        self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
 
     def get_cw_offset(self):
         return self.cw_offset
@@ -243,17 +187,48 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
         self.cw_offset = cw_offset
         self.freq_xlating_fir_filter_xxx_0.set_center_freq(self.lo_offset - self.cw_offset)
 
+    def get_decoded_data_file_path(self):
+        return self.decoded_data_file_path
+
+    def set_decoded_data_file_path(self, decoded_data_file_path):
+        self.decoded_data_file_path = decoded_data_file_path
+
+    def get_dev_args(self):
+        return self.dev_args
+
+    def set_dev_args(self, dev_args):
+        self.dev_args = dev_args
+
     def get_doppler_correction_per_sec(self):
         return self.doppler_correction_per_sec
 
     def set_doppler_correction_per_sec(self, doppler_correction_per_sec):
         self.doppler_correction_per_sec = doppler_correction_per_sec
 
+    def get_enable_iq_dump(self):
+        return self.enable_iq_dump
+
+    def set_enable_iq_dump(self, enable_iq_dump):
+        self.enable_iq_dump = enable_iq_dump
+
     def get_file_path(self):
         return self.file_path
 
     def set_file_path(self, file_path):
         self.file_path = file_path
+
+    def get_if_gain(self):
+        return self.if_gain
+
+    def set_if_gain(self, if_gain):
+        self.if_gain = if_gain
+        self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
+
+    def get_iq_file_path(self):
+        return self.iq_file_path
+
+    def set_iq_file_path(self, iq_file_path):
+        self.iq_file_path = iq_file_path
 
     def get_lo_offset(self):
         return self.lo_offset
@@ -269,6 +244,13 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
     def set_ppm(self, ppm):
         self.ppm = ppm
         self.osmosdr_source_0.set_freq_corr(self.ppm, 0)
+
+    def get_rf_gain(self):
+        return self.rf_gain
+
+    def set_rf_gain(self, rf_gain):
+        self.rf_gain = rf_gain
+        self.osmosdr_source_0.set_gain(satnogs.handle_rx_rf_gain(self.rx_sdr_device, self.rf_gain), 0)
 
     def get_rigctl_port(self):
         return self.rigctl_port
@@ -290,10 +272,10 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
     def set_rx_sdr_device(self, rx_sdr_device):
         self.rx_sdr_device = rx_sdr_device
         self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
-        self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['rf_gain'], 0)
-        self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['if_gain'], 0)
-        self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
-        self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
+        self.osmosdr_source_0.set_gain(satnogs.handle_rx_rf_gain(self.rx_sdr_device, self.rf_gain), 0)
+        self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
+        self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
+        self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
 
     def get_waterfall_file_path(self):
         return self.waterfall_file_path
@@ -313,8 +295,6 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
     def set_samp_rate_rx(self, samp_rate_rx):
         self.samp_rate_rx = samp_rate_rx
         self.set_xlate_filter_taps(firdes.low_pass(1, self.samp_rate_rx, 125000, 25000, firdes.WIN_HAMMING, 6.76))
-        self.qtgui_time_sink_x_0.set_samp_rate(int((self.samp_rate_rx/self.xlating_decimation)/self.lpf_decimation))
-        self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate_rx/self.xlating_decimation)
         self.osmosdr_source_0.set_sample_rate(self.samp_rate_rx)
         self.osmosdr_source_0.set_bandwidth(self.samp_rate_rx, 0)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate_rx/self.xlating_decimation, 2e3, 500, firdes.WIN_HAMMING, 6.76))
@@ -324,8 +304,6 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
 
     def set_xlating_decimation(self, xlating_decimation):
         self.xlating_decimation = xlating_decimation
-        self.qtgui_time_sink_x_0.set_samp_rate(int((self.samp_rate_rx/self.xlating_decimation)/self.lpf_decimation))
-        self.qtgui_freq_sink_x_0.set_frequency_range(0, self.samp_rate_rx/self.xlating_decimation)
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.samp_rate_rx/self.xlating_decimation, 2e3, 500, firdes.WIN_HAMMING, 6.76))
 
     def get_xlate_filter_taps(self):
@@ -355,27 +333,56 @@ class satnogs_cw_decoder(gr.top_block, Qt.QWidget):
 
     def set_lpf_decimation(self, lpf_decimation):
         self.lpf_decimation = lpf_decimation
-        self.qtgui_time_sink_x_0.set_samp_rate(int((self.samp_rate_rx/self.xlating_decimation)/self.lpf_decimation))
+
+    def get_audio_samp_rate(self):
+        return self.audio_samp_rate
+
+    def set_audio_samp_rate(self, audio_samp_rate):
+        self.audio_samp_rate = audio_samp_rate
 
 
 def argument_parser():
     description = 'A CW (Morse) Decoder'
     parser = OptionParser(usage="%prog: [options]", option_class=eng_option, description=description)
     parser.add_option(
+        "", "--antenna", dest="antenna", type="string", default=satnogs.not_set_antenna,
+        help="Set antenna [default=%default]")
+    parser.add_option(
+        "", "--bb-gain", dest="bb_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_bb_gain),
+        help="Set bb_gain [default=%default]")
+    parser.add_option(
         "", "--cw-offset", dest="cw_offset", type="eng_float", default=eng_notation.num_to_str(700),
         help="Set cw_offset [default=%default]")
+    parser.add_option(
+        "", "--decoded-data-file-path", dest="decoded_data_file_path", type="string", default='/tmp/.satnogs/data/data',
+        help="Set decoded_data_file_path [default=%default]")
+    parser.add_option(
+        "", "--dev-args", dest="dev_args", type="string", default=satnogs.not_set_dev_args,
+        help="Set dev_args [default=%default]")
     parser.add_option(
         "", "--doppler-correction-per-sec", dest="doppler_correction_per_sec", type="intx", default=1000,
         help="Set doppler_correction_per_sec [default=%default]")
     parser.add_option(
+        "", "--enable-iq-dump", dest="enable_iq_dump", type="intx", default=0,
+        help="Set enable_iq_dump [default=%default]")
+    parser.add_option(
         "", "--file-path", dest="file_path", type="string", default='test.txt',
         help="Set file_path [default=%default]")
+    parser.add_option(
+        "", "--if-gain", dest="if_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_if_gain),
+        help="Set if_gain [default=%default]")
+    parser.add_option(
+        "", "--iq-file-path", dest="iq_file_path", type="string", default='/tmp/iq.dat',
+        help="Set iq_file_path [default=%default]")
     parser.add_option(
         "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
         help="Set lo_offset [default=%default]")
     parser.add_option(
         "", "--ppm", dest="ppm", type="intx", default=0,
         help="Set ppm [default=%default]")
+    parser.add_option(
+        "", "--rf-gain", dest="rf_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_rf_gain),
+        help="Set rf_gain [default=%default]")
     parser.add_option(
         "", "--rigctl-port", dest="rigctl_port", type="intx", default=4532,
         help="Set rigctl_port [default=%default]")
@@ -404,7 +411,7 @@ def main(top_block_cls=satnogs_cw_decoder, options=None):
         Qt.QApplication.setGraphicsSystem(style)
     qapp = Qt.QApplication(sys.argv)
 
-    tb = top_block_cls(cw_offset=options.cw_offset, doppler_correction_per_sec=options.doppler_correction_per_sec, file_path=options.file_path, lo_offset=options.lo_offset, ppm=options.ppm, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path, wpm=options.wpm)
+    tb = top_block_cls(antenna=options.antenna, bb_gain=options.bb_gain, cw_offset=options.cw_offset, decoded_data_file_path=options.decoded_data_file_path, dev_args=options.dev_args, doppler_correction_per_sec=options.doppler_correction_per_sec, enable_iq_dump=options.enable_iq_dump, file_path=options.file_path, if_gain=options.if_gain, iq_file_path=options.iq_file_path, lo_offset=options.lo_offset, ppm=options.ppm, rf_gain=options.rf_gain, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path, wpm=options.wpm)
     tb.start()
     tb.show()
 
