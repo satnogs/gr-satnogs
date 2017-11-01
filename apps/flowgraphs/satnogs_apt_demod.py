@@ -5,7 +5,7 @@
 # Title: APT Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic APT demodulation block
-# Generated: Wed Aug  9 13:40:42 2017
+# Generated: Wed Nov  1 13:04:36 2017
 ##################################################
 
 from gnuradio import analog
@@ -23,7 +23,7 @@ import time
 
 class satnogs_apt_demod(gr.top_block):
 
-    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, decoded_data_file_path='/tmp/.satnogs/data/data', dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=20, enable_iq_dump=0, file_path='test.wav', if_gain=satnogs.not_set_rx_if_gain, iq_file_path='/tmp/iq.dat', lo_offset=100e3, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
+    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, decoded_data_file_path='/tmp/.satnogs/data/data', dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=20, enable_iq_dump=0, file_path='test.ogg', if_gain=satnogs.not_set_rx_if_gain, iq_file_path='/tmp/iq.dat', lo_offset=100e3, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
         gr.top_block.__init__(self, "APT Generic Demodulation")
 
         ##################################################
@@ -62,7 +62,7 @@ class satnogs_apt_demod(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate*2, 0.0, 8, 1024, waterfall_file_path, 1)
+        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate*2, 0.0, 10, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000/doppler_correction_per_sec, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(32767, iq_file_path, False, enable_iq_dump)
@@ -289,7 +289,7 @@ def argument_parser():
         "", "--enable-iq-dump", dest="enable_iq_dump", type="intx", default=0,
         help="Set enable_iq_dump [default=%default]")
     parser.add_option(
-        "", "--file-path", dest="file_path", type="string", default='test.wav',
+        "", "--file-path", dest="file_path", type="string", default='test.ogg',
         help="Set file_path [default=%default]")
     parser.add_option(
         "", "--if-gain", dest="if_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_if_gain),

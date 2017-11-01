@@ -178,7 +178,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(805, 985)</value>
+      <value>(789, 857)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -491,7 +491,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(398, 1081)</value>
+      <value>(382, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -534,7 +534,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(311, 1081)</value>
+      <value>(295, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -775,7 +775,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(704, 1084)</value>
+      <value>(686, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -818,7 +818,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(63, 1081)</value>
+      <value>(47, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -861,7 +861,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 984)</value>
+      <value>(47, 857)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -904,7 +904,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(480, 1084)</value>
+      <value>(462, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -947,7 +947,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(494, 985)</value>
+      <value>(478, 857)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -971,7 +971,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>value</key>
-      <value>test.wav</value>
+      <value>test.ogg</value>
     </param>
   </block>
   <block>
@@ -1049,7 +1049,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(231, 1081)</value>
+      <value>(215, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1092,7 +1092,7 @@ tone. This tone is typically 500-800 Hz.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(600, 1084)</value>
+      <value>(582, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2661,7 +2661,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(726, 985)</value>
+      <value>(710, 857)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2704,7 +2704,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(159, 1081)</value>
+      <value>(143, 953)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2747,7 +2747,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(327, 985)</value>
+      <value>(311, 857)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2790,7 +2790,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(414, 985)</value>
+      <value>(398, 857)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2833,7 +2833,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(223, 985)</value>
+      <value>(207, 857)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3154,8 +3154,8 @@ we shift the LO a little further</value>
       <value>1</value>
     </param>
     <param>
-      <key>pps</key>
-      <value>8</value>
+      <key>rps</key>
+      <value>10</value>
     </param>
     <param>
       <key>samp_rate</key>
@@ -3178,7 +3178,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(590, 985)</value>
+      <value>(574, 857)</value>
     </param>
     <param>
       <key>_rotation</key>

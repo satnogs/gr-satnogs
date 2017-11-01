@@ -749,7 +749,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>value</key>
-      <value>test.wav</value>
+      <value>test.ogg</value>
     </param>
   </block>
   <block>
@@ -2865,8 +2865,8 @@ we shift the LO a little further</value>
       <value>1</value>
     </param>
     <param>
-      <key>pps</key>
-      <value>8</value>
+      <key>rps</key>
+      <value>10</value>
     </param>
     <param>
       <key>samp_rate</key>
