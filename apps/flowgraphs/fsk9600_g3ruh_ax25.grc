@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.10'?>
+<?grc format='1' created='3.7.11'?>
 <flow_graph>
   <timestamp>Thu May  5 00:22:45 2016</timestamp>
   <block>
@@ -95,7 +95,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1128, 948)</value>
+      <value>(574, 801)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -122,7 +122,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(960, 884)</value>
+      <value>(446, 586)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -149,7 +149,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1040, 948)</value>
+      <value>(95, 809)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -176,7 +176,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(960, 948)</value>
+      <value>(15, 809)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -203,7 +203,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1232, 884)</value>
+      <value>(734, 746)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -230,7 +230,7 @@ SDR received samples</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1232, 948)</value>
+      <value>(191, 809)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -258,7 +258,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(960, 756)</value>
+      <value>(335, 586)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -293,7 +293,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(48, 716)</value>
+      <value>(15, 590)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -332,7 +332,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1080, 876)</value>
+      <value>(574, 738)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -406,7 +406,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(376, 1116)</value>
+      <value>(247, 905)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -430,7 +430,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>value</key>
-      <value></value>
+      <value>satnogs.not_set_antenna</value>
     </param>
   </block>
   <block>
@@ -449,7 +449,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(224, 1104)</value>
+      <value>(159, 905)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -602,7 +602,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(432, 776)</value>
+      <value>(183, 586)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -645,7 +645,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(744, 992)</value>
+      <value>(454, 730)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -841,7 +841,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(64, 984)</value>
+      <value>(15, 730)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -884,7 +884,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(512, 1112)</value>
+      <value>(327, 905)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -927,7 +927,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(272, 1216)</value>
+      <value>(151, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1029,7 +1029,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(144, 1104)</value>
+      <value>(79, 905)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1072,7 +1072,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(720, 1112)</value>
+      <value>(454, 905)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1116,7 +1116,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(432, 1224)</value>
+      <value>(247, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1226,11 +1226,11 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>ant0</key>
-      <value>antenna</value>
+      <value>satnogs.handle_rx_antenna(rx_sdr_device, antenna)</value>
     </param>
     <param>
       <key>bb_gain0</key>
-      <value>bb_gain</value>
+      <value>satnogs.handle_rx_bb_gain(rx_sdr_device, bb_gain)</value>
     </param>
     <param>
       <key>bw0</key>
@@ -1254,7 +1254,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>if_gain0</key>
-      <value>if_gain</value>
+      <value>satnogs.handle_rx_if_gain(rx_sdr_device, if_gain)</value>
     </param>
     <param>
       <key>iq_balance_mode0</key>
@@ -1262,7 +1262,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>gain0</key>
-      <value>rf_gain</value>
+      <value>satnogs.handle_rx_rf_gain(rx_sdr_device, rf_gain)</value>
     </param>
     <param>
       <key>ant10</key>
@@ -2514,7 +2514,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>args</key>
-      <value>dev_args</value>
+      <value>satnogs.handle_rx_dev_args(rx_sdr_device, dev_args)</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -2522,7 +2522,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 376)</value>
+      <value>(15, 311)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2641,7 +2641,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(568, 1224)</value>
+      <value>(454, 985)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2684,7 +2684,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(72, 1104)</value>
+      <value>(7, 905)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2727,7 +2727,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(600, 984)</value>
+      <value>(367, 730)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2770,7 +2770,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(464, 992)</value>
+      <value>(287, 730)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2813,7 +2813,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(312, 984)</value>
+      <value>(175, 730)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3302,8 +3302,8 @@ we shift the LO a little further</value>
       <value>1</value>
     </param>
     <param>
-      <key>pps</key>
-      <value>8</value>
+      <key>rps</key>
+      <value>10</value>
     </param>
     <param>
       <key>samp_rate</key>
@@ -3326,7 +3326,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(56, 1216)</value>
+      <value>(7, 985)</value>
     </param>
     <param>
       <key>_rotation</key>

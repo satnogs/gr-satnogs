@@ -5,7 +5,7 @@
 # Title: FSK9600 AX.25 decoder
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: FSK9600 AX.25 decoder
-# Generated: Tue Aug  8 23:36:43 2017
+# Generated: Wed Nov  1 14:52:56 2017
 ##################################################
 
 from gnuradio import analog
@@ -24,21 +24,28 @@ import time
 
 class satnogs_fsk9600_ax25(gr.top_block):
 
-    def __init__(self, doppler_correction_per_sec=1000, enable_iq_dump=0, file_path='test.wav', lo_offset=100e3, ppm=0, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', waterfall_file_path='/tmp/waterfall.dat'):
+    def __init__(self, rigctl_port=4532, waterfall_file_path='/tmp/waterfall.dat', dev_args=satnogs.not_set_dev_args, ppm=0, file_path='test.wav', antenna=satnogs.not_set_antenna, doppler_correction_per_sec=1000, rf_gain=satnogs.not_set_rx_rf_gain, lo_offset=100e3, decoded_data_file_path='/tmp/.satnogs/data/data', iq_file_path='/tmp/iq.dat', rx_sdr_device='usrpb200', if_gain=satnogs.not_set_rx_if_gain, rx_freq=100e6, bb_gain=satnogs.not_set_rx_bb_gain, enable_iq_dump=0):
         gr.top_block.__init__(self, "FSK9600 AX.25 decoder ")
 
         ##################################################
         # Parameters
         ##################################################
-        self.doppler_correction_per_sec = doppler_correction_per_sec
-        self.enable_iq_dump = enable_iq_dump
-        self.file_path = file_path
-        self.lo_offset = lo_offset
-        self.ppm = ppm
         self.rigctl_port = rigctl_port
-        self.rx_freq = rx_freq
-        self.rx_sdr_device = rx_sdr_device
         self.waterfall_file_path = waterfall_file_path
+        self.dev_args = dev_args
+        self.ppm = ppm
+        self.file_path = file_path
+        self.antenna = antenna
+        self.doppler_correction_per_sec = doppler_correction_per_sec
+        self.rf_gain = rf_gain
+        self.lo_offset = lo_offset
+        self.decoded_data_file_path = decoded_data_file_path
+        self.iq_file_path = iq_file_path
+        self.rx_sdr_device = rx_sdr_device
+        self.if_gain = if_gain
+        self.rx_freq = rx_freq
+        self.bb_gain = bb_gain
+        self.enable_iq_dump = enable_iq_dump
 
         ##################################################
         # Variables
@@ -58,7 +65,7 @@ class satnogs_fsk9600_ax25(gr.top_block):
         ##################################################
         # Blocks
         ##################################################
-        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 8, 1024, waterfall_file_path, 1)
+        self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 10, 1024, waterfall_file_path, 1)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(16768, '/tmp/iq.bin', False, enable_iq_dump)
@@ -68,17 +75,17 @@ class satnogs_fsk9600_ax25(gr.top_block):
         self.satnogs_frame_file_sink_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, True, False, 1024, 3)
-        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
+        self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.handle_rx_dev_args(rx_sdr_device, dev_args) )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_freq - lo_offset, 0)
         self.osmosdr_source_0.set_freq_corr(ppm, 0)
         self.osmosdr_source_0.set_dc_offset_mode(2, 0)
         self.osmosdr_source_0.set_iq_balance_mode(0, 0)
         self.osmosdr_source_0.set_gain_mode(False, 0)
-        self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[rx_sdr_device]['rf_gain'], 0)
-        self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[rx_sdr_device]['if_gain'], 0)
-        self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[rx_sdr_device]['bb_gain'], 0)
-        self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[rx_sdr_device]['antenna'], 0)
+        self.osmosdr_source_0.set_gain(satnogs.handle_rx_rf_gain(rx_sdr_device, rf_gain), 0)
+        self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(rx_sdr_device, if_gain), 0)
+        self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(rx_sdr_device, bb_gain), 0)
+        self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(rx_sdr_device, antenna), 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
 
         self.low_pass_filter_0 = filter.fir_filter_fff(1, firdes.low_pass(
@@ -118,23 +125,56 @@ class satnogs_fsk9600_ax25(gr.top_block):
         self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
         self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
 
-    def get_doppler_correction_per_sec(self):
-        return self.doppler_correction_per_sec
+    def get_rigctl_port(self):
+        return self.rigctl_port
 
-    def set_doppler_correction_per_sec(self, doppler_correction_per_sec):
-        self.doppler_correction_per_sec = doppler_correction_per_sec
+    def set_rigctl_port(self, rigctl_port):
+        self.rigctl_port = rigctl_port
 
-    def get_enable_iq_dump(self):
-        return self.enable_iq_dump
+    def get_waterfall_file_path(self):
+        return self.waterfall_file_path
 
-    def set_enable_iq_dump(self, enable_iq_dump):
-        self.enable_iq_dump = enable_iq_dump
+    def set_waterfall_file_path(self, waterfall_file_path):
+        self.waterfall_file_path = waterfall_file_path
+
+    def get_dev_args(self):
+        return self.dev_args
+
+    def set_dev_args(self, dev_args):
+        self.dev_args = dev_args
+
+    def get_ppm(self):
+        return self.ppm
+
+    def set_ppm(self, ppm):
+        self.ppm = ppm
+        self.osmosdr_source_0.set_freq_corr(self.ppm, 0)
 
     def get_file_path(self):
         return self.file_path
 
     def set_file_path(self, file_path):
         self.file_path = file_path
+
+    def get_antenna(self):
+        return self.antenna
+
+    def set_antenna(self, antenna):
+        self.antenna = antenna
+        self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
+
+    def get_doppler_correction_per_sec(self):
+        return self.doppler_correction_per_sec
+
+    def set_doppler_correction_per_sec(self, doppler_correction_per_sec):
+        self.doppler_correction_per_sec = doppler_correction_per_sec
+
+    def get_rf_gain(self):
+        return self.rf_gain
+
+    def set_rf_gain(self, rf_gain):
+        self.rf_gain = rf_gain
+        self.osmosdr_source_0.set_gain(satnogs.handle_rx_rf_gain(self.rx_sdr_device, self.rf_gain), 0)
 
     def get_lo_offset(self):
         return self.lo_offset
@@ -144,18 +184,36 @@ class satnogs_fsk9600_ax25(gr.top_block):
         self.osmosdr_source_0.set_center_freq(self.rx_freq - self.lo_offset, 0)
         self.freq_xlating_fir_filter_xxx_0.set_center_freq(self.lo_offset)
 
-    def get_ppm(self):
-        return self.ppm
+    def get_decoded_data_file_path(self):
+        return self.decoded_data_file_path
 
-    def set_ppm(self, ppm):
-        self.ppm = ppm
-        self.osmosdr_source_0.set_freq_corr(self.ppm, 0)
+    def set_decoded_data_file_path(self, decoded_data_file_path):
+        self.decoded_data_file_path = decoded_data_file_path
 
-    def get_rigctl_port(self):
-        return self.rigctl_port
+    def get_iq_file_path(self):
+        return self.iq_file_path
 
-    def set_rigctl_port(self, rigctl_port):
-        self.rigctl_port = rigctl_port
+    def set_iq_file_path(self, iq_file_path):
+        self.iq_file_path = iq_file_path
+
+    def get_rx_sdr_device(self):
+        return self.rx_sdr_device
+
+    def set_rx_sdr_device(self, rx_sdr_device):
+        self.rx_sdr_device = rx_sdr_device
+        self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
+        self.osmosdr_source_0.set_gain(satnogs.handle_rx_rf_gain(self.rx_sdr_device, self.rf_gain), 0)
+        self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
+        self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
+        self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
+        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
+
+    def get_if_gain(self):
+        return self.if_gain
+
+    def set_if_gain(self, if_gain):
+        self.if_gain = if_gain
+        self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
 
     def get_rx_freq(self):
         return self.rx_freq
@@ -165,23 +223,18 @@ class satnogs_fsk9600_ax25(gr.top_block):
         self.satnogs_coarse_doppler_correction_cc_0.set_new_freq_locked(self.rx_freq)
         self.osmosdr_source_0.set_center_freq(self.rx_freq - self.lo_offset, 0)
 
-    def get_rx_sdr_device(self):
-        return self.rx_sdr_device
+    def get_bb_gain(self):
+        return self.bb_gain
 
-    def set_rx_sdr_device(self, rx_sdr_device):
-        self.rx_sdr_device = rx_sdr_device
-        self.set_samp_rate_rx(satnogs.hw_rx_settings[self.rx_sdr_device]['samp_rate'])
-        self.osmosdr_source_0.set_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['rf_gain'], 0)
-        self.osmosdr_source_0.set_if_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['if_gain'], 0)
-        self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[self.rx_sdr_device]['bb_gain'], 0)
-        self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[self.rx_sdr_device]['antenna'], 0)
-        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
+    def set_bb_gain(self, bb_gain):
+        self.bb_gain = bb_gain
+        self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
 
-    def get_waterfall_file_path(self):
-        return self.waterfall_file_path
+    def get_enable_iq_dump(self):
+        return self.enable_iq_dump
 
-    def set_waterfall_file_path(self, waterfall_file_path):
-        self.waterfall_file_path = waterfall_file_path
+    def set_enable_iq_dump(self, enable_iq_dump):
+        self.enable_iq_dump = enable_iq_dump
 
     def get_samp_rate_rx(self):
         return self.samp_rate_rx
@@ -252,32 +305,53 @@ def argument_parser():
     description = 'FSK9600 AX.25 decoder'
     parser = OptionParser(usage="%prog: [options]", option_class=eng_option, description=description)
     parser.add_option(
-        "", "--doppler-correction-per-sec", dest="doppler_correction_per_sec", type="intx", default=1000,
-        help="Set doppler_correction_per_sec [default=%default]")
+        "", "--rigctl-port", dest="rigctl_port", type="intx", default=4532,
+        help="Set rigctl_port [default=%default]")
     parser.add_option(
-        "", "--enable-iq-dump", dest="enable_iq_dump", type="intx", default=0,
-        help="Set enable_iq_dump [default=%default]")
+        "", "--waterfall-file-path", dest="waterfall_file_path", type="string", default='/tmp/waterfall.dat',
+        help="Set waterfall_file_path [default=%default]")
     parser.add_option(
-        "", "--file-path", dest="file_path", type="string", default='test.wav',
-        help="Set file_path [default=%default]")
-    parser.add_option(
-        "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
-        help="Set lo_offset [default=%default]")
+        "", "--dev-args", dest="dev_args", type="string", default=satnogs.not_set_dev_args,
+        help="Set dev_args [default=%default]")
     parser.add_option(
         "", "--ppm", dest="ppm", type="intx", default=0,
         help="Set ppm [default=%default]")
     parser.add_option(
-        "", "--rigctl-port", dest="rigctl_port", type="intx", default=4532,
-        help="Set rigctl_port [default=%default]")
+        "", "--file-path", dest="file_path", type="string", default='test.wav',
+        help="Set file_path [default=%default]")
     parser.add_option(
-        "", "--rx-freq", dest="rx_freq", type="eng_float", default=eng_notation.num_to_str(100e6),
-        help="Set rx_freq [default=%default]")
+        "", "--antenna", dest="antenna", type="string", default=satnogs.not_set_antenna,
+        help="Set antenna [default=%default]")
+    parser.add_option(
+        "", "--doppler-correction-per-sec", dest="doppler_correction_per_sec", type="intx", default=1000,
+        help="Set doppler_correction_per_sec [default=%default]")
+    parser.add_option(
+        "", "--rf-gain", dest="rf_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_rf_gain),
+        help="Set rf_gain [default=%default]")
+    parser.add_option(
+        "", "--lo-offset", dest="lo_offset", type="eng_float", default=eng_notation.num_to_str(100e3),
+        help="Set lo_offset [default=%default]")
+    parser.add_option(
+        "", "--decoded-data-file-path", dest="decoded_data_file_path", type="string", default='/tmp/.satnogs/data/data',
+        help="Set decoded_data_file_path [default=%default]")
+    parser.add_option(
+        "", "--iq-file-path", dest="iq_file_path", type="string", default='/tmp/iq.dat',
+        help="Set iq_file_path [default=%default]")
     parser.add_option(
         "", "--rx-sdr-device", dest="rx_sdr_device", type="string", default='usrpb200',
         help="Set rx_sdr_device [default=%default]")
     parser.add_option(
-        "", "--waterfall-file-path", dest="waterfall_file_path", type="string", default='/tmp/waterfall.dat',
-        help="Set waterfall_file_path [default=%default]")
+        "", "--if-gain", dest="if_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_if_gain),
+        help="Set if_gain [default=%default]")
+    parser.add_option(
+        "", "--rx-freq", dest="rx_freq", type="eng_float", default=eng_notation.num_to_str(100e6),
+        help="Set rx_freq [default=%default]")
+    parser.add_option(
+        "", "--bb-gain", dest="bb_gain", type="eng_float", default=eng_notation.num_to_str(satnogs.not_set_rx_bb_gain),
+        help="Set bb_gain [default=%default]")
+    parser.add_option(
+        "", "--enable-iq-dump", dest="enable_iq_dump", type="intx", default=0,
+        help="Set enable_iq_dump [default=%default]")
     return parser
 
 
@@ -285,7 +359,7 @@ def main(top_block_cls=satnogs_fsk9600_ax25, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(doppler_correction_per_sec=options.doppler_correction_per_sec, enable_iq_dump=options.enable_iq_dump, file_path=options.file_path, lo_offset=options.lo_offset, ppm=options.ppm, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, waterfall_file_path=options.waterfall_file_path)
+    tb = top_block_cls(rigctl_port=options.rigctl_port, waterfall_file_path=options.waterfall_file_path, dev_args=options.dev_args, ppm=options.ppm, file_path=options.file_path, antenna=options.antenna, doppler_correction_per_sec=options.doppler_correction_per_sec, rf_gain=options.rf_gain, lo_offset=options.lo_offset, decoded_data_file_path=options.decoded_data_file_path, iq_file_path=options.iq_file_path, rx_sdr_device=options.rx_sdr_device, if_gain=options.if_gain, rx_freq=options.rx_freq, bb_gain=options.bb_gain, enable_iq_dump=options.enable_iq_dump)
     tb.start()
     tb.wait()
 
