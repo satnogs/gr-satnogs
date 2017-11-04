@@ -103,7 +103,16 @@ namespace gr
           {
           case NO_SYNC:
             if (d_shift_reg == AX25_SYNC_FLAG) {
-              enter_sync_state ();
+              /*
+               * If the user asked for only one leading AX.25 SYNC flag
+               * start immediately the decoding
+               */
+              if (d_sync_flags_thr == 0) {
+                enter_decoding_state ();
+              }
+              else {
+                enter_sync_state ();
+              }
             }
             break;
           case IN_SYNC:
@@ -211,7 +220,16 @@ namespace gr
           {
           case NO_SYNC:
             if (d_shift_reg == AX25_SYNC_FLAG) {
-              enter_sync_state ();
+              /*
+               * If the user asked for only one leading AX.25 SYNC flag
+               * start immediately the decoding
+               */
+              if(d_sync_flags_thr == 0) {
+                enter_decoding_state ();
+              }
+              else {
+                enter_sync_state ();
+              }
             }
             break;
           case IN_SYNC:

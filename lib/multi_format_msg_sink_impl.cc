@@ -98,7 +98,10 @@ namespace gr
       switch (d_format)
         {
         case 0:
-          std::cout << s << std::endl;
+          for (size_t i = 0; i < pmt::blob_length (msg); i++) {
+            std::cout << s[i];
+          }
+          std::cout << std::endl;
           break;
         case 1:
           su = (uint8_t *) pmt::blob_data (msg);
