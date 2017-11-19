@@ -5,7 +5,7 @@
 # Title: Generic IQ samples receiver
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Tue Jul 25 21:47:53 2017
+# Generated: Sun Nov 19 11:38:07 2017
 ##################################################
 
 from gnuradio import blocks
@@ -51,7 +51,6 @@ class satnogs_generic_iq_receiver(gr.top_block):
 
         self.quadrature_rate = quadrature_rate = samp_rate_rx / decimation_rx
         self.audio_samp_rate = audio_samp_rate = 44100
-        self.audio_gain = audio_gain = satnogs.fm_demod_settings[rx_sdr_device]['audio_gain']
         self.audio_decimation = audio_decimation = 2
 
         ##################################################
@@ -171,7 +170,6 @@ class satnogs_generic_iq_receiver(gr.top_block):
         self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
         self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
         self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
-        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
 
     def get_samp_rate_rx(self):
         return self.samp_rate_rx
@@ -207,12 +205,6 @@ class satnogs_generic_iq_receiver(gr.top_block):
 
     def set_audio_samp_rate(self, audio_samp_rate):
         self.audio_samp_rate = audio_samp_rate
-
-    def get_audio_gain(self):
-        return self.audio_gain
-
-    def set_audio_gain(self, audio_gain):
-        self.audio_gain = audio_gain
 
     def get_audio_decimation(self):
         return self.audio_decimation

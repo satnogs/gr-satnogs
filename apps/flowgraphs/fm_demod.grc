@@ -85,35 +85,6 @@
     <key>variable</key>
     <param>
       <key>comment</key>
-      <value>Decimation factor
-for the RX after the
-SDR received samples</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1061, 865)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>audio_gain</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>satnogs.fm_demod_settings[rx_sdr_device]['audio_gain']</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
       <value></value>
     </param>
     <param>
@@ -135,35 +106,6 @@ SDR received samples</value>
     <param>
       <key>value</key>
       <value>48000</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
-      <value>Decimation factor
-for the RX after the
-SDR received samples</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1704, 348)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>decimation_rx</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>satnogs.fm_demod_settings[rx_sdr_device]['decimation_rx']</value>
     </param>
   </block>
   <block>
@@ -251,33 +193,6 @@ SDR received samples</value>
     <key>variable</key>
     <param>
       <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1704, 508)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>quadrature_rate</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>samp_rate_rx / decimation_rx</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
       <value>SDR device 
 TX sampling rate</value>
     </param>
@@ -287,7 +202,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1196, 865)</value>
+      <value>(1088, 860)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2911,7 +2826,7 @@ max_modulation_freq = 3000</value>
       <value>1</value>
     </param>
     <param>
-      <key>rps</key>
+      <key>pps</key>
       <value>10</value>
     </param>
     <param>

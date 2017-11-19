@@ -112,35 +112,6 @@
     <key>variable</key>
     <param>
       <key>comment</key>
-      <value>Decimation factor
-for the RX after the
-SDR received samples</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(336, 612)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>audio_gain</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>satnogs.fm_demod_settings[rx_sdr_device]['audio_gain']</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
       <value></value>
     </param>
     <param>

@@ -5,7 +5,7 @@
 # Title: FM Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic FM demodulation block
-# Generated: Wed Nov  1 13:04:41 2017
+# Generated: Sun Nov 19 11:35:00 2017
 ##################################################
 
 from gnuradio import analog
@@ -58,7 +58,6 @@ class satnogs_fm_demod(gr.top_block):
         self.filter_rate = filter_rate = 250000
         self.deviation = deviation = 5000
         self.audio_samp_rate = audio_samp_rate = 48000
-        self.audio_gain = audio_gain = satnogs.fm_demod_settings[rx_sdr_device]['audio_gain']
 
         ##################################################
         # Blocks
@@ -208,7 +207,6 @@ class satnogs_fm_demod(gr.top_block):
         self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
         self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
         self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
-        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
 
     def get_waterfall_file_path(self):
         return self.waterfall_file_path
@@ -266,12 +264,6 @@ class satnogs_fm_demod(gr.top_block):
         self.audio_samp_rate = audio_samp_rate
         self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.deviation+self.max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
         self.analog_quadrature_demod_cf_0.set_gain((2*math.pi*self.deviation)/self.audio_samp_rate)
-
-    def get_audio_gain(self):
-        return self.audio_gain
-
-    def set_audio_gain(self, audio_gain):
-        self.audio_gain = audio_gain
 
 
 def argument_parser():
