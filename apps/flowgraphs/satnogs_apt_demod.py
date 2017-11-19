@@ -5,7 +5,7 @@
 # Title: APT Generic Demodulation
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A generic APT demodulation block
-# Generated: Wed Nov  1 13:04:36 2017
+# Generated: Sun Nov 19 11:34:53 2017
 ##################################################
 
 from gnuradio import analog
@@ -57,7 +57,6 @@ class satnogs_apt_demod(gr.top_block):
         self.filter_rate = filter_rate = 250000
         self.deviation = deviation = 17000
         self.audio_samp_rate = audio_samp_rate = 48000
-        self.audio_gain = audio_gain = satnogs.fm_demod_settings[rx_sdr_device]['audio_gain']
 
         ##################################################
         # Blocks
@@ -211,7 +210,6 @@ class satnogs_apt_demod(gr.top_block):
         self.osmosdr_source_0.set_if_gain(satnogs.handle_rx_if_gain(self.rx_sdr_device, self.if_gain), 0)
         self.osmosdr_source_0.set_bb_gain(satnogs.handle_rx_bb_gain(self.rx_sdr_device, self.bb_gain), 0)
         self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(self.rx_sdr_device, self.antenna), 0)
-        self.set_audio_gain(satnogs.fm_demod_settings[self.rx_sdr_device]['audio_gain'])
 
     def get_waterfall_file_path(self):
         return self.waterfall_file_path
@@ -259,12 +257,6 @@ class satnogs_apt_demod(gr.top_block):
 
     def set_audio_samp_rate(self, audio_samp_rate):
         self.audio_samp_rate = audio_samp_rate
-
-    def get_audio_gain(self):
-        return self.audio_gain
-
-    def set_audio_gain(self, audio_gain):
-        self.audio_gain = audio_gain
 
 
 def argument_parser():
