@@ -5,7 +5,7 @@
 # Title: AFSK1200 AX.25 decoder
 # Author: Manolis Surligas (surligas@gmail.com), Vardakis Giorgos (vardakis.grg@gmail.com)
 # Description: AFSK1200 AX.25 decoder
-# Generated: Sat Nov  4 12:10:15 2017
+# Generated: Sun Nov 26 22:43:03 2017
 ##################################################
 
 from gnuradio import analog
@@ -54,14 +54,14 @@ class satnogs_afsk1200_ax25(gr.top_block):
         # Variables
         ##################################################
         self.samp_rate_rx = samp_rate_rx = satnogs.hw_rx_settings[rx_sdr_device]['samp_rate']
-        self.deviation = deviation = 5000
-        self.baud_rate = baud_rate = 9600
         self.xlate_filter_taps = xlate_filter_taps = firdes.low_pass(1, samp_rate_rx, 125000, 25000, firdes.WIN_HAMMING, 6.76)
 
         self.taps = taps = firdes.low_pass(12.0, samp_rate_rx, 100e3, 60000, firdes.WIN_HAMMING, 6.76)
 
-        self.modulation_index = modulation_index = deviation / (baud_rate / 2.0)
+        self.max_modulation_freq = max_modulation_freq = 3000
         self.filter_rate = filter_rate = 250000
+        self.deviation = deviation = 5000
+        self.baud_rate = baud_rate = 1200
         self.audio_samp_rate = audio_samp_rate = 48000
         self.audio_gain = audio_gain = satnogs.fm_demod_settings[rx_sdr_device]['audio_gain']
 
@@ -73,7 +73,6 @@ class satnogs_afsk1200_ax25(gr.top_block):
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(16768, '/tmp/iq.bin', False, enable_iq_dump)
         self.satnogs_frame_file_sink_0_1_0 = satnogs.frame_file_sink('/tmp/afsk1200_crc_ok', 1)
-        self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink('/tmp/afsk1200_crc_ok', 0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, True, False, 1024, 1)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.handle_rx_dev_args(rx_sdr_device, dev_args) )
@@ -89,16 +88,15 @@ class satnogs_afsk1200_ax25(gr.top_block):
         self.osmosdr_source_0.set_antenna(satnogs.handle_rx_antenna(rx_sdr_device, antenna), 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
 
-        self.low_pass_filter_1 = filter.fir_filter_ccf(2, firdes.low_pass(
-        	1, audio_samp_rate/4, (mark_frequency - space_frequency)/2.0 + 200.0, 200, firdes.WIN_HAMMING, 6.76))
-        self.low_pass_filter_0 = filter.fir_filter_fff(4, firdes.low_pass(
-        	1, audio_samp_rate, mark_frequency + 1000.0, audio_samp_rate * 0.1, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_1 = filter.fir_filter_ccf(10, firdes.low_pass(
+        	10, audio_samp_rate, (mark_frequency - space_frequency)/2.0, 1000, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0 = filter.fir_filter_ccf(1, firdes.low_pass(
+        	1, audio_samp_rate, deviation+max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(int(samp_rate_rx/filter_rate), (xlate_filter_taps), lo_offset, samp_rate_rx)
-        self.digital_costas_loop_cc_0 = digital.costas_loop_cc(2.0 * math.pi / 100.0, 2, False)
-        self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff(48e3/9600, 0.25*0.175*0.175, 0.5, 0.175, 0.005)
+        self.digital_clock_recovery_mm_xx_0 = digital.clock_recovery_mm_ff((48e3/10)/baud_rate, 0.25*0.175*0.175, 0.5, 0.175, 0.005)
         self.digital_binary_slicer_fb_0 = digital.binary_slicer_fb()
         self.dc_blocker_xx_0 = filter.dc_blocker_ff(1024, True)
-        self.blocks_rotator_cc_0 = blocks.rotator_cc(-2.0 * math.pi * ((mark_frequency + space_frequency) / 2.0) / (audio_samp_rate / 4.0))
+        self.blocks_multiply_xx_0 = blocks.multiply_vcc(1)
         self.blocks_float_to_complex_0 = blocks.float_to_complex(1)
         self.blks2_rational_resampler_xxx_1 = filter.rational_resampler_ccc(
                 interpolation=48000,
@@ -106,29 +104,29 @@ class satnogs_afsk1200_ax25(gr.top_block):
                 taps=None,
                 fractional_bw=None,
         )
-        self.analog_quadrature_demod_cf_0_0 = analog.quadrature_demod_cf(((audio_samp_rate) / baud_rate)/(math.pi*modulation_index))
-        self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf(1.0)
+        self.analog_sig_source_x_0 = analog.sig_source_c(audio_samp_rate, analog.GR_COS_WAVE, -(1200 + 2200) / 2, 1, 0)
+        self.analog_quadrature_demod_cf_0_0 = analog.quadrature_demod_cf((2*math.pi*deviation)/audio_samp_rate)
+        self.analog_quadrature_demod_cf_0 = analog.quadrature_demod_cf(((audio_samp_rate/10) / baud_rate)/(math.pi*1))
 
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_0, 'frame'))
         self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_1_0, 'frame'))
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
         self.connect((self.analog_quadrature_demod_cf_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))
         self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.dc_blocker_xx_0, 0))
-        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.analog_quadrature_demod_cf_0_0, 0))
+        self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.satnogs_ogg_encoder_0, 0))
+        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.low_pass_filter_0, 0))
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_iq_sink_0, 0))
         self.connect((self.blks2_rational_resampler_xxx_1, 0), (self.satnogs_waterfall_sink_0, 0))
-        self.connect((self.blocks_float_to_complex_0, 0), (self.blocks_rotator_cc_0, 0))
-        self.connect((self.blocks_rotator_cc_0, 0), (self.low_pass_filter_1, 0))
-        self.connect((self.dc_blocker_xx_0, 0), (self.low_pass_filter_0, 0))
+        self.connect((self.blocks_float_to_complex_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.low_pass_filter_1, 0))
+        self.connect((self.dc_blocker_xx_0, 0), (self.blocks_float_to_complex_0, 0))
         self.connect((self.digital_binary_slicer_fb_0, 0), (self.satnogs_ax25_decoder_bm_0, 0))
         self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))
-        self.connect((self.digital_costas_loop_cc_0, 0), (self.blks2_rational_resampler_xxx_1, 0))
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.digital_costas_loop_cc_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.blocks_float_to_complex_0, 0))
-        self.connect((self.low_pass_filter_0, 0), (self.satnogs_ogg_encoder_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.blks2_rational_resampler_xxx_1, 0))
+        self.connect((self.low_pass_filter_0, 0), (self.analog_quadrature_demod_cf_0_0, 0))
         self.connect((self.low_pass_filter_1, 0), (self.analog_quadrature_demod_cf_0, 0))
         self.connect((self.osmosdr_source_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
         self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
@@ -203,9 +201,7 @@ class satnogs_afsk1200_ax25(gr.top_block):
 
     def set_mark_frequency(self, mark_frequency):
         self.mark_frequency = mark_frequency
-        self.low_pass_filter_1.set_taps(firdes.low_pass(1, self.audio_samp_rate/4, (self.mark_frequency - self.space_frequency)/2.0 + 200.0, 200, firdes.WIN_HAMMING, 6.76))
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.mark_frequency + 1000.0, self.audio_samp_rate * 0.1, firdes.WIN_HAMMING, 6.76))
-        self.blocks_rotator_cc_0.set_phase_inc(-2.0 * math.pi * ((self.mark_frequency + self.space_frequency) / 2.0) / (self.audio_samp_rate / 4.0))
+        self.low_pass_filter_1.set_taps(firdes.low_pass(10, self.audio_samp_rate, (self.mark_frequency - self.space_frequency)/2.0, 1000, firdes.WIN_HAMMING, 6.76))
 
     def get_ppm(self):
         return self.ppm
@@ -252,8 +248,7 @@ class satnogs_afsk1200_ax25(gr.top_block):
 
     def set_space_frequency(self, space_frequency):
         self.space_frequency = space_frequency
-        self.low_pass_filter_1.set_taps(firdes.low_pass(1, self.audio_samp_rate/4, (self.mark_frequency - self.space_frequency)/2.0 + 200.0, 200, firdes.WIN_HAMMING, 6.76))
-        self.blocks_rotator_cc_0.set_phase_inc(-2.0 * math.pi * ((self.mark_frequency + self.space_frequency) / 2.0) / (self.audio_samp_rate / 4.0))
+        self.low_pass_filter_1.set_taps(firdes.low_pass(10, self.audio_samp_rate, (self.mark_frequency - self.space_frequency)/2.0, 1000, firdes.WIN_HAMMING, 6.76))
 
     def get_waterfall_file_path(self):
         return self.waterfall_file_path
@@ -270,21 +265,6 @@ class satnogs_afsk1200_ax25(gr.top_block):
         self.osmosdr_source_0.set_sample_rate(self.samp_rate_rx)
         self.osmosdr_source_0.set_bandwidth(self.samp_rate_rx, 0)
 
-    def get_deviation(self):
-        return self.deviation
-
-    def set_deviation(self, deviation):
-        self.deviation = deviation
-        self.set_modulation_index(self.deviation / (self.baud_rate / 2.0))
-
-    def get_baud_rate(self):
-        return self.baud_rate
-
-    def set_baud_rate(self, baud_rate):
-        self.baud_rate = baud_rate
-        self.set_modulation_index(self.deviation / (self.baud_rate / 2.0))
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.audio_samp_rate) / self.baud_rate)/(math.pi*self.modulation_index))
-
     def get_xlate_filter_taps(self):
         return self.xlate_filter_taps
 
@@ -298,12 +278,12 @@ class satnogs_afsk1200_ax25(gr.top_block):
     def set_taps(self, taps):
         self.taps = taps
 
-    def get_modulation_index(self):
-        return self.modulation_index
+    def get_max_modulation_freq(self):
+        return self.max_modulation_freq
 
-    def set_modulation_index(self, modulation_index):
-        self.modulation_index = modulation_index
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.audio_samp_rate) / self.baud_rate)/(math.pi*self.modulation_index))
+    def set_max_modulation_freq(self, max_modulation_freq):
+        self.max_modulation_freq = max_modulation_freq
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.deviation+self.max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
 
     def get_filter_rate(self):
         return self.filter_rate
@@ -311,15 +291,32 @@ class satnogs_afsk1200_ax25(gr.top_block):
     def set_filter_rate(self, filter_rate):
         self.filter_rate = filter_rate
 
+    def get_deviation(self):
+        return self.deviation
+
+    def set_deviation(self, deviation):
+        self.deviation = deviation
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.deviation+self.max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
+        self.analog_quadrature_demod_cf_0_0.set_gain((2*math.pi*self.deviation)/self.audio_samp_rate)
+
+    def get_baud_rate(self):
+        return self.baud_rate
+
+    def set_baud_rate(self, baud_rate):
+        self.baud_rate = baud_rate
+        self.digital_clock_recovery_mm_xx_0.set_omega((48e3/10)/self.baud_rate)
+        self.analog_quadrature_demod_cf_0.set_gain(((self.audio_samp_rate/10) / self.baud_rate)/(math.pi*1))
+
     def get_audio_samp_rate(self):
         return self.audio_samp_rate
 
     def set_audio_samp_rate(self, audio_samp_rate):
         self.audio_samp_rate = audio_samp_rate
-        self.low_pass_filter_1.set_taps(firdes.low_pass(1, self.audio_samp_rate/4, (self.mark_frequency - self.space_frequency)/2.0 + 200.0, 200, firdes.WIN_HAMMING, 6.76))
-        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.mark_frequency + 1000.0, self.audio_samp_rate * 0.1, firdes.WIN_HAMMING, 6.76))
-        self.blocks_rotator_cc_0.set_phase_inc(-2.0 * math.pi * ((self.mark_frequency + self.space_frequency) / 2.0) / (self.audio_samp_rate / 4.0))
-        self.analog_quadrature_demod_cf_0_0.set_gain(((self.audio_samp_rate) / self.baud_rate)/(math.pi*self.modulation_index))
+        self.low_pass_filter_1.set_taps(firdes.low_pass(10, self.audio_samp_rate, (self.mark_frequency - self.space_frequency)/2.0, 1000, firdes.WIN_HAMMING, 6.76))
+        self.low_pass_filter_0.set_taps(firdes.low_pass(1, self.audio_samp_rate, self.deviation+self.max_modulation_freq, 3000, firdes.WIN_HAMMING, 6.76))
+        self.analog_sig_source_x_0.set_sampling_freq(self.audio_samp_rate)
+        self.analog_quadrature_demod_cf_0_0.set_gain((2*math.pi*self.deviation)/self.audio_samp_rate)
+        self.analog_quadrature_demod_cf_0.set_gain(((self.audio_samp_rate/10) / self.baud_rate)/(math.pi*1))
 
     def get_audio_gain(self):
         return self.audio_gain
