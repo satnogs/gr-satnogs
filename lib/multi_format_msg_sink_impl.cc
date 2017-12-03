@@ -48,13 +48,14 @@ namespace gr
     multi_format_msg_sink_impl::msg_handler_file (pmt::pmt_t msg)
     {
       uint8_t *su;
+      char buf[256];
       std::string s ((const char *) pmt::blob_data (msg),
                      pmt::blob_length (msg));
 
       if(d_timestamp) {
         std::time_t t = std::time(nullptr);
         std::tm tm = *std::localtime(&t);
-        d_fos << "[" << std::put_time(&tm, "%F %T %z") << "] ";
+        d_fos << "[" << strftime(buf, sizeof(buf), "%F %T %z", &tm) << "]";
       }
 
       switch (d_format)
@@ -86,13 +87,14 @@ namespace gr
     multi_format_msg_sink_impl::msg_handler_stdout (pmt::pmt_t msg)
     {
       uint8_t *su;
+      char buf[256];
       std::string s ((const char *) pmt::blob_data (msg),
                      pmt::blob_length (msg));
 
       if(d_timestamp) {
         std::time_t t = std::time(nullptr);
         std::tm tm = *std::localtime(&t);
-        std::cout << "[" << std::put_time(&tm, "%F %T %z") << "] ";
+        d_fos << "[" << strftime(buf, sizeof(buf), "%F %T %z", &tm) << "]";
       }
 
       switch (d_format)
