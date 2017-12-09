@@ -3256,7 +3256,7 @@ max_modulation_freq = 3000</value>
     </param>
     <param>
       <key>prefix_name</key>
-      <value>/tmp/afsk1200_crc_ok</value>
+      <value>decoded_data_file_path</value>
     </param>
   </block>
   <block>

@@ -2970,124 +2970,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1126, 555)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>satnogs_frame_file_sink_0</value>
-    </param>
-    <param>
-      <key>output_type</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>prefix_name</key>
-      <value>/tmp/fsk9600_crc_failed</value>
-    </param>
-  </block>
-  <block>
-    <key>satnogs_frame_file_sink</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1126, 619)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>satnogs_frame_file_sink_0_0</value>
-    </param>
-    <param>
-      <key>output_type</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>prefix_name</key>
-      <value>/tmp/fsk9600_crc_ok</value>
-    </param>
-  </block>
-  <block>
-    <key>satnogs_frame_file_sink</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1126, 683)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>satnogs_frame_file_sink_0_1</value>
-    </param>
-    <param>
-      <key>output_type</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>prefix_name</key>
-      <value>/tmp/fsk9600_crc_failed</value>
-    </param>
-  </block>
-  <block>
-    <key>satnogs_frame_file_sink</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1142, 747)</value>
+      <value>(1136, 588)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3103,7 +2986,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>prefix_name</key>
-      <value>/tmp/fsk9600_crc_ok</value>
+      <value>decoded_data_file_path</value>
     </param>
   </block>
   <block>
@@ -3302,7 +3185,7 @@ we shift the LO a little further</value>
       <value>1</value>
     </param>
     <param>
-      <key>rps</key>
+      <key>pps</key>
       <value>10</value>
     </param>
     <param>
@@ -3424,24 +3307,6 @@ we shift the LO a little further</value>
     <sink_block_id>satnogs_coarse_doppler_correction_cc_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>satnogs_ax25_decoder_bm_0</source_block_id>
-    <sink_block_id>satnogs_frame_file_sink_0</sink_block_id>
-    <source_key>failed_pdu</source_key>
-    <sink_key>frame</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>satnogs_ax25_decoder_bm_0</source_block_id>
-    <sink_block_id>satnogs_frame_file_sink_0_1</sink_block_id>
-    <source_key>failed_pdu</source_key>
-    <sink_key>frame</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>satnogs_ax25_decoder_bm_0</source_block_id>
-    <sink_block_id>satnogs_frame_file_sink_0_0</sink_block_id>
-    <source_key>pdu</source_key>
-    <sink_key>frame</sink_key>
   </connection>
   <connection>
     <source_block_id>satnogs_ax25_decoder_bm_0</source_block_id>

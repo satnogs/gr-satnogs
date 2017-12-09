@@ -5,7 +5,7 @@
 # Title: FSK9600 AX.25 decoder with G3RUH support
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: FSK9600 AX.25 decoder with G3RUH support
-# Generated: Wed Nov  1 13:04:00 2017
+# Generated: Sat Dec  9 19:37:01 2017
 ##################################################
 
 from gnuradio import analog
@@ -70,9 +70,6 @@ class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(16768, iq_file_path, False, enable_iq_dump)
         self.satnogs_frame_file_sink_0_1_0 = satnogs.frame_file_sink(decoded_data_file_path, 1)
-        self.satnogs_frame_file_sink_0_1 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 1)
-        self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink(decoded_data_file_path, 0)
-        self.satnogs_frame_file_sink_0 = satnogs.frame_file_sink('/tmp/fsk9600_crc_failed', 0)
         self.satnogs_coarse_doppler_correction_cc_0 = satnogs.coarse_doppler_correction_cc(rx_freq, samp_rate_rx)
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, True, True, 1024, 3)
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.handle_rx_dev_args(rx_sdr_device, dev_args) )
@@ -106,9 +103,6 @@ class satnogs_fsk9600_g3ruh_ax25(gr.top_block):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0, 'frame'))
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_0, 'frame'))
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_frame_file_sink_0_1, 'frame'))
         self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_1_0, 'frame'))
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
         self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.dc_blocker_xx_0, 0))
