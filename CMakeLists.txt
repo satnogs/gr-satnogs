@@ -130,11 +130,12 @@ find_package(Doxygen)
 find_package(Volk REQUIRED)
 find_package(OggVorbis REQUIRED)
 find_package(PNG REQUIRED)
+find_package(png++ REQUIRED)
 
 ########################################################################
 # Include or not into the module blocks for debugging
 ########################################################################
-option(INCLUDE_DEBUG_BLOCKS 
+option(INCLUDE_DEBUG_BLOCKS
     "Enable/Disable blocks that are used for debugging purposes" ON)
 
 
