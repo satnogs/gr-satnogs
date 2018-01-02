@@ -9,9 +9,10 @@ for decoding signals from various scientific and academic sattelites.
 * CMake ( > 3.1)
 * G++ (with C++11 support)
 * VOLK
-* libogg 
+* libogg
 * libvorbis
 * libpng
+* libpng++
 * git
 
 **Optional**
@@ -34,12 +35,12 @@ If this is the first time you are building the gr-satnogs module run
 By default, the **SatNOGS** module will use the default installation prefix.
 This highly depends on the Linux distribution. You can use the `CMAKE_INSTALL_PREFIX`
 variable to alter the default installation path.
-E.g: 
+E.g:
 
 `cmake -DCMAKE_INSTALL_PREFIX=/usr ..`
 
 Also, by default the build system enables a set of blocks used for debugging
-during the development. The enable/disable switch is controled through the 
+during the development. The enable/disable switch is controled through the
 `INCLUDE_DEBUG_BLOCKS` boolean variable. If for example, you want to disable the
 debugging blocks, the **CMake** command would be:
 
