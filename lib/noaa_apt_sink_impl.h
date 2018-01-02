@@ -71,21 +71,33 @@ namespace gr
             gr_vector_void_star &output_items);
 
     private:
+        // Generate empty images and filenames to save them to
         void
         init_images ();
 
+        /*
+         * Check if the history portion of the input contains a sync marker.
+         * Matches the 40 samples before pos against the patterns.
+         */
         noaa_apt_sync_marker
         is_marker (size_t pos, const float *samples);
 
+        // Set the pixel indicated by coordinates in the images (both full and split)
         void
         set_pixel (size_t x, size_t y, float sample);
 
+        /*
+         * Updates d_current_x to new_x,
+         * while using historical samples to fill any resulting gaps in the images.
+         */
         void
         skip_to (size_t new_x, size_t pos, const float *samples);
 
+        // Write the images to disk
         void
         write_images ();
 
+        // Write a single image to disk, also takes care of flipping
         void
         write_image (png::image<png::gray_pixel> image, std::string filename);
     };

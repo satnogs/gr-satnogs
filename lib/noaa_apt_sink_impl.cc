@@ -31,6 +31,8 @@ namespace gr
 {
   namespace satnogs
   {
+    // Noaa apt sync pattern A
+    // (see https://sourceforge.isae.fr/attachments/download/1813/apt_synch.gif)
     const bool SYNCA_SEQ[] = {false, false, false, false,
                               true, true, false, false,   // Pulse 1
                               true, true, false, false,   // Pulse 2
@@ -42,6 +44,8 @@ namespace gr
                               false, false, false, false,
                               false, false, false, false};
 
+    // Noaa apt sync pattern B
+    // (see https://sourceforge.isae.fr/attachments/download/1813/apt_synch.gif)
     const bool SYNCB_SEQ[] = {false, false, false, false,
                               true, true, true, false, false,
                               true, true, true, false, false,
@@ -62,6 +66,7 @@ namespace gr
           new noaa_apt_sink_impl (filename_png, width, height, split, sync,
                                   flip));
     }
+
 
     /*
      * The private constructor
@@ -90,6 +95,7 @@ namespace gr
       init_images();
     }
 
+
     void
     noaa_apt_sink_impl::init_images () {
         size_t len = d_filename_png.size();
@@ -108,6 +114,7 @@ namespace gr
             d_right_image = png::image<png::gray_pixel>(d_width/2, d_height);
         }
     }
+
 
     void
     noaa_apt_sink_impl::write_image (png::image<png::gray_pixel> image, std::string filename) {
@@ -130,6 +137,7 @@ namespace gr
         }
     }
 
+
     void
     noaa_apt_sink_impl::write_images () {
         write_image(d_full_image, d_full_filename);
@@ -139,6 +147,7 @@ namespace gr
             write_image(d_right_image, d_right_filename);
         }
     }
+
 
     noaa_apt_sink_impl::~noaa_apt_sink_impl () {
         write_images();
@@ -159,6 +168,7 @@ namespace gr
         }
     }
 
+
     void
     noaa_apt_sink_impl::skip_to (size_t new_x, size_t pos, const float *samples) {
         if(new_x > d_current_x) {
@@ -169,6 +179,7 @@ namespace gr
         }
         d_current_x = new_x;
     }
+
 
     noaa_apt_sync_marker
     noaa_apt_sink_impl::is_marker(size_t pos, const float *samples) {
@@ -199,6 +210,7 @@ namespace gr
         }
     }
 
+
     int
     noaa_apt_sink_impl::work (int noutput_items,
                               gr_vector_const_void_star &input_items,
@@ -217,7 +229,6 @@ namespace gr
             if(d_synchronize_opt) {
                 if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_A) {
                     skip_to(39, i, in);
-
                 }
                 else if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_B) {
                     skip_to(d_width / 2 + 39, i, in);
