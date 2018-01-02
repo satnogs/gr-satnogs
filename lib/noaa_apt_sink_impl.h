@@ -23,8 +23,10 @@
 
 #include <satnogs/noaa_apt_sink.h>
 #define PNG_DEBUG 3
-#include <png.h>
+#include <png++/png.hpp>
 #include <chrono>
+
+
 
 namespace gr
 {
@@ -34,52 +36,56 @@ namespace gr
     class noaa_apt_sink_impl : public noaa_apt_sink
     {
     private:
-      uint32_t d_sync_word;
-      uint32_t d_constructed_word;
-      float d_slicer_threshold;
-      bool d_sync_found;
-      float d_max_value;
-      float d_min_value;
-      size_t d_norm_window;
-      size_t d_sample_counter;
-      const char* d_filename_png;
+      std::string d_filename_png;
       size_t d_width;
       size_t d_height;
       bool d_split;
-      size_t d_history_length;
       bool d_synchronize_opt;
-      png_structp* d_png_ptr;
-      png_infop* d_info_ptr;
-      uint8_t* d_row_buffer;
-      png_byte d_color_type;
-      png_byte d_bit_depth;
-      FILE** d_png_fd;
-      size_t d_images_per_frame;
-      size_t d_row_counter;
-      size_t d_num_images;
-      size_t d_current_buffered_samples;
-      std::vector<std::string> d_png_fn;
       bool d_flip;
+      size_t d_history_length;
+
+      size_t d_num_images;
+      png::image<png::gray_pixel> d_full_image;
+      png::image<png::gray_pixel> d_left_image;
+      png::image<png::gray_pixel> d_right_image;
+      std::string d_full_filename;
+      std::string d_left_filename;
+      std::string d_right_filename;
+
+      size_t d_current_x;
+      size_t d_current_y;
+
+      float f_max_level;
+      float f_min_level;
 
     public:
       noaa_apt_sink_impl (const char *filename_png, size_t width, size_t height,
                           bool split, bool sync, bool flip);
       ~noaa_apt_sink_impl ();
-      void
-      write_png_row ();
-      void
-      init_png ();
-      void
-      flip_image ();
 
       // Where all the action really happens
       int
       work (int noutput_items, gr_vector_const_void_star &input_items,
             gr_vector_void_star &output_items);
+
+    private:
+        void
+        init_images ();
+
+        void
+        set_pixel (float sample);
+
+        void
+        end_line ();
+
+        void
+        write_images ();
+
+        void
+        write_image (png::image<png::gray_pixel> image, std::string filename);
     };
 
   } // namespace satnogs
 } // namespace gr
 
 #endif /* INCLUDED_SATNOGS_NOAA_APT_SINK_IMPL_H */
-
