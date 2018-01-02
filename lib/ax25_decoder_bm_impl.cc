@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, 2017
+ *  Copyright (C) 2016, 2017, 2018
  *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -394,7 +394,7 @@ namespace gr
             pmt::mp ("failed_pdu"),
             pmt::make_blob (d_frame_buffer,
                             d_received_bytes - sizeof(uint16_t)));
-        LOG_WARN("Wrong crc");
+        LOG_DEBUG("Wrong crc");
       }
       d_dec_b = 0x0;
       d_shift_reg = 0x0;
