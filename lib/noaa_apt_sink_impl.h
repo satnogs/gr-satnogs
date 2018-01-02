@@ -32,6 +32,7 @@ namespace gr
 {
   namespace satnogs
   {
+    enum class noaa_apt_sync_marker {SYNC_A, SYNC_B, NONE};
 
     class noaa_apt_sink_impl : public noaa_apt_sink
     {
@@ -44,7 +45,6 @@ namespace gr
       bool d_flip;
       size_t d_history_length;
 
-      size_t d_num_images;
       png::image<png::gray_pixel> d_full_image;
       png::image<png::gray_pixel> d_left_image;
       png::image<png::gray_pixel> d_right_image;
@@ -54,9 +54,11 @@ namespace gr
 
       size_t d_current_x;
       size_t d_current_y;
+      size_t d_num_images;
 
       float f_max_level;
       float f_min_level;
+      float f_average;
 
     public:
       noaa_apt_sink_impl (const char *filename_png, size_t width, size_t height,
@@ -72,11 +74,14 @@ namespace gr
         void
         init_images ();
 
-        void
-        set_pixel (float sample);
+        noaa_apt_sync_marker
+        is_marker (size_t pos, const float *samples);
 
         void
-        end_line ();
+        set_pixel (size_t x, size_t y, float sample);
+
+        void
+        skip_to (size_t new_x, size_t pos, const float *samples);
 
         void
         write_images ();

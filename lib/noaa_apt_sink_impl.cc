@@ -31,6 +31,28 @@ namespace gr
 {
   namespace satnogs
   {
+    const bool SYNCA_SEQ[] = {false, false, false, false,
+                              true, true, false, false,   // Pulse 1
+                              true, true, false, false,   // Pulse 2
+                              true, true, false, false,   // Pulse 3
+                              true, true, false, false,   // Pulse 4
+                              true, true, false, false,   // Pulse 5
+                              true, true, false, false,   // Pulse 6
+                              true, true, false, false,   // Pulse 7
+                              false, false, false, false,
+                              false, false, false, false};
+
+    const bool SYNCB_SEQ[] = {false, false, false, false,
+                              true, true, true, false, false,
+                              true, true, true, false, false,
+                              true, true, true, false, false,
+                              true, true, true, false, false,
+                              true, true, true, false, false,
+                              true, true, true, false, false,
+                              true, true, true, false, false,
+                              false};
+
+
 
     noaa_apt_sink::sptr
     noaa_apt_sink::make (const char *filename_png, size_t width, size_t height,
@@ -61,7 +83,8 @@ namespace gr
             d_current_y (0),
             d_num_images (0),
             f_max_level(0.0),
-            f_min_level(1.0)
+            f_min_level(1.0),
+            f_average(0.0)
     {
       set_history(d_history_length);
       init_images();
@@ -121,33 +144,58 @@ namespace gr
         write_images();
     }
 
-    void noaa_apt_sink_impl::end_line () {
-        d_current_y += 1;
-        d_current_x = 0;
 
-        if(d_current_y % 100 == 0) {
-            write_images();
-        }
+    void noaa_apt_sink_impl::set_pixel (size_t x, size_t y, float sample) {
+        sample = (sample - f_min_level) / (f_max_level - f_min_level) * 255;
+        d_full_image.set_pixel(x, y, sample);
 
-        if(d_current_y >= d_height) {
-            d_current_y = 0;
-            d_num_images += 1;
-            write_images();
-            init_images();
+        if(d_split) {
+            if(x < d_width / 2) {
+                d_left_image.set_pixel(x, y, sample);
+            }
+            else {
+                d_right_image.set_pixel(x - d_width / 2, y, sample);
+            }
         }
     }
 
-    void noaa_apt_sink_impl::set_pixel (float sample) {
-        sample = (sample - f_min_level) / (f_max_level - f_min_level) * 255;
-        d_full_image.set_pixel(d_current_x, d_current_y, sample);
+    void
+    noaa_apt_sink_impl::skip_to (size_t new_x, size_t pos, const float *samples) {
+        if(new_x > d_current_x) {
+            size_t dist = std::min(size_t(39), new_x - d_current_x);
+            for(size_t i = 0; i < dist; i++) {
+                set_pixel(new_x - dist + i, d_current_y, samples[pos - dist + i]);
+            }
+        }
+        d_current_x = new_x;
+    }
 
-        if(d_split) {
-            if(d_current_x < d_width / 2) {
-                d_left_image.set_pixel(d_current_x, d_current_y, sample);
+    noaa_apt_sync_marker
+    noaa_apt_sink_impl::is_marker(size_t pos, const float *samples) {
+        size_t count_a = 0;
+        size_t count_b = 0;
+
+        for(size_t i = 0; i < 40; i++) {
+            float sample = samples[pos - 39 + i];
+            sample = sample - f_average;
+            if((sample > 0 && SYNCA_SEQ[i]) || (sample < 0 && !SYNCA_SEQ[i])) {
+                count_a += 1;
             }
-            else {
-                d_right_image.set_pixel(d_current_x - d_width / 2, d_current_y, sample);
+            if((sample > 0 && SYNCB_SEQ[i]) || (sample < 0 && !SYNCB_SEQ[i])) {
+                count_b += 1;
             }
+
+
+        }
+
+        if(count_a > 35) {
+            return noaa_apt_sync_marker::SYNC_A;
+        }
+        else if(count_b > 35) {
+            return noaa_apt_sync_marker::SYNC_B;
+        }
+        else {
+            return noaa_apt_sync_marker::NONE;
         }
     }
 
@@ -161,14 +209,38 @@ namespace gr
         for (size_t i = d_history_length - 1; i < noutput_items + d_history_length - 1; i++) {
             float sample = in[i];
 
-            f_min_level = std::fmin(f_min_level, sample);
             f_max_level = std::fmax(f_max_level, sample);
+            f_min_level = std::fmin(f_min_level, sample);
 
-            set_pixel(sample);
+            f_average = 0.25 * sample + 0.75 * f_average;
+
+            if(d_synchronize_opt) {
+                if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_A) {
+                    skip_to(39, i, in);
+
+                }
+                else if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_B) {
+                    skip_to(d_width / 2 + 39, i, in);
+                }
+            }
+
+            set_pixel(d_current_x, d_current_y, sample);
 
             d_current_x += 1;
             if(d_current_x >= d_width) {
-                end_line();
+                d_current_y += 1;
+                d_current_x = 0;
+
+                if(d_current_y % 100 == 0) {
+                    write_images();
+                }
+
+                if(d_current_y >= d_height) {
+                    d_current_y = 0;
+                    d_num_images += 1;
+                    write_images();
+                    init_images();
+                }
             }
         }
 
