@@ -150,7 +150,27 @@ namespace gr
 
 
     noaa_apt_sink_impl::~noaa_apt_sink_impl () {
+
+    }
+
+    bool
+    noaa_apt_sink_impl::stop () {
+        auto buf_full_image = d_full_image.get_pixbuf();
+        auto buf_left_image = d_left_image.get_pixbuf();
+        auto buf_right_image = d_right_image.get_pixbuf();
+
+        d_full_image = png::image<png::gray_pixel>(d_width, d_current_y + 1);
+        d_full_image.set_pixbuf(buf_full_image);
+
+        d_left_image = png::image<png::gray_pixel>(d_width/2, d_current_y + 1);
+        d_left_image .set_pixbuf(buf_left_image);
+
+        d_right_image = png::image<png::gray_pixel>(d_width/2, d_current_y + 1);
+        d_right_image.set_pixbuf(buf_right_image);
+
         write_images();
+
+        return true;
     }
 
 
