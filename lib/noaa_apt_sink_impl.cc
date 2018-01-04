@@ -84,6 +84,7 @@ namespace gr
             d_synchronize_opt (sync),
             d_flip (flip),
             d_history_length (40),
+            d_has_sync (false),
             d_current_x (0),
             d_current_y (0),
             d_num_images (0),
@@ -249,9 +250,19 @@ namespace gr
             if(d_synchronize_opt) {
                 if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_A) {
                     skip_to(39, i, in);
+                    if(!d_has_sync) {
+                        f_max_level = 0.0;
+                        f_min_level = 1.0;
+                        d_has_sync = true;
+                    }
                 }
                 else if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_B) {
                     skip_to(d_width / 2 + 39, i, in);
+                    if(!d_has_sync) {
+                        f_max_level = 0.0;
+                        f_min_level = 1.0;
+                        d_has_sync = true;
+                    }
                 }
             }
 

@@ -44,6 +44,7 @@ namespace gr
       bool d_synchronize_opt;
       bool d_flip;
       size_t d_history_length;
+      bool d_has_sync;
 
       png::image<png::gray_pixel> d_full_image;
       png::image<png::gray_pixel> d_left_image;
