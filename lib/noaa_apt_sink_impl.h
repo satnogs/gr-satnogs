@@ -37,6 +37,11 @@ namespace gr
     class noaa_apt_sink_impl : public noaa_apt_sink
     {
     private:
+      static const float f_average_alpha;
+      static const size_t d_row_write_threshold;
+      static const bool synca_seq[];
+      static const bool syncb_seq[];
+
       std::string d_filename_png;
       size_t d_width;
       size_t d_height;
