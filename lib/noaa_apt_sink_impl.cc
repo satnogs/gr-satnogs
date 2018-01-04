@@ -107,18 +107,27 @@ namespace gr
 
     void
     noaa_apt_sink_impl::init_images () {
+        // Split the filename option into path + filename and extension
         size_t len = d_filename_png.size();
         size_t pos = d_filename_png.rfind('.');
         std::string base_filename = d_filename_png.substr(0, pos);
         std::string extension = d_filename_png.substr(pos+1, len-1);
 
-        d_full_filename = base_filename + std::to_string(d_num_images) + "." + extension;
+        // Construct numbered filename for the full image
+        d_full_filename = base_filename + std::to_string(d_num_images)
+                            + "." + extension;
+        // Create a new empty png
         d_full_image = png::image<png::gray_pixel>(d_width, d_height);
 
-        if(d_split) {
-            d_left_filename = base_filename + "_left" + std::to_string(d_num_images) + "." + extension;
-            d_right_filename = base_filename + "_right" + std::to_string(d_num_images)+ "." + extension;
 
+        if(d_split) {
+            // In case split images are requested construct filenames for those as well
+            d_left_filename = base_filename + "_left"
+                                + std::to_string(d_num_images) + "." + extension;
+            d_right_filename = base_filename + "_right"
+                                + std::to_string(d_num_images)+ "." + extension;
+
+            // Create new empty pngs for the split images
             d_left_image = png::image<png::gray_pixel>(d_width/2, d_height);
             d_right_image = png::image<png::gray_pixel>(d_width/2, d_height);
         }
@@ -126,22 +135,30 @@ namespace gr
 
 
     void
-    noaa_apt_sink_impl::write_image (png::image<png::gray_pixel> image, std::string filename) {
+    noaa_apt_sink_impl::write_image (png::image<png::gray_pixel> image,
+                                        std::string filename)
+    {
+        // In case the flip option is set
         if(d_flip) {
             size_t width = image.get_width();
             size_t height = image.get_height();
 
+            // An image of same size is created ...
             png::image<png::gray_pixel> flipped(width, height);
 
+            // ... and all the lines are copied over reverse  order
             for(size_t y = 0; y < height; y++) {
                 for(size_t x = 0; x < width; x++) {
                     auto pixel = image.get_pixel(x, height - y - 1);
                     flipped.set_pixel(x, y, pixel);
                 }
             }
+            // Write out the flipped image
             flipped.write(filename);
         }
+        // In case the flip option is not set
         else {
+            // Write out the original
             image.write(filename);
         }
     }
@@ -149,9 +166,11 @@ namespace gr
 
     void
     noaa_apt_sink_impl::write_images () {
+        // Write out the full image
         write_image(d_full_image, d_full_filename);
 
         if(d_split) {
+            // Write out the split images if the split option is enabled
             write_image(d_left_image, d_left_filename);
             write_image(d_right_image, d_right_filename);
         }
@@ -159,15 +178,20 @@ namespace gr
 
 
     noaa_apt_sink_impl::~noaa_apt_sink_impl () {
-
+        // Nothing happens here
     }
 
     bool
     noaa_apt_sink_impl::stop () {
+        // As a teardown action, the remaining pngs
+        //should be cropped to the correct size and written to disk
+
+        // Grab the buffers from the fullsize pngs
         auto buf_full_image = d_full_image.get_pixbuf();
         auto buf_left_image = d_left_image.get_pixbuf();
         auto buf_right_image = d_right_image.get_pixbuf();
 
+        // Create new smaller pngs using the old buffers
         d_full_image = png::image<png::gray_pixel>(d_width, d_current_y + 1);
         d_full_image.set_pixbuf(buf_full_image);
 
@@ -177,6 +201,7 @@ namespace gr
         d_right_image = png::image<png::gray_pixel>(d_width/2, d_current_y + 1);
         d_right_image.set_pixbuf(buf_right_image);
 
+        // Write the smaller images to disk
         write_images();
 
         return true;
@@ -184,10 +209,15 @@ namespace gr
 
 
     void noaa_apt_sink_impl::set_pixel (size_t x, size_t y, float sample) {
+        // Adjust dynamic range, using minimum and maximum values
         sample = (sample - f_min_level) / (f_max_level - f_min_level) * 255;
+        // Set the pixel in the full image
         d_full_image.set_pixel(x, y, sample);
 
+        // Id the split otions is set
         if(d_split) {
+            // Set the pixel in the right image,
+            // depending on its coordinate
             if(x < d_width / 2) {
                 d_left_image.set_pixel(x, y, sample);
             }
@@ -200,24 +230,35 @@ namespace gr
 
     void
     noaa_apt_sink_impl::skip_to (size_t new_x, size_t pos, const float *samples) {
+        // Check if the skip is forward or backward
         if(new_x > d_current_x) {
+            // In case it is forward there will be a new_x - d_current_x sized hole
+            // in the image. Holes up 39 pixels can be filled from the modules history
             size_t dist = std::min(size_t(39), new_x - d_current_x);
+            // Fill the hole using the previous samples of pos
             for(size_t i = 0; i < dist; i++) {
                 set_pixel(new_x - dist + i, d_current_y, samples[pos - dist + i]);
             }
         }
+        // Jump to new location
         d_current_x = new_x;
     }
 
 
     noaa_apt_sync_marker
     noaa_apt_sink_impl::is_marker(size_t pos, const float *samples) {
+        // Initialize counters for 'hacky' correlation
         size_t count_a = 0;
         size_t count_b = 0;
 
         for(size_t i = 0; i < 40; i++) {
+            // history of previous 39 samples + current one
+            // -> start 39 samples in the past
             float sample = samples[pos - 39 + i];
+            // Remove DC-offset (aka. the average value of the sync pattern)
             sample = sample - f_average;
+
+            // Very basic 1/0 correlation between pattern constan and history
             if((sample > 0 && synca_seq[i]) || (sample < 0 && !syncb_seq[i])) {
                 count_a += 1;
             }
@@ -228,6 +269,7 @@ namespace gr
 
         }
 
+        // Prefer sync pattern a as it is detected more reliable
         if(count_a > 35) {
             return noaa_apt_sync_marker::SYNC_A;
         }
@@ -247,26 +289,43 @@ namespace gr
     {
         const float *in = (const float *) input_items[0];
 
-        for (size_t i = d_history_length - 1; i < noutput_items + d_history_length - 1; i++) {
+        // Structure of in[]:
+        // - d_history_length many historical samples
+        // - noutput_items many samples to process
+        for (size_t i = d_history_length - 1;
+            i < noutput_items + d_history_length - 1; i++) {
+
+            // Get the current sample
             float sample = in[i];
 
+            // Update min and max level to adjust dynamic range in set pixel
             f_max_level = std::fmax(f_max_level, sample);
             f_min_level = std::fmin(f_min_level, sample);
 
             // Update exponential smoothing average used in sync pattern detection
             f_average = f_average_alpha * sample + (1.0 - f_average_alpha) * f_average;
 
+            // If line sync is enabled
             if(d_synchronize_opt) {
-                if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_A) {
+                // Check if the history for the current sample is a sync pattern
+                noaa_apt_sync_marker marker = is_marker(i, in);
+
+                // For pattern a
+                if(marker == noaa_apt_sync_marker::SYNC_A) {
+                    // Skip to right location, pattern starts 40 samples in the past
                     skip_to(39, i, in);
+                    // If this is the first sync, reset min and max
                     if(!d_has_sync) {
                         f_max_level = 0.0;
                         f_min_level = 1.0;
                         d_has_sync = true;
                     }
                 }
-                else if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_B) {
+                // For pattern b
+                else if(marker == noaa_apt_sync_marker::SYNC_B) {
+                    // Skip to right location, pattern starts 40 samples in the past
                     skip_to(d_width / 2 + 39, i, in);
+                    // If this is the first sync, reset min and max
                     if(!d_has_sync) {
                         f_max_level = 0.0;
                         f_min_level = 1.0;
@@ -275,17 +334,24 @@ namespace gr
                 }
             }
 
+            // Set the the pixel at the current position
             set_pixel(d_current_x, d_current_y, sample);
 
+            // Increment x position
             d_current_x += 1;
+            // If we are beyond the end of line
             if(d_current_x >= d_width) {
+                // Increment y position
                 d_current_y += 1;
+                // Reset x position to line start
                 d_current_x = 0;
 
+                // If there are enough lines decoded write the image to disk
                 if(d_current_y % d_row_write_threshold == 0) {
                     write_images();
                 }
 
+                // Split the image if there are enough lines decoded
                 if(d_current_y >= d_height) {
                     d_current_y = 0;
                     d_num_images += 1;
@@ -295,7 +361,7 @@ namespace gr
             }
         }
 
-
+        // Tell gnu radio how many samples were consumed
         return noutput_items;
     }
 

@@ -76,22 +76,23 @@ namespace gr
       work (int noutput_items, gr_vector_const_void_star &input_items,
             gr_vector_void_star &output_items);
 
+      // For teardown actions, like writing the remaining images to disk
       bool
       stop ();
 
     private:
-        // Generate empty images and filenames to save them to
+        // Generates new empty images and the filenames for them
         void
         init_images ();
 
         /*
-         * Check if the history portion of the input contains a sync marker.
+         * Checks if the history portion of the input contains a sync marker.
          * Matches the 40 samples before pos against the patterns.
          */
         noaa_apt_sync_marker
         is_marker (size_t pos, const float *samples);
 
-        // Set the pixel indicated by coordinates in the images (both full and split)
+        // Sets the pixel indicated by coordinates in the images (both full and split)
         void
         set_pixel (size_t x, size_t y, float sample);
 
@@ -102,11 +103,11 @@ namespace gr
         void
         skip_to (size_t new_x, size_t pos, const float *samples);
 
-        // Write the images to disk
+        // Writes all images to disk
         void
         write_images ();
 
-        // Write a single image to disk, also takes care of flipping
+        // Writes a single image to disk, also takes care of flipping
         void
         write_image (png::image<png::gray_pixel> image, std::string filename);
     };
