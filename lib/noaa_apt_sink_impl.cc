@@ -31,9 +31,17 @@ namespace gr
 {
   namespace satnogs
   {
+    // Factor exponential smoothing average,
+    // which is used for sync pattern detection
+    const float noaa_apt_sink_impl::f_average_alpha = 0.25;
+
+    // The images are written to disk every d_row_write_threshold lines
+    // so in case something goes horribly wrong, partial images will be available
+    const size_t noaa_apt_sink_impl::d_row_write_threshold = 250;
+
     // Noaa apt sync pattern A
     // (see https://sourceforge.isae.fr/attachments/download/1813/apt_synch.gif)
-    const bool SYNCA_SEQ[] = {false, false, false, false,
+    const bool noaa_apt_sink_impl::synca_seq[] = {false, false, false, false,
                               true, true, false, false,   // Pulse 1
                               true, true, false, false,   // Pulse 2
                               true, true, false, false,   // Pulse 3
@@ -46,7 +54,7 @@ namespace gr
 
     // Noaa apt sync pattern B
     // (see https://sourceforge.isae.fr/attachments/download/1813/apt_synch.gif)
-    const bool SYNCB_SEQ[] = {false, false, false, false,
+    const bool noaa_apt_sink_impl::syncb_seq[] = {false, false, false, false,
                               true, true, true, false, false,
                               true, true, true, false, false,
                               true, true, true, false, false,
@@ -210,10 +218,10 @@ namespace gr
         for(size_t i = 0; i < 40; i++) {
             float sample = samples[pos - 39 + i];
             sample = sample - f_average;
-            if((sample > 0 && SYNCA_SEQ[i]) || (sample < 0 && !SYNCA_SEQ[i])) {
+            if((sample > 0 && synca_seq[i]) || (sample < 0 && !syncb_seq[i])) {
                 count_a += 1;
             }
-            if((sample > 0 && SYNCB_SEQ[i]) || (sample < 0 && !SYNCB_SEQ[i])) {
+            if((sample > 0 && syncb_seq[i]) || (sample < 0 && !syncb_seq[i])) {
                 count_b += 1;
             }
 
@@ -245,7 +253,8 @@ namespace gr
             f_max_level = std::fmax(f_max_level, sample);
             f_min_level = std::fmin(f_min_level, sample);
 
-            f_average = 0.25 * sample + 0.75 * f_average;
+            // Update exponential smoothing average used in sync pattern detection
+            f_average = f_average_alpha * sample + (1.0 - f_average_alpha) * f_average;
 
             if(d_synchronize_opt) {
                 if(is_marker(i, in) == noaa_apt_sync_marker::SYNC_A) {
@@ -273,7 +282,7 @@ namespace gr
                 d_current_y += 1;
                 d_current_x = 0;
 
-                if(d_current_y % 100 == 0) {
+                if(d_current_y % d_row_write_threshold == 0) {
                     write_images();
                 }
 
