@@ -108,24 +108,20 @@ namespace gr
     void
     noaa_apt_sink_impl::init_images () {
         // Split the filename option into path + filename and extension
-        size_t len = d_filename_png.size();
-        size_t pos = d_filename_png.rfind('.');
-        std::string base_filename = d_filename_png.substr(0, pos);
-        std::string extension = d_filename_png.substr(pos+1, len-1);
+
 
         // Construct numbered filename for the full image
-        d_full_filename = base_filename + std::to_string(d_num_images)
-                            + "." + extension;
+        d_full_filename = d_filename_png + std::to_string(d_num_images);
         // Create a new empty png
         d_full_image = png::image<png::gray_pixel>(d_width, d_height);
 
 
         if(d_split) {
             // In case split images are requested construct filenames for those as well
-            d_left_filename = base_filename + "_left"
-                                + std::to_string(d_num_images) + "." + extension;
-            d_right_filename = base_filename + "_right"
-                                + std::to_string(d_num_images)+ "." + extension;
+            d_left_filename = d_filename_png + std::to_string(d_num_images)
+                                    + "_left";
+            d_right_filename = d_filename_png + std::to_string(d_num_images) 
+                                    + "_right";
 
             // Create new empty pngs for the split images
             d_left_image = png::image<png::gray_pixel>(d_width/2, d_height);
