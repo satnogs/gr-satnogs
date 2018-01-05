@@ -139,33 +139,6 @@
     <key>variable</key>
     <param>
       <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(175, 546)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>ndelay</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>250</value>
-    </param>
-  </block>
-  <block>
-    <key>variable</key>
-    <param>
-      <key>comment</key>
       <value>SDR device 
 TX sampling rate</value>
     </param>
@@ -175,7 +148,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(247, 546)</value>
+      <value>(231, 547)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -191,53 +164,6 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
-    <key>variable_low_pass_filter_taps</key>
-    <param>
-      <key>beta</key>
-      <value>6.76</value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>cutoff_freq</key>
-      <value>100e3</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(31, 542)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>gain</key>
-      <value>12.0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>taps</value>
-    </param>
-    <param>
-      <key>samp_rate</key>
-      <value>samp_rate_rx</value>
-    </param>
-    <param>
-      <key>width</key>
-      <value>60000</value>
-    </param>
-    <param>
-      <key>win</key>
-      <value>firdes.WIN_HAMMING</value>
-    </param>
-  </block>
-  <block>
     <key>variable</key>
     <param>
       <key>comment</key>
@@ -249,7 +175,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1723, 219)</value>
+      <value>(23, 547)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -292,11 +218,7 @@ TX sampling rate</value>
     </param>
   </block>
   <block>
-    <key>analog_agc2_xx</key>
-    <param>
-      <key>attack_rate</key>
-      <value>0.1</value>
-    </param>
+    <key>analog_pll_carriertracking_cc</key>
     <param>
       <key>alias</key>
       <value></value>
@@ -310,48 +232,40 @@ TX sampling rate</value>
       <value></value>
     </param>
     <param>
-      <key>decay_rate</key>
-      <value>0.8</value>
-    </param>
-    <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>True</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(981, 263)</value>
+      <value>(983, 275)</value>
     </param>
     <param>
       <key>_rotation</key>
       <value>0</value>
     </param>
     <param>
-      <key>gain</key>
-      <value>0.0</value>
-    </param>
-    <param>
       <key>id</key>
-      <value>analog_agc2_xx_0</value>
+      <value>analog_pll_carriertracking_cc_0</value>
     </param>
     <param>
-      <key>max_gain</key>
-      <value>1e3</value>
+      <key>w</key>
+      <value>2*math.pi/100</value>
+    </param>
+    <param>
+      <key>max_freq</key>
+      <value>2*math.pi*2e3/(samp_rate_rx/xlating_decimation/lpf_decimation)</value>
     </param>
     <param>
       <key>maxoutbuf</key>
       <value>0</value>
     </param>
     <param>
+      <key>min_freq</key>
+      <value>-2*math.pi*2e3/(samp_rate_rx/xlating_decimation/lpf_decimation)</value>
+    </param>
+    <param>
       <key>minoutbuf</key>
       <value>0</value>
-    </param>
-    <param>
-      <key>reference</key>
-      <value>0.6</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
     </param>
   </block>
   <block>
@@ -460,7 +374,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1739, 327)</value>
+      <value>(1374, 295)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -503,7 +417,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1069, 199)</value>
+      <value>(1070, 159)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -524,203 +438,6 @@ TX sampling rate</value>
     <param>
       <key>vlen</key>
       <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_delay</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>delay</key>
-      <value>ndelay</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1172, 379)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_delay_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>num_ports</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>complex</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_moving_average_xx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1883, 394)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_moving_average_xx_0</value>
-    </param>
-    <param>
-      <key>length</key>
-      <value>ndelay</value>
-    </param>
-    <param>
-      <key>max_iter</key>
-      <value>40</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>scale</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>float</value>
-    </param>
-  </block>
-  <block>
-    <key>blocks_multiply_conjugate_cc</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1316, 311)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>blocks_multiply_conjugate_cc_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>vlen</key>
-      <value>1</value>
-    </param>
-  </block>
-  <block>
-    <key>parameter</key>
-    <param>
-      <key>alias</key>
-      <value>700</value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value>Offset in Hz from the carrier frequency in order the 
-CW beacon to be audable.</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(678, 546)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>cw_offset</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value></value>
-    </param>
-    <param>
-      <key>short_id</key>
-      <value></value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>eng_float</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>700</value>
     </param>
   </block>
   <block>
@@ -939,61 +656,6 @@ CW beacon to be audable.</value>
     </param>
   </block>
   <block>
-    <key>fir_filter_xxx</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>decim</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(1531, 315)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>fir_filter_xxx_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>samp_delay</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>taps</key>
-      <value>[1,] * ndelay</value>
-    </param>
-    <param>
-      <key>type</key>
-      <value>ccc</value>
-    </param>
-  </block>
-  <block>
     <key>freq_xlating_fir_filter_xxx</key>
     <param>
       <key>alias</key>
@@ -1001,7 +663,7 @@ CW beacon to be audable.</value>
     </param>
     <param>
       <key>center_freq</key>
-      <value>lo_offset - cw_offset</value>
+      <value>lo_offset</value>
     </param>
     <param>
       <key>comment</key>
@@ -1124,6 +786,37 @@ CW beacon to be audable.</value>
     <param>
       <key>import</key>
       <value>import satnogs</value>
+    </param>
+  </block>
+  <block>
+    <key>import</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(255, 83)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>import_1</value>
+    </param>
+    <param>
+      <key>import</key>
+      <value>import math</value>
     </param>
   </block>
   <block>
@@ -1257,7 +950,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>gain</key>
-      <value>1</value>
+      <value>lpf_decimation</value>
     </param>
     <param>
       <key>id</key>
@@ -1281,7 +974,82 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>width</key>
-      <value>500</value>
+      <value>1e3</value>
+    </param>
+    <param>
+      <key>win</key>
+      <value>firdes.WIN_HAMMING</value>
+    </param>
+  </block>
+  <block>
+    <key>low_pass_filter</key>
+    <param>
+      <key>beta</key>
+      <value>6.76</value>
+    </param>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>cutoff_freq</key>
+      <value>100</value>
+    </param>
+    <param>
+      <key>decim</key>
+      <value>4</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>fir_filter_ccf</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1182, 247)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>gain</key>
+      <value>4</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>low_pass_filter_0_0</value>
+    </param>
+    <param>
+      <key>interp</key>
+      <value>1</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>samp_rate</key>
+      <value>samp_rate_rx/xlating_decimation/lpf_decimation</value>
+    </param>
+    <param>
+      <key>width</key>
+      <value>100</value>
     </param>
     <param>
       <key>win</key>
@@ -3020,7 +2788,7 @@ we shift the LO a little further</value>
     <key>satnogs_cw_to_symbol</key>
     <param>
       <key>threshold</key>
-      <value>300000</value>
+      <value>0.25</value>
     </param>
     <param>
       <key>alias</key>
@@ -3032,7 +2800,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>conf_level</key>
-      <value>0.9</value>
+      <value>0.75</value>
     </param>
     <param>
       <key>affinity</key>
@@ -3044,7 +2812,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1627, 406)</value>
+      <value>(1366, 391)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3064,7 +2832,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>sampling_rate</key>
-      <value>int((samp_rate_rx/xlating_decimation)/lpf_decimation)</value>
+      <value>samp_rate_rx/xlating_decimation/lpf_decimation/4</value>
     </param>
     <param>
       <key>wpm</key>
@@ -3091,7 +2859,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1093, 450)</value>
+      <value>(903, 403)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3138,7 +2906,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1069, 123)</value>
+      <value>(1070, 83)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3177,7 +2945,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1396, 426)</value>
+      <value>(1142, 411)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3224,7 +2992,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1244, 179)</value>
+      <value>(1246, 139)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3334,7 +3102,7 @@ we shift the LO a little further</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1069, 7)</value>
+      <value>(647, 23)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3444,20 +3212,14 @@ we shift the LO a little further</value>
     </param>
   </block>
   <connection>
-    <source_block_id>analog_agc2_xx_0</source_block_id>
-    <sink_block_id>blocks_delay_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>analog_agc2_xx_0</source_block_id>
-    <sink_block_id>blocks_multiply_conjugate_cc_0</sink_block_id>
+    <source_block_id>analog_pll_carriertracking_cc_0</source_block_id>
+    <sink_block_id>low_pass_filter_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>blocks_complex_to_mag_squared_0</source_block_id>
-    <sink_block_id>blocks_moving_average_xx_0</sink_block_id>
+    <sink_block_id>satnogs_cw_to_symbol_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3468,44 +3230,32 @@ we shift the LO a little further</value>
     <sink_key>0</sink_key>
   </connection>
   <connection>
-    <source_block_id>blocks_delay_0</source_block_id>
-    <sink_block_id>blocks_multiply_conjugate_cc_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>1</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_moving_average_xx_0</source_block_id>
-    <sink_block_id>satnogs_cw_to_symbol_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>blocks_multiply_conjugate_cc_0</source_block_id>
-    <sink_block_id>fir_filter_xxx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>fir_filter_xxx_0</source_block_id>
-    <sink_block_id>blocks_complex_to_mag_squared_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>freq_xlating_fir_filter_xxx_0</source_block_id>
     <sink_block_id>low_pass_filter_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>freq_xlating_fir_filter_xxx_0</source_block_id>
+    <sink_block_id>satnogs_waterfall_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>low_pass_filter_0</source_block_id>
-    <sink_block_id>analog_agc2_xx_0</sink_block_id>
+    <sink_block_id>analog_pll_carriertracking_cc_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
   <connection>
     <source_block_id>low_pass_filter_0</source_block_id>
     <sink_block_id>rational_resampler_xxx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>low_pass_filter_0_0</source_block_id>
+    <sink_block_id>blocks_complex_to_mag_squared_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3524,12 +3274,6 @@ we shift the LO a little further</value>
   <connection>
     <source_block_id>rational_resampler_xxx_0</source_block_id>
     <sink_block_id>satnogs_iq_sink_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>rational_resampler_xxx_0</source_block_id>
-    <sink_block_id>satnogs_waterfall_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
