@@ -31,14 +31,6 @@ namespace gr
 {
   namespace satnogs
   {
-    // Factor exponential smoothing average,
-    // which is used for sync pattern detection
-    const float noaa_apt_sink_impl::f_average_alpha = 0.25;
-
-    // The images are written to disk every d_row_write_threshold lines
-    // so in case something goes horribly wrong, partial images will be available
-    const size_t noaa_apt_sink_impl::d_row_write_threshold = 250;
-
     // Noaa apt sync pattern A
     // (see https://sourceforge.isae.fr/attachments/download/1813/apt_synch.gif)
     const bool noaa_apt_sink_impl::synca_seq[] = {false, false, false, false,
@@ -85,6 +77,8 @@ namespace gr
             gr::sync_block ("noaa_apt_sink",
                             gr::io_signature::make (1, 1, sizeof(float)),
                             gr::io_signature::make (0, 0, 0)),
+            f_average_alpha (0.25),
+            d_row_write_threshold (250),
             d_filename_png (filename_png),
             d_width (width),
             d_height (height),
@@ -120,7 +114,7 @@ namespace gr
             // In case split images are requested construct filenames for those as well
             d_left_filename = d_filename_png + std::to_string(d_num_images)
                                     + "_left";
-            d_right_filename = d_filename_png + std::to_string(d_num_images) 
+            d_right_filename = d_filename_png + std::to_string(d_num_images)
                                     + "_right";
 
             // Create new empty pngs for the split images
@@ -145,7 +139,7 @@ namespace gr
             // ... and all the lines are copied over reverse  order
             for(size_t y = 0; y < height; y++) {
                 for(size_t x = 0; x < width; x++) {
-                    auto pixel = image.get_pixel(x, height - y - 1);
+                    png::gray_pixel pixel = image.get_pixel(x, height - y - 1);
                     flipped.set_pixel(x, y, pixel);
                 }
             }
@@ -183,9 +177,9 @@ namespace gr
         //should be cropped to the correct size and written to disk
 
         // Grab the buffers from the fullsize pngs
-        auto buf_full_image = d_full_image.get_pixbuf();
-        auto buf_left_image = d_left_image.get_pixbuf();
-        auto buf_right_image = d_right_image.get_pixbuf();
+        png::image<png::gray_pixel>::pixbuf buf_full_image = d_full_image.get_pixbuf();
+        png::image<png::gray_pixel>::pixbuf buf_left_image = d_left_image.get_pixbuf();
+        png::image<png::gray_pixel>::pixbuf buf_right_image = d_right_image.get_pixbuf();
 
         // Create new smaller pngs using the old buffers
         d_full_image = png::image<png::gray_pixel>(d_width, d_current_y + 1);

@@ -37,8 +37,15 @@ namespace gr
     class noaa_apt_sink_impl : public noaa_apt_sink
     {
     private:
-      static const float f_average_alpha;
-      static const size_t d_row_write_threshold;
+      // Factor exponential smoothing average,
+      // which is used for sync pattern detection
+      const float f_average_alpha;
+      
+      // The images are written to disk every d_row_write_threshold lines
+      // so in case something goes horribly wrong, partial images will be available
+      const size_t d_row_write_threshold;
+
+
       static const bool synca_seq[];
       static const bool syncb_seq[];
 
