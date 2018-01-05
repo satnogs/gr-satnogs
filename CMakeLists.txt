@@ -48,7 +48,7 @@ list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake/Modules)
 # Set the version information here
 set(VERSION_INFO_MAJOR_VERSION 1)
 set(VERSION_INFO_API_COMPAT    2)
-set(VERSION_INFO_MINOR_VERSION 1)
+set(VERSION_INFO_MINOR_VERSION 2)
 set(VERSION_INFO_MAINT_VERSION git)
 
 ########################################################################
@@ -130,11 +130,12 @@ find_package(Doxygen)
 find_package(Volk REQUIRED)
 find_package(OggVorbis REQUIRED)
 find_package(PNG REQUIRED)
+find_package(png++ REQUIRED)
 
 ########################################################################
 # Include or not into the module blocks for debugging
 ########################################################################
-option(INCLUDE_DEBUG_BLOCKS 
+option(INCLUDE_DEBUG_BLOCKS
     "Enable/Disable blocks that are used for debugging purposes" ON)
 
 

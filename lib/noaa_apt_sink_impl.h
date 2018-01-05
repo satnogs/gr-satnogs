@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2017, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2017,2018 Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -23,63 +23,103 @@
 
 #include <satnogs/noaa_apt_sink.h>
 #define PNG_DEBUG 3
-#include <png.h>
+#include <png++/png.hpp>
 #include <chrono>
+
+
 
 namespace gr
 {
   namespace satnogs
   {
+    enum class noaa_apt_sync_marker {SYNC_A, SYNC_B, NONE};
 
     class noaa_apt_sink_impl : public noaa_apt_sink
     {
     private:
-      uint32_t d_sync_word;
-      uint32_t d_constructed_word;
-      float d_slicer_threshold;
-      bool d_sync_found;
-      float d_max_value;
-      float d_min_value;
-      size_t d_norm_window;
-      size_t d_sample_counter;
-      const char* d_filename_png;
+      // Factor exponential smoothing average,
+      // which is used for sync pattern detection
+      const float f_average_alpha;
+      
+      // The images are written to disk every d_row_write_threshold lines
+      // so in case something goes horribly wrong, partial images will be available
+      const size_t d_row_write_threshold;
+
+
+      static const bool synca_seq[];
+      static const bool syncb_seq[];
+
+      std::string d_filename_png;
       size_t d_width;
       size_t d_height;
       bool d_split;
-      size_t d_history_length;
       bool d_synchronize_opt;
-      png_structp* d_png_ptr;
-      png_infop* d_info_ptr;
-      uint8_t* d_row_buffer;
-      png_byte d_color_type;
-      png_byte d_bit_depth;
-      FILE** d_png_fd;
-      size_t d_images_per_frame;
-      size_t d_row_counter;
-      size_t d_num_images;
-      size_t d_current_buffered_samples;
-      std::vector<std::string> d_png_fn;
       bool d_flip;
+      size_t d_history_length;
+      bool d_has_sync;
+
+      png::image<png::gray_pixel> d_full_image;
+      png::image<png::gray_pixel> d_left_image;
+      png::image<png::gray_pixel> d_right_image;
+      std::string d_full_filename;
+      std::string d_left_filename;
+      std::string d_right_filename;
+
+      size_t d_current_x;
+      size_t d_current_y;
+      size_t d_num_images;
+
+      float f_max_level;
+      float f_min_level;
+      float f_average;
 
     public:
       noaa_apt_sink_impl (const char *filename_png, size_t width, size_t height,
                           bool split, bool sync, bool flip);
       ~noaa_apt_sink_impl ();
-      void
-      write_png_row ();
-      void
-      init_png ();
-      void
-      flip_image ();
 
       // Where all the action really happens
       int
       work (int noutput_items, gr_vector_const_void_star &input_items,
             gr_vector_void_star &output_items);
+
+      // For teardown actions, like writing the remaining images to disk
+      bool
+      stop ();
+
+    private:
+        // Generates new empty images and the filenames for them
+        void
+        init_images ();
+
+        /*
+         * Checks if the history portion of the input contains a sync marker.
+         * Matches the 40 samples before pos against the patterns.
+         */
+        noaa_apt_sync_marker
+        is_marker (size_t pos, const float *samples);
+
+        // Sets the pixel indicated by coordinates in the images (both full and split)
+        void
+        set_pixel (size_t x, size_t y, float sample);
+
+        /*
+         * Updates d_current_x to new_x,
+         * while using historical samples to fill any resulting gaps in the images.
+         */
+        void
+        skip_to (size_t new_x, size_t pos, const float *samples);
+
+        // Writes all images to disk
+        void
+        write_images ();
+
+        // Writes a single image to disk, also takes care of flipping
+        void
+        write_image (png::image<png::gray_pixel> image, std::string filename);
     };
 
   } // namespace satnogs
 } // namespace gr
 
 #endif /* INCLUDED_SATNOGS_NOAA_APT_SINK_IMPL_H */
-

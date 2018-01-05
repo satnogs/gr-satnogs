@@ -28,6 +28,7 @@ include_directories(
     ${VORBIS_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${PNG_INCLUDE_DIR}
+    ${png++_INCLUDE_DIRS}
 )
 
 link_directories(${Boost_LIBRARY_DIRS})
@@ -36,14 +37,14 @@ list(APPEND satnogs_debug_sources
     morse_debug_source_impl.cc
     debug_msg_source_impl.cc
     debug_msg_source_raw_impl.cc
-    leo_channel_impl.cc 
+    leo_channel_impl.cc
     cw_encoder_impl.cc
 )
 list(APPEND satnogs_sources
     morse_tree.cc
     morse_decoder_impl.cc
     multi_format_msg_sink_impl.cc
-    ogg_encoder_impl.cc 
+    ogg_encoder_impl.cc
     cw_to_symbol_impl.cc
     sine_matched_filter_ff_impl.cc
     udp_msg_source_impl.cc
@@ -77,16 +78,17 @@ if(NOT satnogs_sources)
 endif(NOT satnogs_sources)
 
 add_library(gnuradio-satnogs SHARED ${satnogs_sources})
-target_link_libraries(gnuradio-satnogs 
-    ${Boost_LIBRARIES} 
+target_link_libraries(gnuradio-satnogs
+    ${Boost_LIBRARIES}
     ${GNURADIO_ALL_LIBRARIES}
     ${CMAKE_THREAD_LIBS_INIT}
     ${NOVA_LIBRARIES}
     ${VOLK_LIBRARIES}
     ${OGGVORBIS_LIBRARIES}
     ${PNG_LIBRARIES}
+    ${png++_LIBRARIES}
 )
-    
+
 set_target_properties(gnuradio-satnogs PROPERTIES DEFINE_SYMBOL "gnuradio_satnogs_EXPORTS")
 
 if(APPLE)
