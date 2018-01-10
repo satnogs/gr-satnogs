@@ -31,6 +31,7 @@ try:
     from dsp_settings import *
     from hw_settings import *
     from satnogs_upsat_transmitter import *
+    from utils import *
 except ImportError as err:
     sys.stderr.write("Failed to import SatNOGS ({})\n".format(err))
     sys.stderr.write("Consider first to run 'sudo ldconfig'\n")

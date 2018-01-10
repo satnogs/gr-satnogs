@@ -23,5 +23,6 @@ GR_PYTHON_INSTALL(
     PROGRAMS
     upsat_transceiver_cli.py
     satnogs_noaa_apt_decoder.py
+    satnogs_meteor_decoder.py
     DESTINATION bin
 )
