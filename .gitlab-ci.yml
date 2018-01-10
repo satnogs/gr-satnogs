@@ -1,0 +1,12 @@
+image: debian:latest
+
+before_script:
+    - apt-get update -qq && apt-get install -y -qq gnuradio-dev libcppunit-dev libpng++-dev libvorbis-dev libnova-dev cmake swig pkg-config build-essential 
+
+test:
+    script:
+        - mkdir -p build
+        - cd build
+        - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+        - make
+ 
