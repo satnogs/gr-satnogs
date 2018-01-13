@@ -52,5 +52,5 @@ if(${INCLUDE_DEBUG_BLOCKS})
 endif()
 install(FILES
     ${enabled_blocks}
-    DESTINATION share/gnuradio/grc/blocks
+    satnogs_quad_demod_filter_ff.xml DESTINATION share/gnuradio/grc/blocks
 )

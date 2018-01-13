@@ -67,5 +67,5 @@ endif()
 
 install(FILES
     ${HEADER_FILES}
-     DESTINATION include/satnogs
+    quad_demod_filter_ff.h DESTINATION include/satnogs
 )
