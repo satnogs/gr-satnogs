@@ -181,9 +181,6 @@ namespace gr
 	     * should continue using the predicted frequencies
 	     */
 	    if (d_corrections == d_corrections_per_sec) {
-	      d_doppler_fit_engine.predict_freqs (d_predicted_freqs,
-						  d_corrections_per_sec,
-						  d_update_period);
 	      d_corrections = 0;
 	    }
 	  }
