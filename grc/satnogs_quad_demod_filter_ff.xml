@@ -8,8 +8,15 @@
   <param>
     <name>Threshold</name>
     <key>thresh</key>
-    <value>math.pi</value>
+    <value>1.0</value>
     <type>real</type>
+  </param>
+  
+  <param>
+    <name>Window Size</name>
+    <key>win</key>
+    <value>80</value>
+    <type>int</type>
   </param>
 
   <!-- Make one 'sink' node per input. Sub-nodes:

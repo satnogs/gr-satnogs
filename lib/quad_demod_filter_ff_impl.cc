@@ -40,9 +40,9 @@ namespace gr {
      */
     quad_demod_filter_ff_impl::quad_demod_filter_ff_impl (float gain,
                                                           int window) :
-            gr::block ("quad_demod_filter_ff",
-                       gr::io_signature::make (1, 1, sizeof(float)),
-                       gr::io_signature::make (1, 1, sizeof(float))),
+            gr::sync_block ("quad_demod_filter_ff",
+                            gr::io_signature::make (1, 1, sizeof(float)),
+                            gr::io_signature::make (1, 1, sizeof(float))),
             d_gain (gain),
             d_norm (1.0f / window),
             d_win (window),
@@ -53,7 +53,7 @@ namespace gr {
       if(window < 1) {
         throw std::invalid_argument ("Window must be a positive");
       }
-      set_history (2 * window);
+      set_history (window);
     }
 
     /*
@@ -86,15 +86,12 @@ namespace gr {
     }
 
     int
-    quad_demod_filter_ff_impl::general_work (
-        int noutput_items, gr_vector_int &ninput_items,
-        gr_vector_const_void_star &input_items,
-        gr_vector_void_star &output_items)
+    quad_demod_filter_ff_impl::work (int noutput_items,
+                                     gr_vector_const_void_star &input_items,
+                                     gr_vector_void_star &output_items)
     {
       const float *in = (const float *) input_items[0];
       float *out = (float *) output_items[0];
-      int available = std::min(ninput_items[0], noutput_items);
-      int produced = 0;
       float m;
       float m_sq;
       float snr;
@@ -102,9 +99,9 @@ namespace gr {
       float in_new;
 
       float diff;
-      for(int i = 0; i < available; i++) {
-        in_old = std::abs(in[i + d_win]);
-        in_new = std::abs(in[i + 2*d_win - 1]);
+      for (int i = 0; i < noutput_items; i++) {
+        in_old = std::abs (in[i]);
+        in_new = std::abs (in[i + d_win - 1]);
         d_sum -= in_old;
         d_sum += in_new;
         d_sum_sq -= (in_old * in_old);
@@ -112,7 +109,7 @@ namespace gr {
 
         m = (d_sum * d_norm);
         m_sq = (d_sum_sq * d_norm);
-        snr = m  * inv_sqrt(m_sq - m*m);
+        snr = m * inv_sqrt (m_sq - m * m);
 
         /*
          * If the SNR is high enough start passing the data to the output.
@@ -120,19 +117,21 @@ namespace gr {
          * from the buffered and let a window of samples to pass after the
          * trigger is off
          */
-        if(snr > d_gain * 1.8) {
-          d_remaining = 2*d_win;
+        if (snr > d_gain * 1.8) {
+          d_remaining = 2 * d_win;
         }
 
-        if(d_remaining) {
-          out[produced++] = in[i];
+        if (d_remaining) {
+          out[i] = in[i];
           d_remaining--;
+        }
+        else {
+          out[i] = 0.0f;
         }
       }
 
       // Tell runtime system how many output items we produced.
-      consume_each(available);
-      return produced;
+      return noutput_items;
     }
 
   } /* namespace satnogs */

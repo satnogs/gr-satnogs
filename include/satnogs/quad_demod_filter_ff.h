@@ -23,7 +23,7 @@
 #define INCLUDED_SATNOGS_QUAD_DEMOD_FILTER_FF_H
 
 #include <satnogs/api.h>
-#include <gnuradio/block.h>
+#include <gnuradio/sync_block.h>
 
 namespace gr {
   namespace satnogs {
@@ -50,7 +50,7 @@ namespace gr {
      * \ingroup satnogs
      *
      */
-    class SATNOGS_API quad_demod_filter_ff : virtual public gr::block
+    class SATNOGS_API quad_demod_filter_ff : virtual public gr::sync_block
     {
      public:
       typedef boost::shared_ptr<quad_demod_filter_ff> sptr;
@@ -58,8 +58,8 @@ namespace gr {
 
       /**
        * Creates a Quadrature Demodulate filter. The block will output samples
-       * only in signal presence acting as a valve to reduce false alarms of
-       * the FSK decoders.
+       * only in signal presence acting as a "valve" to reduce false alarms of
+       * the FSK decoders. In case of no signal, zero samples are produced.
        *
        * @param gain this MUST be the gain set on the quadrature demodulate
        * gain or an appropriate value if the amplitude of the quadrature
