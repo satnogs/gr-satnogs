@@ -3,11 +3,11 @@
   <name>Quadrature Demod Filter</name>
   <key>satnogs_quad_demod_filter_ff</key>
   <import>import satnogs</import>
-  <make>satnogs.quad_demod_filter_ff($thresh)</make>
+  <make>satnogs.quad_demod_filter_ff($gain)</make>
 
   <param>
-    <name>Threshold</name>
-    <key>thresh</key>
+    <name>Gain</name>
+    <key>gain</key>
     <value>1.0</value>
     <type>real</type>
   </param>
