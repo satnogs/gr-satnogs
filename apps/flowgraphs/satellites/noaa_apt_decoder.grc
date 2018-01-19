@@ -740,7 +740,7 @@ TX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(718, 115)</value>
+      <value>(710, 171)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3486,6 +3486,12 @@ we shift the LO a little further</value>
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>fft_filter_xxx_0</source_block_id>
+    <sink_block_id>satnogs_waterfall_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>fir_filter_xxx_1</source_block_id>
     <sink_block_id>rational_resampler_xxx_0</sink_block_id>
     <source_key>0</source_key>
@@ -3536,12 +3542,6 @@ we shift the LO a little further</value>
   <connection>
     <source_block_id>satnogs_coarse_doppler_correction_cc_0</source_block_id>
     <sink_block_id>fft_filter_xxx_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
-    <source_block_id>satnogs_coarse_doppler_correction_cc_0</source_block_id>
-    <sink_block_id>satnogs_waterfall_sink_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

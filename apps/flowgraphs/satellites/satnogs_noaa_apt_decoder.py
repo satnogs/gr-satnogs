@@ -5,7 +5,7 @@
 # Title: NOAA APT Decoder
 # Author: Manolis Surligas, George Vardakis
 # Description: A NOAA APT Decoder with automatic image synchronization
-# Generated: Wed Aug  9 18:06:52 2017
+# Generated: Fri Jan 19 21:55:37 2018
 ##################################################
 
 from gnuradio import analog
@@ -133,6 +133,7 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.connect((self.blocks_complex_to_mag_0, 0), (self.rational_resampler_xxx_0_0, 0))
         self.connect((self.fft_filter_xxx_0, 0), (self.analog_wfm_rcv_0, 0))
         self.connect((self.fft_filter_xxx_0, 0), (self.rational_resampler_xxx_2, 0))
+        self.connect((self.fft_filter_xxx_0, 0), (self.satnogs_waterfall_sink_0, 0))
         self.connect((self.fir_filter_xxx_1, 0), (self.rational_resampler_xxx_0, 0))
         self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.satnogs_coarse_doppler_correction_cc_0, 0))
         self.connect((self.hilbert_fc_0, 0), (self.blocks_complex_to_mag_0, 0))
@@ -142,7 +143,6 @@ class satnogs_noaa_apt_decoder(gr.top_block):
         self.connect((self.rational_resampler_xxx_1, 0), (self.satnogs_ogg_encoder_0, 0))
         self.connect((self.rational_resampler_xxx_2, 0), (self.satnogs_iq_sink_0, 0))
         self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.fft_filter_xxx_0, 0))
-        self.connect((self.satnogs_coarse_doppler_correction_cc_0, 0), (self.satnogs_waterfall_sink_0, 0))
 
     def get_antenna(self):
         return self.antenna
