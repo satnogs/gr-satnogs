@@ -77,20 +77,19 @@ namespace gr
        * delivered at the sink block out-of-sync causing the frame transmission
        * to terminate sooner.
        *
+       * @param ax25_dest_addr the destination AX.25 address
+       * @param ax25_dest_ssid the destination AX.25 SSID
+       * @param ax25_src_addr the source AX.25 address
+       * @param ax25_src_ssid the source AX.25 SSID
+       *
        */
       static sptr
       make (const std::vector<uint8_t>& preamble,
-	    const std::vector<uint8_t>& sync_word,
-	    bool append_crc,
-	    bool whitening,
-	    bool manchester,
-	    bool msb_first,
-	    bool ax25_format,
-	    const std::string& ax25_dest_addr,
-	    uint8_t ax25_dest_ssid,
-	    const std::string& ax25_src_addr,
-	    uint8_t ax25_src_ssid,
-	    size_t settling_samples);
+            const std::vector<uint8_t>& sync_word, bool append_crc,
+            bool whitening, bool manchester, bool msb_first, bool ax25_format,
+            const std::string& ax25_dest_addr, uint8_t ax25_dest_ssid,
+            const std::string& ax25_src_addr, uint8_t ax25_src_ssid,
+            size_t settling_samples);
     };
 
   } // namespace satnogs

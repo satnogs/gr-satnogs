@@ -126,7 +126,7 @@ namespace gr
 
     void
     noaa_apt_sink_impl::write_image (png::image<png::gray_pixel> image,
-                                        std::string filename)
+                                     std::string filename)
     {
         // In case the flip option is set
         if(d_flip) {

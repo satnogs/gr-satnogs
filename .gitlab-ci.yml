@@ -7,6 +7,14 @@ test:
     script:
         - mkdir -p build
         - cd build
-        - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo ..
+        - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=/usr ..
         - make
- 
+        - make install
+        - ldconfig
+        - python -c "import satnogs"
+        - rm -rf *
+        - cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DINCLUDE_DEBUG_BLOCKS=OFF -DCMAKE_INSTALL_PREFIX=/usr  ..
+        - make
+        - make install
+        - ldconfig
+        - python -c "import satnogs"

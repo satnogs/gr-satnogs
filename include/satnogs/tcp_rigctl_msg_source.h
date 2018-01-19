@@ -47,12 +47,12 @@ namespace gr
        *
        * @param addr the address of the interface to listen at
        * @param port the TCP port to listen or connect
-       * @param serve_mode If set to yes this block, act as a rigctl server.
+       * @param server_mode If set to yes this block, act as a rigctl server.
        * Otherwise as a rigctl client
        * @param interval_ms The interval in milliseconds at which the client
        * request the frequency from the rigctl
        * @param mtu the maximum MTU
-       * @return
+       * @return shared pointer of the block
        */
       static sptr
       make (const std::string& addr, uint16_t port, bool server_mode,

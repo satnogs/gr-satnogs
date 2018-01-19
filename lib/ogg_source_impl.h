@@ -33,7 +33,7 @@ namespace gr
     class ogg_source_impl : public ogg_source
     {
     private:
-      const size_t              d_channels;
+      const int                 d_channels;
       const bool                d_repeat;
       OggVorbis_File            d_ogvorb_f;
 
@@ -41,7 +41,7 @@ namespace gr
       float                     *d_out_buffer;
 
     public:
-      ogg_source_impl (const std::string& filename, size_t channels,
+      ogg_source_impl (const std::string& filename, int channels,
                        bool repeat);
       ~ogg_source_impl ();
 
