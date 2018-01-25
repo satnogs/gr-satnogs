@@ -36,6 +36,17 @@ namespace gr
       uint16_t d_control_symbol_pos;
       uint16_t d_control_symbol_neg;
       uint16_t d_data_reg;
+      unsigned long long d_wrong_bits, d_wrong_bits_neg;
+      unsigned int d_nwrong, d_nwrong_neg;
+      uint d_10b_cnt;
+      uint16_t d_word;
+
+      typedef enum
+      {
+        IN_SYNC, DECODING
+      } d_state_t;
+
+      d_state_t d_state;
 
     public:
       decoder_8b10b_impl (const std::string& control_symbol,

@@ -51,7 +51,14 @@ namespace gr
             d_comp_type (comp_type),
             d_control_symbol_pos (0),
             d_control_symbol_neg (0),
-            d_data_reg (0)
+            d_data_reg (0),
+            d_wrong_bits (0),
+            d_wrong_bits_neg (0),
+            d_nwrong (0),
+            d_nwrong_neg (0),
+            d_10b_cnt (0),
+            d_word (0),
+            d_state (IN_SYNC)
     {
       message_port_register_out (pmt::mp ("pdu"));
       if (!set_access_code (control_symbol)) {
@@ -81,7 +88,7 @@ namespace gr
         d_control_symbol_pos = (d_control_symbol_pos << 1)
             | (control_symbol[i] & 0x1);
       }
-      d_control_symbol_neg = ~d_control_symbol_pos;
+      d_control_symbol_neg = (~d_control_symbol_pos) & 0x3FF;
 
       return true;
     }
@@ -96,17 +103,45 @@ namespace gr
 
         d_data_reg = (d_data_reg << 1) | (in[i] & 0x1);
 
-        unsigned long long wrong_bits = (d_data_reg ^ d_control_symbol_pos)
-            & 0x3FF;
-        unsigned int nwrong = gr::blocks::count_bits64 (wrong_bits);
+        switch (d_state)
+          {
+          case IN_SYNC:
 
-        if (nwrong <= 1) {
-          d_data_reg = 0;
-          printf ("Packet found \n");
-        }
+            d_wrong_bits = (d_data_reg ^ d_control_symbol_pos) & 0x3FF;
+            d_wrong_bits_neg = (d_data_reg ^ d_control_symbol_neg) & 0x3FF;
+            d_nwrong = gr::blocks::count_bits64 (d_wrong_bits);
+            d_nwrong_neg = gr::blocks::count_bits64 (d_wrong_bits_neg);
 
-        //GR_LOG_DEBUG(d_logger, boost::format ("Wrong number: %u") % wrong_bits);
+            /* we found the controls symbol */
+            if ((d_nwrong == 0) || (d_nwrong_neg == 0)) {
+              d_state = DECODING;
+              d_word = 0;
+              printf ("Packet start found! Begin decoding! \n");
+            }
 
+            //GR_LOG_DEBUG(d_logger, boost::format ("Wrong number: %u") % wrong_bits);
+
+            break;
+
+          case DECODING:
+
+            if (d_10b_cnt < 10) {
+
+              d_word = (d_word << 1) | (d_data_reg & 0x1);
+              d_10b_cnt++;
+
+              if(d_10b_cnt == 10){
+                d_state = IN_SYNC;
+                d_10b_cnt = 0;
+                printf("DECODING FINISHED! BEGIN SYNC!!\n");
+              }
+            }
+
+            break;
+
+          default:
+            GR_LOG_ERROR(d_logger, "Invalid state");
+          }
       }
 
       // Tell runtime system how many output items we produced.
