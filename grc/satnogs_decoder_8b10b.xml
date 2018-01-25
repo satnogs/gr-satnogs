@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<block>
+	<name>8b10b Decoder</name>
+	<key>satnogs_decoder_8b10b</key>
+	<category>[SatNOGS]</category>
+	<import>import satnogs</import>
+	<make>satnogs.decoder_8b10b($control_symbol, $max_frame_len,
+		$comp_type)</make>
+
+	<param>
+		<name>Control symbols</name>
+		<key>control_symbol</key>
+		<value>0011111010</value>
+		<type>string</type>
+	</param>
+
+	<param>
+		<name>Maximum frame length</name>
+		<key>max_frame_len</key>
+		<value>1500</value>
+		<type>int</type>
+	</param>
+
+	<param>
+		<name>Comparison type</name>
+		<key>comp_type</key>
+		<type>enum</type>
+		<option>
+			<name>Equality</name>
+			<key>0</key>
+		</option>
+		<option>
+			<name>Hamming</name>
+			<key>1</key>
+		</option>
+	</param>
+
+	<sink>
+		<name>in</name>
+		<type>byte</type>
+	</sink>
+
+	<source>
+		<name>pdu</name>
+		<type>message</type>
+	</source>
+
+</block>

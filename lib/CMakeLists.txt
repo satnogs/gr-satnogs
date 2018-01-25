@@ -65,7 +65,8 @@ list(APPEND satnogs_sources
     noaa_apt_sink_impl.cc
     frame_file_sink_impl.cc
     iq_sink_impl.cc
-    quad_demod_filter_ff_impl.cc)
+    quad_demod_filter_ff_impl.cc
+    decoder_8b10b_impl.cc)
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND satnogs_sources ${satnogs_debug_sources})
