@@ -33,22 +33,21 @@ namespace gr
 
     decoder_8b10b::sptr
     decoder_8b10b::make (const std::string& control_symbol,
-                         size_t max_frame_len, int comp_type)
+                         size_t max_frame_len)
     {
       return gnuradio::get_initial_sptr (
-          new decoder_8b10b_impl (control_symbol, max_frame_len, comp_type));
+          new decoder_8b10b_impl (control_symbol, max_frame_len));
     }
 
     /*
      * The private constructor
      */
     decoder_8b10b_impl::decoder_8b10b_impl (const std::string& control_symbol,
-                                            size_t max_frame_len, int comp_type) :
+                                            size_t max_frame_len) :
             gr::sync_block ("decoder_8b10b",
                             gr::io_signature::make (1, 1, sizeof(char)),
                             gr::io_signature::make (0, 0, 0)),
             d_max_frame_len (max_frame_len),
-            d_comp_type (comp_type),
             d_control_symbol_pos (0),
             d_control_symbol_neg (0),
             d_data_reg (0),
@@ -56,15 +55,19 @@ namespace gr
             d_wrong_bits_neg (0),
             d_nwrong (0),
             d_nwrong_neg (0),
-            d_10b_cnt (0),
+            d_10b_cnt (1),
             d_word (0),
             d_state (IN_SYNC)
     {
       message_port_register_out (pmt::mp ("pdu"));
+
       if (!set_access_code (control_symbol)) {
         GR_LOG_ERROR(d_logger, "control_symbol is not 10 bits");
         throw std::out_of_range ("control_symbol is not 10 bits");
       }
+
+      d_8b_words = (uint8_t*) malloc (d_max_frame_len / 10);
+      d_erasures = (uint8_t*) malloc (d_max_frame_len / 10);
     }
 
     /*
@@ -93,12 +96,49 @@ namespace gr
       return true;
     }
 
+    uint8_t
+    decoder_8b10b_impl::process_10b (int write_pos)
+    {
+      uint16_t diff_bits = 0;
+      uint8_t min_pos = 0, temp_min_pos_rd = 0, min_pos_rd = 0;
+      uint8_t min_dist = 11;
+      uint8_t curr_dist = 0;
+      size_t i = 0;
+
+      while ((i < 256) || (min_dist > 0)) {
+
+        diff_bits = (d_word ^ (d_lookup_8b10b[0][i])) & 0x3FF;
+        curr_dist = gr::blocks::count_bits16 (diff_bits);
+
+        if (curr_dist > 5) {
+          curr_dist = 10 - curr_dist;
+          temp_min_pos_rd = 1;
+        }
+        else {
+          temp_min_pos_rd = 0;
+        }
+
+        if (curr_dist < min_dist) {
+          min_dist = curr_dist;
+          min_pos = i;
+          min_pos_rd = temp_min_pos_rd;
+        }
+
+        i++;
+      }
+
+      /* report that there is erasure to this 10 bits */
+      d_8b_words[write_pos - 1] = min_pos;
+      d_erasures[write_pos - 1] = (min_dist != 0);
+    }
+
     int
     decoder_8b10b_impl::work (int noutput_items,
                               gr_vector_const_void_star &input_items,
                               gr_vector_void_star &output_items)
     {
       const uint8_t *in = (const uint8_t *) input_items[0];
+
       for (int i = 0; i < noutput_items; i++) {
 
         d_data_reg = (d_data_reg << 1) | (in[i] & 0x1);
@@ -109,32 +149,42 @@ namespace gr
 
             d_wrong_bits = (d_data_reg ^ d_control_symbol_pos) & 0x3FF;
             d_wrong_bits_neg = (d_data_reg ^ d_control_symbol_neg) & 0x3FF;
-            d_nwrong = gr::blocks::count_bits64 (d_wrong_bits);
-            d_nwrong_neg = gr::blocks::count_bits64 (d_wrong_bits_neg);
+            d_nwrong = gr::blocks::count_bits16 (d_wrong_bits);
+            d_nwrong_neg = gr::blocks::count_bits16 (d_wrong_bits_neg);
 
             /* we found the controls symbol */
             if ((d_nwrong == 0) || (d_nwrong_neg == 0)) {
               d_state = DECODING;
-              d_word = 0;
-              printf ("Packet start found! Begin decoding! \n");
             }
-
-            //GR_LOG_DEBUG(d_logger, boost::format ("Wrong number: %u") % wrong_bits);
 
             break;
 
           case DECODING:
 
-            if (d_10b_cnt < 10) {
+            if (d_10b_cnt <= d_max_frame_len) {
+              if ((d_10b_cnt % 10 == 0) && (d_10b_cnt < d_max_frame_len)) {
 
-              d_word = (d_word << 1) | (d_data_reg & 0x1);
-              d_10b_cnt++;
+                d_word = (d_data_reg & 0x3FF);
 
-              if(d_10b_cnt == 10){
-                d_state = IN_SYNC;
-                d_10b_cnt = 0;
-                printf("DECODING FINISHED! BEGIN SYNC!!\n");
+                /* Revert 10b to 8b and accumulate! */
+                process_10b (d_10b_cnt / 10);
               }
+
+              if (d_10b_cnt == d_max_frame_len) {
+                d_state = IN_SYNC;
+                d_10b_cnt = 0; // one is added after the if
+                d_word = 0; // zero it after you use it to prepare for next round
+
+                pmt::pmt_t data = pmt::init_u8vector (d_max_frame_len / 10,
+                                                      d_8b_words);
+                pmt::pmt_t erasures = pmt::init_u8vector (d_max_frame_len / 10,
+                                                          d_erasures);
+
+                pmt::pmt_t out = pmt::cons (data, erasures);
+                message_port_pub (pmt::mp ("pdu"), out);
+              }
+
+              d_10b_cnt++;
             }
 
             break;

@@ -47,7 +47,7 @@ namespace gr
      * class. satnogs::decoder_8b10b::make is the public interface for
      * creating new instances.
      */
-    static sptr make(const std::string& control_symbol,size_t max_frame_len,int comp_type);
+    static sptr make(const std::string& control_symbol,size_t max_frame_len);
   };
 
 }

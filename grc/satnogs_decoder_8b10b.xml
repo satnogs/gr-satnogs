@@ -4,8 +4,9 @@
 	<key>satnogs_decoder_8b10b</key>
 	<category>[SatNOGS]</category>
 	<import>import satnogs</import>
-	<make>satnogs.decoder_8b10b($control_symbol, $max_frame_len,
-		$comp_type)</make>
+	<make>satnogs.decoder_8b10b($control_symbol, $max_frame_len
+		)
+	</make>
 
 	<param>
 		<name>Control symbols</name>
@@ -17,22 +18,8 @@
 	<param>
 		<name>Maximum frame length</name>
 		<key>max_frame_len</key>
-		<value>1500</value>
+		<value>960</value>
 		<type>int</type>
-	</param>
-
-	<param>
-		<name>Comparison type</name>
-		<key>comp_type</key>
-		<type>enum</type>
-		<option>
-			<name>Equality</name>
-			<key>0</key>
-		</option>
-		<option>
-			<name>Hamming</name>
-			<key>1</key>
-		</option>
 	</param>
 
 	<sink>
