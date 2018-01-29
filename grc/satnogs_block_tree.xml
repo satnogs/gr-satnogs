@@ -30,4 +30,6 @@
   <block>satnogs_ax25_decoder_bm</block>
   <block>satnogs_waterfall_sink</block>
   <block>satnogs_quad_demod_filter_ff</block>
+  <block>satnogs_ccsds_rs_decoder_mm</block>
+  <block>satnogs_decoder_8b10b</block>
 </cat>

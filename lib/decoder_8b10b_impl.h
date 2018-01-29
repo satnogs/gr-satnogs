@@ -31,17 +31,20 @@ namespace gr
     class decoder_8b10b_impl : public decoder_8b10b
     {
     private:
-      size_t d_max_frame_len;
+      const size_t d_max_frame_len;
+      size_t d_erasure_cnt;
       uint16_t d_control_symbol_pos;
       uint16_t d_control_symbol_neg;
       uint16_t d_data_reg;
-      uint16_t d_wrong_bits, d_wrong_bits_neg;
-      uint8_t d_nwrong, d_nwrong_neg;
-      uint16_t d_10b_cnt;
+      uint16_t d_wrong_bits;
+      uint16_t d_wrong_bits_neg;
+      uint8_t d_nwrong;
+      uint8_t d_nwrong_neg;
       uint16_t d_word;
+      size_t d_word_cnt;
 
       uint8_t *d_8b_words;
-      uint8_t *d_erasures;
+      int *d_erasures_indexes;
 
       int d_lookup_8b10b[2][256] =
         {

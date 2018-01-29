@@ -53,5 +53,6 @@ endif()
 install(FILES
     ${enabled_blocks}
     satnogs_quad_demod_filter_ff.xml
-    satnogs_decoder_8b10b.xml DESTINATION share/gnuradio/grc/blocks
+    satnogs_decoder_8b10b.xml
+    satnogs_ccsds_rs_decoder_mm.xml DESTINATION share/gnuradio/grc/blocks
 )

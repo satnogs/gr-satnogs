@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<block>
+  <name>CCSDS (255,223) RS Decoder</name>
+  <key>satnogs_ccsds_rs_decoder_mm</key>
+  <import>import satnogs</import>
+  <make>satnogs.ccsds_rs_decoder_mm()</make>
+  
+  <sink>
+    <name>in</name>
+    <type>message</type>
+  </sink>
+
+  <source>
+    <name>pdu</name>
+    <type>message</type>
+  </source>
+</block>

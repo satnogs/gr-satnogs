@@ -131,6 +131,7 @@ find_package(Volk REQUIRED)
 find_package(OggVorbis REQUIRED)
 find_package(PNG REQUIRED)
 find_package(png++ REQUIRED)
+find_package(Fec REQUIRED)
 
 ########################################################################
 # Include or not into the module blocks for debugging

@@ -1,35 +1,33 @@
 <?xml version="1.0"?>
 <block>
-	<name>8b10b Decoder</name>
-	<key>satnogs_decoder_8b10b</key>
-	<category>[SatNOGS]</category>
-	<import>import satnogs</import>
-	<make>satnogs.decoder_8b10b($control_symbol, $max_frame_len
-		)
-	</make>
+  <name>8b10b Decoder</name>
+  <key>satnogs_decoder_8b10b</key>
+  <import>import satnogs</import>
+  <make>satnogs.decoder_8b10b($control_symbol, $max_frame_len)
+  </make>
 
-	<param>
-		<name>Control symbols</name>
-		<key>control_symbol</key>
-		<value>0011111010</value>
-		<type>string</type>
-	</param>
+  <param>
+    <name>Control symbols</name>
+    <key>control_symbol</key>
+    <value>0011111010</value>
+    <type>string</type>
+  </param>
 
-	<param>
-		<name>Maximum frame length</name>
-		<key>max_frame_len</key>
-		<value>960</value>
-		<type>int</type>
-	</param>
+  <param>
+    <name>Maximum frame length</name>
+    <key>max_frame_len</key>
+    <value>960</value>
+    <type>int</type>
+  </param>
 
-	<sink>
-		<name>in</name>
-		<type>byte</type>
-	</sink>
+  <sink>
+    <name>in</name>
+    <type>byte</type>
+  </sink>
 
-	<source>
-		<name>pdu</name>
-		<type>message</type>
-	</source>
+  <source>
+    <name>pdu</name>
+    <type>message</type>
+  </source>
 
 </block>

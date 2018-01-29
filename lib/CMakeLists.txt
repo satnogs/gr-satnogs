@@ -29,6 +29,7 @@ include_directories(
     ${OGG_INCLUDE_DIR}
     ${PNG_INCLUDE_DIR}
     ${png++_INCLUDE_DIRS}
+    ${FEC_INCLUDE_DIRS}
 )
 
 link_directories(${Boost_LIBRARY_DIRS})
@@ -66,7 +67,8 @@ list(APPEND satnogs_sources
     frame_file_sink_impl.cc
     iq_sink_impl.cc
     quad_demod_filter_ff_impl.cc
-    decoder_8b10b_impl.cc)
+    decoder_8b10b_impl.cc
+    ccsds_rs_decoder_mm_impl.cc)
 
 if(${INCLUDE_DEBUG_BLOCKS})
 	list(APPEND satnogs_sources ${satnogs_debug_sources})
@@ -88,6 +90,7 @@ target_link_libraries(gnuradio-satnogs
     ${OGGVORBIS_LIBRARIES}
     ${PNG_LIBRARIES}
     ${png++_LIBRARIES}
+    ${FEC_LIBRARIES}
 )
 
 set_target_properties(gnuradio-satnogs PROPERTIES DEFINE_SYMBOL "gnuradio_satnogs_EXPORTS")
