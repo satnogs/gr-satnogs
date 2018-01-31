@@ -18,6 +18,7 @@ for decoding signals from various scientific and academic sattelites.
 **Optional**
 * gr-osmocom (for using the flowgraphs with real SDR hardware)
 * libnova (for building the debug blocks)
+* libfec (it will automatically installed if not present)
 
 ### Installation
 
