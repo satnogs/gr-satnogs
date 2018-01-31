@@ -191,15 +191,19 @@ namespace gr
         d_word_cnt++;
 
 
-        if(d_word_cnt == d_max_frame_len) {
+        if(d_word_cnt == d_max_frame_len / 10) {
           d_state = IN_SYNC;
           pmt::pmt_t data = pmt::init_u8vector (d_max_frame_len / 10,
                                                 d_8b_words);
-          pmt::pmt_t erasures = pmt::init_s32vector (d_erasure_cnt,
-                                                     d_erasures_indexes);
+
           pmt::pmt_t out = pmt::make_dict();
-          pmt::dict_add(out, pmt::mp("pdu"), data);
-          pmt::dict_add(out, pmt::mp("erasures"), erasures);
+          if (d_erasure_cnt > 0) {
+            pmt::pmt_t erasures = pmt::init_s32vector (d_erasure_cnt,
+                                                       d_erasures_indexes);
+            out = pmt::dict_add (out, pmt::intern ("erasures"), erasures);
+          }
+          out = pmt::dict_add(out, pmt::intern("data"), data);
+
 
           message_port_pub (pmt::mp ("pdu"), out);
           return (i+1) * 10;

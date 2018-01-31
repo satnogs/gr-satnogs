@@ -66,22 +66,26 @@ namespace gr {
       const int *erasures_ref;
       size_t erasures_len;
 
-      pmt::pmt_t pmt_data = pmt::dict_ref(m, pmt::mp("pdu"), pmt::PMT_NIL);
-      pmt::pmt_t pmt_erasures = pmt::dict_ref(m, pmt::mp("erasures"),
+      pmt::pmt_t pmt_data = pmt::dict_ref(m, pmt::intern("data"), pmt::PMT_NIL);
+      pmt::pmt_t pmt_erasures = pmt::dict_ref(m, pmt::intern("erasures"),
                                               pmt::PMT_NIL);
-      if (pmt::equal (pmt::PMT_NIL, pmt_data)
-          || pmt::equal (pmt::PMT_NIL, pmt_erasures)) {
+      if (pmt::equal (pmt::PMT_NIL, pmt_data)) {
         LOG_ERROR("Invalid message format.");
       }
 
       data_ref = pmt::u8vector_elements(pmt_data, data_len);
       memcpy(data, data_ref, data_len);
 
-      erasures_len = pmt::blob_length(pmt_erasures);
-      erasures_ref = pmt::s32vector_elements(pmt_erasures, erasures_len);
-      memcpy(erasures, erasures_ref, erasures_len * sizeof(int));
-
-      decode_rs_ccsds(data, erasures, (int)erasures_len, (int)(255 - data_len));
+      if( pmt::equal (pmt::PMT_NIL, pmt_erasures)) {
+        decode_rs_ccsds(data, NULL, 0, (int)(255 - data_len));
+      }
+      else {
+        erasures_len = pmt::blob_length(pmt_erasures);
+        erasures_ref = pmt::s32vector_elements(pmt_erasures, erasures_len);
+        memcpy(erasures, erasures_ref, erasures_len * sizeof(int));
+        decode_rs_ccsds(data, erasures, (int)erasures_len,
+                        (int)(255 - data_len));
+      }
       message_port_pub(pmt::mp("pdu"), pmt::make_blob(data, 223));
     }
 
