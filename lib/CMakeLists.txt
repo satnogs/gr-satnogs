@@ -81,6 +81,9 @@ if(NOT satnogs_sources)
 endif(NOT satnogs_sources)
 
 add_library(gnuradio-satnogs SHARED ${satnogs_sources})
+
+add_dependencies(gnuradio-satnogs fec)
+
 target_link_libraries(gnuradio-satnogs
     ${Boost_LIBRARIES}
     ${GNURADIO_ALL_LIBRARIES}

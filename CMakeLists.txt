@@ -131,7 +131,6 @@ find_package(Volk REQUIRED)
 find_package(OggVorbis REQUIRED)
 find_package(PNG REQUIRED)
 find_package(png++ REQUIRED)
-find_package(Fec REQUIRED)
 
 ########################################################################
 # Include or not into the module blocks for debugging
@@ -148,6 +147,45 @@ if(${INCLUDE_DEBUG_BLOCKS})
     if(NOT NOVA_FOUND)
         message(FATAL_ERROR "libnova required to compile satnogs")
     endif()
+endif()
+
+########################################################################
+# Search for the libfec if it is already installed in the system
+# If not, install the internal one.
+########################################################################
+find_package(Fec)
+if(NOT FEC_FOUND)
+    message(WARNING "libfec is not installed. The internal libfec will be automatically build and install.")
+    include(ExternalProject)
+    ExternalProject_Add(FEC_EXTERNAL
+        SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libfec
+        BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/libfec
+        CMAKE_ARGS "-DCMAKE_C_FLAGS=${CMAKE_C_FLAGS}"
+                   "-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}"
+                   "-DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}"
+        INSTALL_COMMAND ""
+    )
+    
+    ExternalProject_Get_Property(FEC_EXTERNAL binary_dir)
+    add_library(fec SHARED IMPORTED)
+
+    set_property(TARGET fec PROPERTY IMPORTED_LOCATION ${install_dir}/libfec.so)
+    
+    add_dependencies(fec FEC_EXTERNAL)
+    set(FEC_LIBRARIES "${binary_dir}/libfec.so")
+    set(FEC_INCLUDE_DIRS "${CMAKE_CURRENT_SOURCE_DIR}/libfec")
+    
+    # Install the header and the library in the standard places
+    install(FILES 
+        "${FEC_INCLUDE_DIRS}/fec.h" 
+        DESTINATION "include"
+    )
+    install(FILES
+        ${FEC_LIBRARIES}
+        DESTINATION lib${LIB_SUFFIX}
+    )
+else()
+    add_library(fec INTERFACE)
 endif()
 
 # Search for GNU Radio and its components and versions. Add any
