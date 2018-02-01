@@ -32,10 +32,10 @@ namespace gr
   {
 
     morse_decoder::sptr
-    morse_decoder::make (char unrecognized_char)
+    morse_decoder::make (char unrecognized_char, size_t min_frame_len)
     {
       return gnuradio::get_initial_sptr (
-          new morse_decoder_impl (unrecognized_char));
+          new morse_decoder_impl (unrecognized_char, min_frame_len));
     }
 
     void
@@ -69,9 +69,11 @@ namespace gr
             break;
           }
           str = d_morse_tree.get_word ();
-          d_morse_tree.reset ();
-          message_port_pub (pmt::mp ("out"),
-                            pmt::make_blob (str.c_str (), str.length ()));
+          if (str.length () > d_min_frame_len) {
+            d_morse_tree.reset ();
+            message_port_pub (pmt::mp ("out"),
+                              pmt::make_blob (str.c_str (), str.length ()));
+          }
           break;
         case MORSE_INTRA_SPACE:
           /*Ignore it */
@@ -98,10 +100,13 @@ namespace gr
     /*
      * The private constructor
      */
-    morse_decoder_impl::morse_decoder_impl (char unrecognized_char) :
+    morse_decoder_impl::morse_decoder_impl (char unrecognized_char,
+                                            size_t min_frame_len) :
             gr::block ("morse_decoder", gr::io_signature::make (0, 0, 0),
                        gr::io_signature::make (0, 0, 0)),
-            d_morse_tree (unrecognized_char)
+            d_morse_tree (unrecognized_char),
+            d_min_frame_len (min_frame_len)
+
     {
       /* Register the input and output msg handler */
       message_port_register_in (pmt::mp ("in"));

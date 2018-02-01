@@ -42,8 +42,10 @@ namespace gr {
        * @param unrecognized_char the character that will be placed
        * in situations where the decoder can not decide which character
        * was received.
+       * @param min_frame_len the minimum frame length in order to reduce
+       * false alarms
        */
-      static sptr make(char unrecognized_char = '#');
+      static sptr make(char unrecognized_char = '#', size_t min_frame_len = 3);
     };
 
   } // namespace satnogs

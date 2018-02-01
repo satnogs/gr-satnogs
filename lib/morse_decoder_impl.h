@@ -31,12 +31,13 @@ namespace gr {
     {
      private:
       morse_tree d_morse_tree;
+      size_t d_min_frame_len;
 
       void
       symbol_msg_handler(pmt::pmt_t msg);
 
      public:
-      morse_decoder_impl(char unrecognized_char);
+      morse_decoder_impl(char unrecognized_char, size_t min_frame_len);
 
     };
 

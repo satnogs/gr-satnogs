@@ -3,12 +3,19 @@
 	<name>Morse Decoder</name>
 	<key>satnogs_morse_decoder</key>
 	<import>import satnogs</import>
-	<make>satnogs.morse_decoder($unrecognized_char)</make>
+	<make>satnogs.morse_decoder($unrecognized_char, $min_frame_len)</make>
 
 	<param>
 		<name>Unrecognized character</name>
 		<key>unrecognized_char</key>
 		<value>ord('#')</value>
+		<type>int</type>
+	</param>
+	
+	<param>
+		<name>Minimum frame length</name>
+		<key>min_frame_len</key>
+		<value>3</value>
 		<type>int</type>
 	</param>
 
