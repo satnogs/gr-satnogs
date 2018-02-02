@@ -127,11 +127,15 @@ namespace gr
     }
 
     noaa_apt_sink_impl::~noaa_apt_sink_impl () {
+
+    }
+    bool
+    noaa_apt_sink_impl::stop(){
         if(!d_image_received){
         	write_image(d_full_image, d_filename_png);
         }
+        return true;
     }
-
 
     void noaa_apt_sink_impl::set_pixel (size_t x, size_t y, float sample) {
         // Adjust dynamic range, using minimum and maximum values
