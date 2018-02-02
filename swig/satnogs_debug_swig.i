@@ -1,10 +1,12 @@
 /* -*- c++ -*- */
 
+#define SATNOGS_API
+
 %include <typemaps.i>
 %include "gnuradio.i"			// the common stuff
 
 //load generated python docstrings
-%include "satnogs_swig_doc.i"
+%include "satnogs_debug_swig_doc.i"
 
 %{
 #include "satnogs/morse_debug_source.h"

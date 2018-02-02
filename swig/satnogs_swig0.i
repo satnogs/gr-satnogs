@@ -6,7 +6,7 @@
 %include "gnuradio.i"			// the common stuff
 
 //load generated python docstrings
-%include "satnogs_swig_doc.i"
+%include "satnogs_swig0_doc.i"
 
 %{
 #include "satnogs/morse_tree.h"
