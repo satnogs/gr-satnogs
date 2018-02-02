@@ -1,0 +1,13 @@
+#! /usr/bin/python
+"""SatNOGS Information script"""
+
+import sys
+import json
+
+VERSION = "@VERSION@"
+INFO = {
+    "name": "gr-satnogs",
+    "version": VERSION,
+}
+
+json.dump(INFO, sys.stdout)

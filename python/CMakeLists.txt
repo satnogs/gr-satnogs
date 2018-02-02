@@ -28,6 +28,10 @@ endif()
 ########################################################################
 # Install python sources
 ########################################################################
+configure_file(satnogs_info.py.in ${CMAKE_BINARY_DIR}/satnogs_info.py
+    @ONLY
+)
+
 GR_PYTHON_INSTALL(
     FILES
     __init__.py
@@ -35,6 +39,7 @@ GR_PYTHON_INSTALL(
     hw_settings.py
     satnogs_upsat_transmitter.py
     utils.py
+    ${CMAKE_BINARY_DIR}/satnogs_info.py
     DESTINATION ${GR_PYTHON_DIR}/satnogs
 )
 
