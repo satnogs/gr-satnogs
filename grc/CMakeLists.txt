@@ -33,7 +33,6 @@ list(APPEND enabled_blocks
     satnogs_multi_format_msg_sink.xml
     satnogs_ogg_encoder.xml 
     satnogs_cw_to_symbol.xml
-    satnogs_sine_matched_filter_ff.xml
     satnogs_udp_msg_source.xml
     satnogs_tcp_rigctl_msg_source.xml
     satnogs_doppler_correction_cc.xml

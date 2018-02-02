@@ -46,7 +46,6 @@ list(APPEND satnogs_sources
     multi_format_msg_sink_impl.cc
     ogg_encoder_impl.cc
     cw_to_symbol_impl.cc
-    sine_matched_filter_ff_impl.cc
     udp_msg_source_impl.cc
     tcp_rigctl_msg_source_impl.cc
     doppler_correction_cc_impl.cc

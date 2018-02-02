@@ -39,7 +39,6 @@ list(APPEND HEADER_FILES
     multi_format_msg_sink.h
     ogg_encoder.h 
     cw_to_symbol.h
-    sine_matched_filter_ff.h
     utils.h
     udp_msg_source.h
     tcp_rigctl_msg_source.h

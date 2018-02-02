@@ -13,7 +13,6 @@
 #include "satnogs/morse_decoder.h"
 #include "satnogs/multi_format_msg_sink.h"
 #include "satnogs/cw_to_symbol.h"
-#include "satnogs/sine_matched_filter_ff.h"
 #include "satnogs/udp_msg_source.h"
 #include "satnogs/tcp_rigctl_msg_source.h"
 #include "satnogs/doppler_correction_cc.h"
@@ -45,9 +44,6 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, multi_format_msg_sink);
 
 %include "satnogs/cw_to_symbol.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, cw_to_symbol);
-
-%include "satnogs/sine_matched_filter_ff.h"
-GR_SWIG_BLOCK_MAGIC2(satnogs, sine_matched_filter_ff);
 
 %include "satnogs/udp_msg_source.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, udp_msg_source);
