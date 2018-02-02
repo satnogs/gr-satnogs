@@ -68,7 +68,7 @@ namespace gr
        *
        */
       static sptr
-      make (const char *filename_png, size_t width, size_t height, bool split,
+      make (const char *filename_png, size_t width, size_t height,
             bool sync, bool flip);
     };
 

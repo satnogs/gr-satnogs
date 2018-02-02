@@ -4,7 +4,7 @@
   <key>satnogs_noaa_apt_sink</key>
   <category>[SatNOGS]</category>
   <import>import satnogs</import>
-  <make>satnogs.noaa_apt_sink($*filename_png, $width, $height, $split, $sync, $flip)</make>
+  <make>satnogs.noaa_apt_sink($*filename_png, $width, $height, $sync, $flip)</make>
    <param>
  		<name>Output PNG Filename</name>
 		<key>filename_png</key>
@@ -22,21 +22,7 @@
 		<key>height</key>
 		<value>1500</value>
 		<type>int</type>
-  </param>  
-	<param>
-		<name>Split Images</name>
-		<key>split</key>
-		<value>False</value>
-		<type>bool</type>
-		<option>
-			<name>Yes</name>
-			<key>True</key>
-		</option>
-		<option>
-			<name>No</name>
-			<key>False</key>
-		</option>
-	</param>
+  </param> 
 	<param>
 		<name>Synchronize</name>
 		<key>sync</key>

@@ -40,23 +40,17 @@ namespace gr
       // Factor exponential smoothing average,
       // which is used for sync pattern detection
       const float f_average_alpha;
-      
-      // The images are written to disk every d_row_write_threshold lines
-      // so in case something goes horribly wrong, partial images will be available
-      const size_t d_row_write_threshold;
-
-
       static const bool synca_seq[];
       static const bool syncb_seq[];
 
       std::string d_filename_png;
       size_t d_width;
       size_t d_height;
-      bool d_split;
       bool d_synchronize_opt;
       bool d_flip;
       size_t d_history_length;
       bool d_has_sync;
+      bool d_image_received;
 
       png::image<png::gray_pixel> d_full_image;
       png::image<png::gray_pixel> d_left_image;
@@ -75,7 +69,7 @@ namespace gr
 
     public:
       noaa_apt_sink_impl (const char *filename_png, size_t width, size_t height,
-                          bool split, bool sync, bool flip);
+                          bool sync, bool flip);
       ~noaa_apt_sink_impl ();
 
       // Where all the action really happens
@@ -83,14 +77,8 @@ namespace gr
       work (int noutput_items, gr_vector_const_void_star &input_items,
             gr_vector_void_star &output_items);
 
-      // For teardown actions, like writing the remaining images to disk
-      bool
-      stop ();
 
     private:
-        // Generates new empty images and the filenames for them
-        void
-        init_images ();
 
         /*
          * Checks if the history portion of the input contains a sync marker.
@@ -109,10 +97,6 @@ namespace gr
          */
         void
         skip_to (size_t new_x, size_t pos, const float *samples);
-
-        // Writes all images to disk
-        void
-        write_images ();
 
         // Writes a single image to disk, also takes care of flipping
         void

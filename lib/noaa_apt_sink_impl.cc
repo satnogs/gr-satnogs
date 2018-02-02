@@ -60,10 +60,10 @@ namespace gr
 
     noaa_apt_sink::sptr
     noaa_apt_sink::make (const char *filename_png, size_t width, size_t height,
-                         bool split, bool sync, bool flip)
+                         bool sync, bool flip)
     {
       return gnuradio::get_initial_sptr (
-          new noaa_apt_sink_impl (filename_png, width, height, split, sync,
+          new noaa_apt_sink_impl (filename_png, width, height, sync,
                                   flip));
     }
 
@@ -73,20 +73,19 @@ namespace gr
      */
     noaa_apt_sink_impl::noaa_apt_sink_impl (const char *filename_png,
                                             size_t width, size_t height,
-                                            bool split, bool sync, bool flip) :
+                                            bool sync, bool flip) :
             gr::sync_block ("noaa_apt_sink",
                             gr::io_signature::make (1, 1, sizeof(float)),
                             gr::io_signature::make (0, 0, 0)),
             f_average_alpha (0.25),
-            d_row_write_threshold (250),
             d_filename_png (filename_png),
             d_width (width),
             d_height (height),
-            d_split (split),
             d_synchronize_opt (sync),
             d_flip (flip),
             d_history_length (40),
             d_has_sync (false),
+			d_image_received(false),
             d_current_x (0),
             d_current_y (0),
             d_num_images (0),
@@ -95,34 +94,8 @@ namespace gr
             f_average(0.0)
     {
       set_history(d_history_length);
-      init_images();
+      d_full_image = png::image<png::gray_pixel>(d_width, d_height);
     }
-
-
-    void
-    noaa_apt_sink_impl::init_images () {
-        // Split the filename option into path + filename and extension
-
-
-        // Construct numbered filename for the full image
-        d_full_filename = d_filename_png + std::to_string(d_num_images);
-        // Create a new empty png
-        d_full_image = png::image<png::gray_pixel>(d_width, d_height);
-
-
-        if(d_split) {
-            // In case split images are requested construct filenames for those as well
-            d_left_filename = d_filename_png + std::to_string(d_num_images)
-                                    + "_left";
-            d_right_filename = d_filename_png + std::to_string(d_num_images)
-                                    + "_right";
-
-            // Create new empty pngs for the split images
-            d_left_image = png::image<png::gray_pixel>(d_width/2, d_height);
-            d_right_image = png::image<png::gray_pixel>(d_width/2, d_height);
-        }
-    }
-
 
     void
     noaa_apt_sink_impl::write_image (png::image<png::gray_pixel> image,
@@ -153,48 +126,10 @@ namespace gr
         }
     }
 
-
-    void
-    noaa_apt_sink_impl::write_images () {
-        // Write out the full image
-        write_image(d_full_image, d_full_filename);
-
-        if(d_split) {
-            // Write out the split images if the split option is enabled
-            write_image(d_left_image, d_left_filename);
-            write_image(d_right_image, d_right_filename);
-        }
-    }
-
-
     noaa_apt_sink_impl::~noaa_apt_sink_impl () {
-        // Nothing happens here
-    }
-
-    bool
-    noaa_apt_sink_impl::stop () {
-        // As a teardown action, the remaining pngs
-        //should be cropped to the correct size and written to disk
-
-        // Grab the buffers from the fullsize pngs
-        png::image<png::gray_pixel>::pixbuf buf_full_image = d_full_image.get_pixbuf();
-        png::image<png::gray_pixel>::pixbuf buf_left_image = d_left_image.get_pixbuf();
-        png::image<png::gray_pixel>::pixbuf buf_right_image = d_right_image.get_pixbuf();
-
-        // Create new smaller pngs using the old buffers
-        d_full_image = png::image<png::gray_pixel>(d_width, d_current_y + 1);
-        d_full_image.set_pixbuf(buf_full_image);
-
-        d_left_image = png::image<png::gray_pixel>(d_width/2, d_current_y + 1);
-        d_left_image .set_pixbuf(buf_left_image);
-
-        d_right_image = png::image<png::gray_pixel>(d_width/2, d_current_y + 1);
-        d_right_image.set_pixbuf(buf_right_image);
-
-        // Write the smaller images to disk
-        write_images();
-
-        return true;
+        if(!d_image_received){
+        	write_image(d_full_image, d_filename_png);
+        }
     }
 
 
@@ -203,20 +138,7 @@ namespace gr
         sample = (sample - f_min_level) / (f_max_level - f_min_level) * 255;
         // Set the pixel in the full image
         d_full_image.set_pixel(x, y, sample);
-
-        // Id the split otions is set
-        if(d_split) {
-            // Set the pixel in the right image,
-            // depending on its coordinate
-            if(x < d_width / 2) {
-                d_left_image.set_pixel(x, y, sample);
-            }
-            else {
-                d_right_image.set_pixel(x - d_width / 2, y, sample);
-            }
-        }
     }
-
 
     void
     noaa_apt_sink_impl::skip_to (size_t new_x, size_t pos, const float *samples) {
@@ -255,8 +177,6 @@ namespace gr
             if((sample > 0 && syncb_seq[i]) || (sample < 0 && !syncb_seq[i])) {
                 count_b += 1;
             }
-
-
         }
 
         // Prefer sync pattern a as it is detected more reliable
@@ -278,6 +198,10 @@ namespace gr
                               gr_vector_void_star &output_items)
     {
         const float *in = (const float *) input_items[0];
+        /* If we have already produced one image, ignore the remaining observation*/
+        if(d_image_received){
+        	return noutput_items;
+        }
 
         // Structure of in[]:
         // - d_history_length many historical samples
@@ -336,17 +260,13 @@ namespace gr
                 // Reset x position to line start
                 d_current_x = 0;
 
-                // If there are enough lines decoded write the image to disk
-                if(d_current_y % d_row_write_threshold == 0) {
-                    write_images();
-                }
-
                 // Split the image if there are enough lines decoded
                 if(d_current_y >= d_height) {
                     d_current_y = 0;
                     d_num_images += 1;
-                    write_images();
-                    init_images();
+                    // Write out the full image
+                    write_image(d_full_image, d_filename_png);
+                    d_image_received = true;
                 }
             }
         }
