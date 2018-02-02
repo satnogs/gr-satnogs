@@ -105,8 +105,7 @@ namespace gr
         {
         case 0:
           {
-            /* add .txt to filename */
-            filename.append (".txt");
+            /* Binary form */
             std::ofstream fd (filename.c_str ());
             fd.write ((const char *) pmt::blob_data (msg),
                       pmt::blob_length (msg));
@@ -115,8 +114,8 @@ namespace gr
           }
         case 1:
           {
-            /* add .hex to filename */
-            filename.append (".hex");
+            /* aHex annotated, dd .txt to filename */
+            filename.append (".txt");
             std::ofstream fd (filename.c_str ());
             su = (uint8_t *) pmt::blob_data (msg);
             for (size_t i = 0; i < pmt::blob_length (msg); i++) {
@@ -128,8 +127,8 @@ namespace gr
           }
         case 2:
           {
-            /* add .bin to filename */
-            filename.append (".bin");
+            /* Binary annotated, add .txt to filename */
+            filename.append (".txt");
             std::ofstream fd (filename.c_str ());
             su = (uint8_t *) pmt::blob_data (msg);
             for (size_t i = 0; i < pmt::blob_length (msg); i++) {

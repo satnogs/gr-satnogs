@@ -99,13 +99,13 @@ namespace gr
 
       switch (d_format)
         {
-        case 0:
+        case 0: // binary
           for (size_t i = 0; i < pmt::blob_length (msg); i++) {
             std::cout << s[i];
           }
           std::cout << std::endl;
           break;
-        case 1:
+        case 1: // hex annotated
           su = (uint8_t *) pmt::blob_data (msg);
           for (size_t i = 0; i < pmt::blob_length (msg); i++) {
             std::cout << std::hex << std::showbase << std::setw (4)
@@ -113,7 +113,7 @@ namespace gr
           }
           std::cout << std::endl;
           break;
-        case 2:
+        case 2: // binary annotated
           su = (uint8_t *) pmt::blob_data (msg);
           for (size_t i = 0; i < pmt::blob_length (msg); i++) {
             std::cout << "0b" << std::bitset<8> (su[i]) << " ";
