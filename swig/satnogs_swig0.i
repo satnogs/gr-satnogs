@@ -34,6 +34,7 @@
 #include "satnogs/quad_demod_filter_ff.h"
 #include "satnogs/decoder_8b10b.h"
 #include "satnogs/ccsds_rs_decoder_mm.h"
+#include "satnogs/fox_telem_mm.h"
 %}
 
 
@@ -109,3 +110,6 @@ GR_SWIG_BLOCK_MAGIC2(satnogs, decoder_8b10b);
 
 %include "satnogs/ccsds_rs_decoder_mm.h"
 GR_SWIG_BLOCK_MAGIC2(satnogs, ccsds_rs_decoder_mm);
+
+%include "satnogs/fox_telem_mm.h"
+GR_SWIG_BLOCK_MAGIC2(satnogs, fox_telem_mm);

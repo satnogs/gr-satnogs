@@ -69,5 +69,6 @@ install(FILES
     ${HEADER_FILES}
     quad_demod_filter_ff.h
     decoder_8b10b.h
-    ccsds_rs_decoder_mm.h DESTINATION include/satnogs
+    ccsds_rs_decoder_mm.h
+    fox_telem_mm.h DESTINATION include/satnogs
 )

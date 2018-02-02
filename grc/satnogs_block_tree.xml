@@ -13,6 +13,10 @@
       <block>satnogs_upsat_transmitter</block>
       <block>satnogs_qb50_deframer</block>
     </cat>
+    <cat>
+        <name>AMSAT FOX</name>
+        <block>satnogs_fox_telem_mm</block>
+    </cat>
   </cat>
   <block>satnogs_cw_matched_filter_ff</block>
   <block>satnogs_morse_decoder</block>

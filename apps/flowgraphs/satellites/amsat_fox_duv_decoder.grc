@@ -3016,6 +3016,45 @@ max_modulation_freq = 3000</value>
     </param>
   </block>
   <block>
+    <key>satnogs_fox_telem_mm</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(535, 759)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_fox_telem_mm_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
     <key>satnogs_frame_file_sink</key>
     <param>
       <key>alias</key>
@@ -3035,7 +3074,7 @@ max_modulation_freq = 3000</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(622, 761)</value>
+      <value>(279, 779)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3428,9 +3467,9 @@ max_modulation_freq = 3000</value>
   </connection>
   <connection>
     <source_block_id>satnogs_ccsds_rs_decoder_mm_0</source_block_id>
-    <sink_block_id>satnogs_frame_file_sink_0_1_0</sink_block_id>
+    <sink_block_id>satnogs_fox_telem_mm_0</sink_block_id>
     <source_key>pdu</source_key>
-    <sink_key>frame</sink_key>
+    <sink_key>in</sink_key>
   </connection>
   <connection>
     <source_block_id>satnogs_coarse_doppler_correction_cc_0</source_block_id>
@@ -3443,6 +3482,12 @@ max_modulation_freq = 3000</value>
     <sink_block_id>satnogs_ccsds_rs_decoder_mm_0</sink_block_id>
     <source_key>pdu</source_key>
     <sink_key>in</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_fox_telem_mm_0</source_block_id>
+    <sink_block_id>satnogs_frame_file_sink_0_1_0</sink_block_id>
+    <source_key>raw</source_key>
+    <sink_key>frame</sink_key>
   </connection>
   <connection>
     <source_block_id>satnogs_quad_demod_filter_ff_0</source_block_id>

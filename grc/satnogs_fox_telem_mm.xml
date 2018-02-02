@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<block>
+  <name>FOX telemetry processor</name>
+  <key>satnogs_fox_telem_mm</key>
+  <import>import satnogs</import>
+  <make>satnogs.fox_telem_mm()</make>
+
+  <sink>
+    <name>in</name>
+    <type>message</type>
+  </sink>
+
+  <source>
+    <name>raw</name>
+    <type>message</type>
+  </source>
+</block>
