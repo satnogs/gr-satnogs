@@ -40,7 +40,6 @@ namespace gr
       uint16_t d_wrong_bits_neg;
       uint8_t d_nwrong;
       uint8_t d_nwrong_neg;
-      uint16_t d_word;
       size_t d_word_cnt;
 
       uint8_t *d_8b_words;
@@ -580,7 +579,7 @@ namespace gr
       set_access_code (const std::string &access_code);
 
       uint8_t
-      process_10b (int write_pos);
+      process_10b (uint16_t word, int write_pos);
 
       // Where all the action really happens
       int

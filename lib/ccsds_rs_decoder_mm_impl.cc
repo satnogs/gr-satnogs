@@ -59,6 +59,7 @@ namespace gr {
     void
     ccsds_rs_decoder_mm_impl::message_handler (pmt::pmt_t m)
     {
+      int ret;
       uint8_t data[255];
       int erasures[255];
       const uint8_t *data_ref;
@@ -77,16 +78,18 @@ namespace gr {
       memcpy(data, data_ref, data_len);
 
       if( pmt::equal (pmt::PMT_NIL, pmt_erasures)) {
-        decode_rs_ccsds(data, NULL, 0, (int)(255 - data_len));
+        ret = decode_rs_8(data, NULL, 0, (int)(255 - data_len));
       }
       else {
         erasures_len = pmt::blob_length(pmt_erasures);
         erasures_ref = pmt::s32vector_elements(pmt_erasures, erasures_len);
         memcpy(erasures, erasures_ref, erasures_len * sizeof(int));
-        decode_rs_ccsds(data, erasures, (int)erasures_len,
-                        (int)(255 - data_len));
+        ret = decode_rs_8 (data, erasures, (int) erasures_len,
+                               (int) (255 - data_len));
       }
-      message_port_pub(pmt::mp("pdu"), pmt::make_blob(data, 223));
+      if(ret > -1) {
+        message_port_pub(pmt::mp("pdu"), pmt::make_blob(data, 223));
+      }
     }
 
     /*

@@ -58,7 +58,6 @@ namespace gr
             d_wrong_bits_neg (0),
             d_nwrong (0),
             d_nwrong_neg (0),
-            d_word (0),
             d_word_cnt (0),
             d_state (IN_SYNC)
     {
@@ -102,35 +101,41 @@ namespace gr
     }
 
     uint8_t
-    decoder_8b10b_impl::process_10b (int write_pos)
+    decoder_8b10b_impl::process_10b (uint16_t word, int write_pos)
     {
       uint16_t diff_bits = 0;
-      uint8_t min_pos = 0, temp_min_pos_rd = 0, min_pos_rd = 0;
+      uint8_t min_pos = 0;
       uint8_t min_dist = 11;
       uint8_t curr_dist = 0;
       size_t i = 0;
 
-      while ((i < 256) || (min_dist > 0)) {
+      /* Check for the disparity -1 */
+      while ((i < 256) && (min_dist > 0)) {
 
-        diff_bits = (d_word ^ (d_lookup_8b10b[0][i])) & 0x3FF;
+        diff_bits = (word ^ (d_lookup_8b10b[0][i])) & 0x3FF;
         curr_dist = gr::blocks::count_bits16 (diff_bits);
-
-        if (curr_dist > 5) {
-          curr_dist = 10 - curr_dist;
-          temp_min_pos_rd = 1;
-        }
-        else {
-          temp_min_pos_rd = 0;
-        }
 
         if (curr_dist < min_dist) {
           min_dist = curr_dist;
           min_pos = i;
-          min_pos_rd = temp_min_pos_rd;
         }
-
         i++;
       }
+
+      /* Check for the disparity +1 */
+      i = 0;
+      while ((i < 256) && (min_dist > 0)) {
+
+        diff_bits = (word ^ (d_lookup_8b10b[1][i])) & 0x3FF;
+        curr_dist = gr::blocks::count_bits16 (diff_bits);
+
+        if (curr_dist < min_dist) {
+          min_dist = curr_dist;
+          min_pos = i;
+        }
+        i++;
+      }
+
 
       /* report that there is erasure to this 10 bits */
       d_8b_words[write_pos] = min_pos;
@@ -144,11 +149,11 @@ namespace gr
     static inline uint16_t
     pack_10b_word(const uint8_t *in)
     {
-      return ((in[0] & 0x1) << 9) | ((in[1] & 0x1) << 8)
-          | ((in[2] & 0x1) << 7) | ((in[3] & 0x1) << 6)
-          | ((in[4] & 0x1) << 5) | ((in[5] & 0x1) << 4)
-          | ((in[6] & 0x1) << 3) | ((in[7] & 0x1) << 2)
-          | ((in[8] & 0x1) << 1) | (in[9] & 0x1);
+      return (((uint16_t)in[0] & 0x1) << 9) | (((uint16_t)in[1] & 0x1) << 8)
+          | (((uint16_t)in[2] & 0x1) << 7) | (((uint16_t)in[3] & 0x1) << 6)
+          | (((uint16_t)in[4] & 0x1) << 5) | (((uint16_t)in[5] & 0x1) << 4)
+          | (((uint16_t)in[6] & 0x1) << 3) | (((uint16_t)in[7] & 0x1) << 2)
+          | (((uint16_t)in[8] & 0x1) << 1) | (in[9] & 0x1);
     }
 
     int
@@ -157,6 +162,7 @@ namespace gr
                               gr_vector_void_star &output_items)
     {
       int i;
+      uint16_t word;
       const uint8_t *in = (const uint8_t *) input_items[0];
 
       /* Search for the Comma symbol */
@@ -184,10 +190,10 @@ namespace gr
        * in chunks of 10 bits
        */
       for(i = 0; i < noutput_items / 10; i++) {
-        d_word = pack_10b_word(&in[i * 10]);
+        word = pack_10b_word(&in[i * 10]);
 
         /* Revert 10b to 8b and accumulate! */
-        process_10b (d_word_cnt);
+        process_10b (word, d_word_cnt);
         d_word_cnt++;
 
 
