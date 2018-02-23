@@ -4,7 +4,7 @@
 import sys
 import json
 
-VERSION = "@VERSION@"
+VERSION = "@VERSION_INFO_MAJOR_VERSION@.@VERSION_INFO_API_COMPAT@.@VERSION_INFO_MINOR_VERSION@"
 INFO = {
     "name": "gr-satnogs",
     "version": VERSION,
