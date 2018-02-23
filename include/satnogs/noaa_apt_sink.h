@@ -60,8 +60,6 @@ namespace gr
        * @param filename_png the base filename of the output PNG file(s)
        * @param width the width of the image in the APT transmission
        * @param height the height of the image in the APT transmission
-       * @param split user option for splitting the two images contained
-       * in a NOAA APT transmission
        * @param sync user option for synchronizing to the first of the
        * two training sequences
        * @param flip user option to rotate the image(s) 180 degrees

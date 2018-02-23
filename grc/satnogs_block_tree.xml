@@ -3,11 +3,15 @@
   <cat>
     <name>Satellites</name>
     <cat>
-        <name>UPSat</name>
-        <block>satnogs_upsat_fsk_frame_acquisition</block>
-        <block>satnogs_upsat_fsk_frame_encoder</block>
-        <block>satnogs_upsat_transmitter</block>
-        <block>satnogs_qb50_deframer</block>
+      <name>NOAA</name>
+      <block>satnogs_noaa_apt_sink</block>
+    </cat>
+    <cat>
+      <name>UPSat</name>
+      <block>satnogs_upsat_fsk_frame_acquisition</block>
+      <block>satnogs_upsat_fsk_frame_encoder</block>
+      <block>satnogs_upsat_transmitter</block>
+      <block>satnogs_qb50_deframer</block>
     </cat>
   </cat>
   <block>satnogs_cw_matched_filter_ff</block>
