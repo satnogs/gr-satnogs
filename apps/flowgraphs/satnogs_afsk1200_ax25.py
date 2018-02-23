@@ -5,7 +5,7 @@
 # Title: AFSK1200 AX.25 decoder
 # Author: Manolis Surligas (surligas@gmail.com), Vardakis Giorgos (vardakis.grg@gmail.com)
 # Description: AFSK1200 AX.25 decoder
-# Generated: Sat Dec  9 19:39:06 2017
+# Generated: Fri Feb 23 21:34:11 2018
 ##################################################
 
 from gnuradio import analog
@@ -25,7 +25,7 @@ import time
 
 class satnogs_afsk1200_ax25(gr.top_block):
 
-    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, decoded_data_file_path='/tmp/.satnogs/data/data', dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=1000, enable_iq_dump=0, file_path='test.wav', if_gain=satnogs.not_set_rx_if_gain, iq_file_path='/tmp/iq.dat', lo_offset=100e3, mark_frequency=2200.0, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', space_frequency=1200.0, waterfall_file_path='/tmp/waterfall.dat'):
+    def __init__(self, antenna=satnogs.not_set_antenna, bb_gain=satnogs.not_set_rx_bb_gain, decoded_data_file_path='/tmp/.satnogs/data/data', dev_args=satnogs.not_set_dev_args, doppler_correction_per_sec=1000, enable_iq_dump=0, file_path='test.wav', if_gain=satnogs.not_set_rx_if_gain, iq_file_path='/tmp/iq.dat', lo_offset=100e3, mark_frequency=2200.0, ppm=0, rf_gain=satnogs.not_set_rx_rf_gain, rigctl_port=4532, rx_freq=100e6, rx_sdr_device='usrpb200', space_frequency=1200.0, udp_IP='127.0.0.1', udp_port=16887, waterfall_file_path='/tmp/waterfall.dat'):
         gr.top_block.__init__(self, "AFSK1200 AX.25 decoder ")
 
         ##################################################
@@ -48,6 +48,8 @@ class satnogs_afsk1200_ax25(gr.top_block):
         self.rx_freq = rx_freq
         self.rx_sdr_device = rx_sdr_device
         self.space_frequency = space_frequency
+        self.udp_IP = udp_IP
+        self.udp_port = udp_port
         self.waterfall_file_path = waterfall_file_path
 
         ##################################################
@@ -69,6 +71,7 @@ class satnogs_afsk1200_ax25(gr.top_block):
         # Blocks
         ##################################################
         self.satnogs_waterfall_sink_0 = satnogs.waterfall_sink(audio_samp_rate, 0.0, 10, 1024, waterfall_file_path, 1)
+        self.satnogs_udp_msg_sink_0_0 = satnogs.udp_msg_sink(udp_IP, udp_port, 1500)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(16768, '/tmp/iq.bin', False, enable_iq_dump)
@@ -112,6 +115,7 @@ class satnogs_afsk1200_ax25(gr.top_block):
         # Connections
         ##################################################
         self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_frame_file_sink_0_1_0, 'frame'))
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_udp_msg_sink_0_0, 'in'))
         self.msg_connect((self.satnogs_tcp_rigctl_msg_source_0, 'freq'), (self.satnogs_coarse_doppler_correction_cc_0, 'freq'))
         self.connect((self.analog_quadrature_demod_cf_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))
         self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.dc_blocker_xx_0, 0))
@@ -250,6 +254,18 @@ class satnogs_afsk1200_ax25(gr.top_block):
         self.space_frequency = space_frequency
         self.low_pass_filter_1.set_taps(firdes.low_pass(10, self.audio_samp_rate, (self.mark_frequency - self.space_frequency)/2.0, 1000, firdes.WIN_HAMMING, 6.76))
 
+    def get_udp_IP(self):
+        return self.udp_IP
+
+    def set_udp_IP(self, udp_IP):
+        self.udp_IP = udp_IP
+
+    def get_udp_port(self):
+        return self.udp_port
+
+    def set_udp_port(self, udp_port):
+        self.udp_port = udp_port
+
     def get_waterfall_file_path(self):
         return self.waterfall_file_path
 
@@ -380,6 +396,12 @@ def argument_parser():
         "", "--space-frequency", dest="space_frequency", type="eng_float", default=eng_notation.num_to_str(1200.0),
         help="Set space_frequency [default=%default]")
     parser.add_option(
+        "", "--udp-IP", dest="udp_IP", type="string", default='127.0.0.1',
+        help="Set udp_IP [default=%default]")
+    parser.add_option(
+        "", "--udp-port", dest="udp_port", type="intx", default=16887,
+        help="Set udp_port [default=%default]")
+    parser.add_option(
         "", "--waterfall-file-path", dest="waterfall_file_path", type="string", default='/tmp/waterfall.dat',
         help="Set waterfall_file_path [default=%default]")
     return parser
@@ -389,7 +411,7 @@ def main(top_block_cls=satnogs_afsk1200_ax25, options=None):
     if options is None:
         options, _ = argument_parser().parse_args()
 
-    tb = top_block_cls(antenna=options.antenna, bb_gain=options.bb_gain, decoded_data_file_path=options.decoded_data_file_path, dev_args=options.dev_args, doppler_correction_per_sec=options.doppler_correction_per_sec, enable_iq_dump=options.enable_iq_dump, file_path=options.file_path, if_gain=options.if_gain, iq_file_path=options.iq_file_path, lo_offset=options.lo_offset, mark_frequency=options.mark_frequency, ppm=options.ppm, rf_gain=options.rf_gain, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, space_frequency=options.space_frequency, waterfall_file_path=options.waterfall_file_path)
+    tb = top_block_cls(antenna=options.antenna, bb_gain=options.bb_gain, decoded_data_file_path=options.decoded_data_file_path, dev_args=options.dev_args, doppler_correction_per_sec=options.doppler_correction_per_sec, enable_iq_dump=options.enable_iq_dump, file_path=options.file_path, if_gain=options.if_gain, iq_file_path=options.iq_file_path, lo_offset=options.lo_offset, mark_frequency=options.mark_frequency, ppm=options.ppm, rf_gain=options.rf_gain, rigctl_port=options.rigctl_port, rx_freq=options.rx_freq, rx_sdr_device=options.rx_sdr_device, space_frequency=options.space_frequency, udp_IP=options.udp_IP, udp_port=options.udp_port, waterfall_file_path=options.waterfall_file_path)
     tb.start()
     tb.wait()
 
