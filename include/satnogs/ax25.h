@@ -334,7 +334,7 @@ namespace gr
         /* Check if bit stuffing should be applied */
         if ((shift_reg & 0x1F) == 0x1F) {
           out[out_idx++] = 0x0;
-          shift_reg = 0x0;
+          shift_reg <<= 1;
         }
       }
 

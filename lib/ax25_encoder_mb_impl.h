@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2018
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -43,7 +44,6 @@ namespace gr
       uint8_t *d_addr_field;
       size_t d_addr_len;
       digital::lfsr d_lfsr;
-      boost::mutex d_mutex;
 
       void
       add_sob (uint64_t item);
@@ -52,15 +52,15 @@ namespace gr
 
     public:
       ax25_encoder_mb_impl (const std::string& dest_addr, uint8_t dest_ssid,
-			    const std::string& src_addr, uint8_t src_ssid,
-			    size_t preamble_len, size_t postamble_len,
-			    bool scramble);
+                            const std::string& src_addr, uint8_t src_ssid,
+                            size_t preamble_len, size_t postamble_len,
+                            bool scramble);
       ~ax25_encoder_mb_impl ();
 
       // Where all the action really happens
       int
       work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
+            gr_vector_void_star &output_items);
     };
 
   } // namespace satnogs

@@ -2,7 +2,8 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, Libre Space Foundation <http://librespacefoundation.org/>
+ *  Copyright (C) 2016,2018
+ *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -34,7 +35,7 @@ namespace gr
     private:
       typedef enum
       {
-	NO_SYNC, IN_SYNC, DECODING, FRAME_END
+        NO_SYNC, IN_SYNC, DECODING, FRAME_END
       } decoding_state_t;
 
       /**
@@ -44,13 +45,11 @@ namespace gr
       const bool d_promisc;
       const bool d_descramble;
       const size_t d_max_frame_len;
-      const size_t d_sync_flags_thr;
       decoding_state_t d_state;
       uint8_t d_shift_reg;
       uint8_t d_dec_b;
       uint8_t d_prev_bit_nrzi;
       size_t d_received_bytes;
-      size_t d_sync_received;
       size_t d_decoded_bits;
       digital::lfsr d_lfsr;
       uint8_t *d_frame_buffer;
@@ -64,21 +63,26 @@ namespace gr
       void
       enter_frame_end ();
 
-      void
+      size_t
       descramble_and_decode (const uint8_t *in, size_t nitems);
-      void
+      size_t
       decode (const uint8_t *in, size_t nitems);
+
+      inline void
+      descramble_and_decode_1b (uint8_t in);
+      inline void
+      decode_1b (uint8_t in);
+
 
     public:
       ax25_decoder_bm_impl (const std::string& addr, uint8_t ssid, bool promisc,
-			    bool descramble, size_t max_frame_len,
-			    size_t n_sync_flags);
+                            bool descramble, size_t max_frame_len);
       ~ax25_decoder_bm_impl ();
 
       // Where all the action really happens
       int
       work (int noutput_items, gr_vector_const_void_star &input_items,
-	    gr_vector_void_star &output_items);
+            gr_vector_void_star &output_items);
     };
 
   } // namespace satnogs

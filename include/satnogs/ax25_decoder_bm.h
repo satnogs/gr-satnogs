@@ -2,7 +2,7 @@
 /*
  * gr-satnogs: SatNOGS GNU Radio Out-Of-Tree Module
  *
- *  Copyright (C) 2016, 2017
+ *  Copyright (C) 2016, 2017, 2018
  *  Libre Space Foundation <http://librespacefoundation.org/>
  *
  *  This program is free software: you can redistribute it and/or modify
@@ -75,17 +75,11 @@ namespace gr
        * @param descramble if set to yes, the data will be descrambled prior
        * decoding using the G3RUH self-synchronizing descrambler.
        * @param max_frame_len the maximum allowed frame length
-       * @param n_sync_flags the number of the leading AX.25 SYNC flag
-       * repetitions. Normally the SYNC flag is repeated multiple times
-       * prior the payload transmission. Increasing this parameter
-       * reduces significantly the false alarms
        * @return
        */
       static sptr
       make (const std::string& addr, uint8_t ssid, bool promisc = false,
-	    bool descramble = true,
-	    size_t max_frame_len = 512,
-	    size_t n_sync_flags = 2);
+            bool descramble = true, size_t max_frame_len = 512);
     };
 
   } // namespace satnogs

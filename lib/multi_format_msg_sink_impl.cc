@@ -55,7 +55,8 @@ namespace gr
       if(d_timestamp) {
         std::time_t t = std::time(nullptr);
         std::tm tm = *std::localtime(&t);
-        d_fos << "[" << strftime(buf, sizeof(buf), "%F %T %z", &tm) << "]";
+        strftime(buf, sizeof(buf), "%F %T %z", &tm);
+        d_fos << "[" << buf << "]";
       }
 
       switch (d_format)
