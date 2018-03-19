@@ -119,8 +119,8 @@ namespace gr
             std::ofstream fd (filename.c_str ());
             su = (uint8_t *) pmt::blob_data (msg);
             for (size_t i = 0; i < pmt::blob_length (msg); i++) {
-              fd << std::hex << std::showbase << std::setw (4)
-                  << (uint32_t) su[i] << " ";
+		fd << "0x" << std::hex << std::setw (2)
+		 << std::setfill('0') << (uint32_t) su[i] << " ";
             }
             fd.close ();
             break;
