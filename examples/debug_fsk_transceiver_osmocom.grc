@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<?grc format='1' created='3.7.9'?>
+<?grc format='1' created='3.7.11'?>
 <flow_graph>
   <timestamp>Fri Mar 18 13:57:31 2016</timestamp>
   <block>
@@ -2284,7 +2284,7 @@ is too great and becomes a bottlneck.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(544, 689)</value>
+      <value>(542, 754)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3860,6 +3860,10 @@ is too great and becomes a bottlneck.</value>
       <value>1.0</value>
     </param>
     <param>
+      <key>axislabels</key>
+      <value>True</value>
+    </param>
+    <param>
       <key>bw</key>
       <value>samp_rate_rx/10.0</value>
     </param>
@@ -4128,6 +4132,10 @@ is too great and becomes a bottlneck.</value>
       <value>firdes.WIN_BLACKMAN_hARRIS</value>
     </param>
     <param>
+      <key>label</key>
+      <value>Relative Gain</value>
+    </param>
+    <param>
       <key>ymax</key>
       <value>10</value>
     </param>
@@ -4135,9 +4143,17 @@ is too great and becomes a bottlneck.</value>
       <key>ymin</key>
       <value>-140</value>
     </param>
+    <param>
+      <key>units</key>
+      <value>dB</value>
+    </param>
   </block>
   <block>
     <key>qtgui_waterfall_sink_x</key>
+    <param>
+      <key>axislabels</key>
+      <value>True</value>
+    </param>
     <param>
       <key>bw</key>
       <value>samp_rate_rx/10.0</value>
@@ -4356,37 +4372,6 @@ is too great and becomes a bottlneck.</value>
     </param>
   </block>
   <block>
-    <key>satnogs_clear_text_msg_sink</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(288, 336)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>180</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>satnogs_clear_text_msg_sink_0</value>
-    </param>
-  </block>
-  <block>
     <key>satnogs_debug_msg_source</key>
     <param>
       <key>alias</key>
@@ -4438,6 +4423,53 @@ is too great and becomes a bottlneck.</value>
     </param>
   </block>
   <block>
+    <key>satnogs_multi_format_msg_sink</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>filename</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(247, 363)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_multi_format_msg_sink_0</value>
+    </param>
+    <param>
+      <key>outstream</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>timestamp</key>
+      <value>False</value>
+    </param>
+    <param>
+      <key>format</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
     <key>satnogs_udp_msg_source</key>
     <param>
       <key>alias</key>
@@ -4479,6 +4511,10 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>msg_type</key>
       <value>0</value>
     </param>
     <param>
@@ -4537,12 +4573,32 @@ similar to produce dynamic payloads.</value>
       <value>0</value>
     </param>
     <param>
+      <key>packet_len</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>sync_word</key>
       <value>[0x7A, 0x0E]</value>
     </param>
     <param>
+      <key>ax_25</key>
+      <value>False</value>
+    </param>
+    <param>
       <key>manchester</key>
       <value>False</value>
+    </param>
+    <param>
+      <key>whitening_mask</key>
+      <value>0x1001</value>
+    </param>
+    <param>
+      <key>whitening_order</key>
+      <value>17</value>
+    </param>
+    <param>
+      <key>whitening_seed</key>
+      <value>0x1FF</value>
     </param>
     <param>
       <key>whitening</key>
@@ -4568,6 +4624,14 @@ similar to produce dynamic payloads.</value>
       <value></value>
     </param>
     <param>
+      <key>dest_addr</key>
+      <value>GND</value>
+    </param>
+    <param>
+      <key>dest_ssid</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>_enabled</key>
       <value>1</value>
     </param>
@@ -4577,7 +4641,7 @@ similar to produce dynamic payloads.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(544, 482)</value>
+      <value>(534, 506)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4604,8 +4668,20 @@ similar to produce dynamic payloads.</value>
       <value>True</value>
     </param>
     <param>
+      <key>src_addr</key>
+      <value>UPSAT</value>
+    </param>
+    <param>
+      <key>src_ssid</key>
+      <value>0</value>
+    </param>
+    <param>
       <key>sync_word</key>
       <value>[0x7A, 0x0E]</value>
+    </param>
+    <param>
+      <key>ax_25</key>
+      <value>False</value>
     </param>
     <param>
       <key>manchester</key>
@@ -4696,7 +4772,7 @@ similar to produce dynamic payloads.</value>
   </connection>
   <connection>
     <source_block_id>satnogs_upsat_fsk_frame_acquisition_0</source_block_id>
-    <sink_block_id>satnogs_clear_text_msg_sink_0</sink_block_id>
+    <sink_block_id>satnogs_multi_format_msg_sink_0</sink_block_id>
     <source_key>pdu</source_key>
     <sink_key>in</sink_key>
   </connection>

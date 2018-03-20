@@ -1039,10 +1039,6 @@
   <block>
     <key>satnogs_ax25_decoder_bm</key>
     <param>
-      <key>n_sync_flags</key>
-      <value>1</value>
-    </param>
-    <param>
       <key>alias</key>
       <value></value>
     </param>
@@ -1143,7 +1139,7 @@
     </param>
     <param>
       <key>format</key>
-      <value>0</value>
+      <value>1</value>
     </param>
   </block>
   <block>

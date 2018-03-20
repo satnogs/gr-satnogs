@@ -5,7 +5,7 @@
 # Title: UPSat Transceiver QT
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: SATNOGS transceiver for UPSAT satellite
-# Generated: Sun Feb  5 13:59:36 2017
+# Generated: Tue Mar 20 20:00:52 2018
 ##################################################
 
 if __name__ == '__main__':
@@ -37,6 +37,7 @@ import satnogs
 import sip
 import sys
 import time
+from gnuradio import qtgui
 
 
 class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
@@ -45,6 +46,7 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         gr.top_block.__init__(self, "UPSat Transceiver QT")
         Qt.QWidget.__init__(self)
         self.setWindowTitle("UPSat Transceiver QT")
+        qtgui.util.check_set_qss()
         try:
             self.setWindowIcon(Qt.QIcon.fromTheme('gnuradio-grc'))
         except:
@@ -88,9 +90,9 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         self.baud_rate_uplink = baud_rate_uplink = 1200
         self.baud_rate_downlink = baud_rate_downlink = 9600
         self.tx_frequency = tx_frequency = 145.835e6
-        
+
         self.taps = taps = firdes.low_pass(1.0, samp_rate_rx, 20000, 60000, firdes.WIN_HAMMING, 6.76)
-          
+
         self.samp_rate_tx = samp_rate_tx = satnogs.hw_tx_settings[rx_sdr_device]['samp_rate']
         self.rx_frequency = rx_frequency = 435.765e6
         self.modulation_index_uplink = modulation_index_uplink = deviation / (baud_rate_uplink / 2.0)
@@ -106,7 +108,7 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         self.satnogs_udp_msg_sink_0_0_0 = satnogs.udp_msg_sink(dest_addr, wod_port, 1500)
         self.satnogs_udp_msg_sink_0_0 = satnogs.udp_msg_sink(dest_addr, send_port, 1500)
         self.satnogs_qb50_deframer_0 = satnogs.qb50_deframer(0xe)
-        self.satnogs_multi_format_msg_sink_0 = satnogs.multi_format_msg_sink(1)
+        self.satnogs_multi_format_msg_sink_0 = satnogs.multi_format_msg_sink(1, False, True, '')
         self.satnogs_ax25_decoder_bm_0 = satnogs.ax25_decoder_bm('GND', 0, False, True, 256, 3)
         self.qtgui_waterfall_sink_x_0 = qtgui.waterfall_sink_c(
         	1024, #size
@@ -119,13 +121,13 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         self.qtgui_waterfall_sink_x_0.set_update_time(0.10)
         self.qtgui_waterfall_sink_x_0.enable_grid(False)
         self.qtgui_waterfall_sink_x_0.enable_axis_labels(True)
-        
+
         if not True:
           self.qtgui_waterfall_sink_x_0.disable_legend()
-        
+
         if "complex" == "float" or "complex" == "msg_float":
           self.qtgui_waterfall_sink_x_0.set_plot_pos_half(not True)
-        
+
         labels = ['', '', '', '', '',
                   '', '', '', '', '']
         colors = [0, 0, 0, 0, 0,
@@ -139,9 +141,9 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
                 self.qtgui_waterfall_sink_x_0.set_line_label(i, labels[i])
             self.qtgui_waterfall_sink_x_0.set_color_map(i, colors[i])
             self.qtgui_waterfall_sink_x_0.set_line_alpha(i, alphas[i])
-        
+
         self.qtgui_waterfall_sink_x_0.set_intensity_range(-140, 10)
-        
+
         self._qtgui_waterfall_sink_x_0_win = sip.wrapinstance(self.qtgui_waterfall_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_waterfall_sink_x_0_win)
         self.qtgui_freq_sink_x_0 = qtgui.freq_sink_c(
@@ -161,13 +163,13 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         self.qtgui_freq_sink_x_0.set_fft_average(1.0)
         self.qtgui_freq_sink_x_0.enable_axis_labels(True)
         self.qtgui_freq_sink_x_0.enable_control_panel(True)
-        
+
         if not True:
           self.qtgui_freq_sink_x_0.disable_legend()
-        
+
         if "complex" == "float" or "complex" == "msg_float":
           self.qtgui_freq_sink_x_0.set_plot_pos_half(not True)
-        
+
         labels = ['', '', '', '', '',
                   '', '', '', '', '']
         widths = [1, 1, 1, 1, 1,
@@ -184,7 +186,7 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
             self.qtgui_freq_sink_x_0.set_line_width(i, widths[i])
             self.qtgui_freq_sink_x_0.set_line_color(i, colors[i])
             self.qtgui_freq_sink_x_0.set_line_alpha(i, alphas[i])
-        
+
         self._qtgui_freq_sink_x_0_win = sip.wrapinstance(self.qtgui_freq_sink_x_0.pyqwidget(), Qt.QWidget)
         self.top_layout.addWidget(self._qtgui_freq_sink_x_0_win)
         self.pfb_arb_resampler_xxx_0 = pfb.arb_resampler_ccf(
@@ -192,7 +194,7 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
                   taps=(firdes.low_pass_2(32, 32, 0.8, 0.1, 60)),
         	  flt_size=32)
         self.pfb_arb_resampler_xxx_0.declare_sample_delay(0)
-        	
+
         self.osmosdr_source_0 = osmosdr.source( args="numchan=" + str(1) + " " + satnogs.hw_rx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_source_0.set_sample_rate(samp_rate_rx)
         self.osmosdr_source_0.set_center_freq(rx_frequency - lo_offset, 0)
@@ -205,7 +207,7 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         self.osmosdr_source_0.set_bb_gain(satnogs.hw_rx_settings[rx_sdr_device]['bb_gain'], 0)
         self.osmosdr_source_0.set_antenna(satnogs.hw_rx_settings[rx_sdr_device]['antenna'], 0)
         self.osmosdr_source_0.set_bandwidth(samp_rate_rx, 0)
-          
+
         self.osmosdr_sink_0 = osmosdr.sink( args="numchan=" + str(1) + " " + satnogs.hw_tx_settings[rx_sdr_device]['dev_arg'] )
         self.osmosdr_sink_0.set_sample_rate(samp_rate_tx)
         self.osmosdr_sink_0.set_center_freq(tx_frequency - lo_offset, 0)
@@ -215,7 +217,7 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         self.osmosdr_sink_0.set_bb_gain(satnogs.hw_tx_settings[tx_sdr_device]['bb_gain'], 0)
         self.osmosdr_sink_0.set_antenna(satnogs.hw_tx_settings[tx_sdr_device]['antenna'], 0)
         self.osmosdr_sink_0.set_bandwidth(samp_rate_tx, 0)
-          
+
         self.interp_fir_filter_xxx_0 = filter.interp_fir_filter_fff(samples_per_symbol_tx, (interp_taps))
         self.interp_fir_filter_xxx_0.declare_sample_delay(0)
         self.freq_xlating_fir_filter_xxx_0 = filter.freq_xlating_fir_filter_ccc(decimation_rx, (taps), lo_offset, samp_rate_rx)
@@ -229,24 +231,24 @@ class upsat_transceiver_qt(gr.top_block, Qt.QWidget):
         ##################################################
         # Connections
         ##################################################
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_multi_format_msg_sink_0, 'in'))    
-        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_qb50_deframer_0, 'in'))    
-        self.msg_connect((self.satnogs_qb50_deframer_0, 'out'), (self.satnogs_udp_msg_sink_0_0, 'in'))    
-        self.msg_connect((self.satnogs_qb50_deframer_0, 'wod'), (self.satnogs_udp_msg_sink_0_0_0, 'in'))    
-        self.msg_connect((self.satnogs_udp_msg_source_0, 'msg'), (self.satnogs_upsat_fsk_frame_encoder_0, 'pdu'))    
-        self.connect((self.analog_frequency_modulator_fc_0, 0), (self.pfb_arb_resampler_xxx_0, 0))    
-        self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))    
-        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))    
-        self.connect((self.blocks_multiply_xx_0, 0), (self.osmosdr_sink_0, 0))    
-        self.connect((self.digital_binary_slicer_fb_0, 0), (self.satnogs_ax25_decoder_bm_0, 0))    
-        self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.analog_quadrature_demod_cf_0_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.qtgui_freq_sink_x_0, 0))    
-        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))    
-        self.connect((self.interp_fir_filter_xxx_0, 0), (self.analog_frequency_modulator_fc_0, 0))    
-        self.connect((self.osmosdr_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))    
-        self.connect((self.pfb_arb_resampler_xxx_0, 0), (self.blocks_multiply_xx_0, 0))    
-        self.connect((self.satnogs_upsat_fsk_frame_encoder_0, 0), (self.interp_fir_filter_xxx_0, 0))    
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'failed_pdu'), (self.satnogs_multi_format_msg_sink_0, 'in'))
+        self.msg_connect((self.satnogs_ax25_decoder_bm_0, 'pdu'), (self.satnogs_qb50_deframer_0, 'in'))
+        self.msg_connect((self.satnogs_qb50_deframer_0, 'out'), (self.satnogs_udp_msg_sink_0_0, 'in'))
+        self.msg_connect((self.satnogs_qb50_deframer_0, 'wod'), (self.satnogs_udp_msg_sink_0_0_0, 'in'))
+        self.msg_connect((self.satnogs_udp_msg_source_0, 'msg'), (self.satnogs_upsat_fsk_frame_encoder_0, 'pdu'))
+        self.connect((self.analog_frequency_modulator_fc_0, 0), (self.pfb_arb_resampler_xxx_0, 0))
+        self.connect((self.analog_quadrature_demod_cf_0_0, 0), (self.digital_clock_recovery_mm_xx_0, 0))
+        self.connect((self.analog_sig_source_x_0, 0), (self.blocks_multiply_xx_0, 1))
+        self.connect((self.blocks_multiply_xx_0, 0), (self.osmosdr_sink_0, 0))
+        self.connect((self.digital_binary_slicer_fb_0, 0), (self.satnogs_ax25_decoder_bm_0, 0))
+        self.connect((self.digital_clock_recovery_mm_xx_0, 0), (self.digital_binary_slicer_fb_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.analog_quadrature_demod_cf_0_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.qtgui_freq_sink_x_0, 0))
+        self.connect((self.freq_xlating_fir_filter_xxx_0, 0), (self.qtgui_waterfall_sink_x_0, 0))
+        self.connect((self.interp_fir_filter_xxx_0, 0), (self.analog_frequency_modulator_fc_0, 0))
+        self.connect((self.osmosdr_source_0, 0), (self.freq_xlating_fir_filter_xxx_0, 0))
+        self.connect((self.pfb_arb_resampler_xxx_0, 0), (self.blocks_multiply_xx_0, 0))
+        self.connect((self.satnogs_upsat_fsk_frame_encoder_0, 0), (self.interp_fir_filter_xxx_0, 0))
 
     def closeEvent(self, event):
         self.settings = Qt.QSettings("GNU Radio", "upsat_transceiver_qt")
