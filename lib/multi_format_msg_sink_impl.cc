@@ -67,8 +67,8 @@ namespace gr
         case 1:
           su = (uint8_t *) pmt::blob_data (msg);
           for (size_t i = 0; i < pmt::blob_length (msg); i++) {
-            d_fos << "0x" << std::hex << std::setw (2)
-		 << std::setfill('0') << (uint32_t) su[i] << " ";
+            d_fos << "0x" << std::hex << std::setw (2) << std::setfill ('0')
+                << (uint32_t) su[i] << " ";
           }
           d_fos << std::endl;
           break;
@@ -110,7 +110,7 @@ namespace gr
         case 1: // hex annotated
           su = (uint8_t *) pmt::blob_data (msg);
           for (size_t i = 0; i < pmt::blob_length (msg); i++) {
-            std::cout << std::hex << std::showbase << std::setw (4)
+            std::cout << "0x" << std::hex << std::setw (2) << std::setfill ('0')
                 << (uint32_t) su[i] << " ";
           }
           std::cout << std::endl;
