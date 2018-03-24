@@ -122,7 +122,7 @@ namespace gr
       *out++ = ((0b1111 & dest_ssid) << 1) | 0b01100000;
 
       for (i = 0; i < src_addr.length (); i++) {
-        *out++ = dest_addr[i] << 1;
+        *out++ = src_addr[i] << 1;
       }
       for (; i < AX25_CALLSIGN_MAX_LEN; i++) {
         *out++ = ' ' << 1;
@@ -131,7 +131,7 @@ namespace gr
        * the trailing bit is set to 1.
        * /
        /* FIXME: C bit is set to 0 implicitly */
-      *out++ = ((0b1111 & dest_ssid) << 1) | 0b01100001;
+      *out++ = ((0b1111 & src_ssid) << 1) | 0b01100001;
       return AX25_MIN_ADDR_LEN;
     }
 

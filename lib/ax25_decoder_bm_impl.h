@@ -72,6 +72,8 @@ namespace gr
       descramble_and_decode_1b (uint8_t in);
       inline void
       decode_1b (uint8_t in);
+      inline bool
+      check_byte ();
 
 
     public:
