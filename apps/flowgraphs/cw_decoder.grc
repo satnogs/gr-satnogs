@@ -2964,6 +2964,10 @@ we shift the LO a little further</value>
       <value>0</value>
     </param>
     <param>
+      <key>min_frame_len</key>
+      <value>3</value>
+    </param>
+    <param>
       <key>unrecognized_char</key>
       <value>ord('#')</value>
     </param>

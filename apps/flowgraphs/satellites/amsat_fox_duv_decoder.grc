@@ -3086,7 +3086,7 @@ max_modulation_freq = 3000</value>
     </param>
     <param>
       <key>output_type</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>prefix_name</key>

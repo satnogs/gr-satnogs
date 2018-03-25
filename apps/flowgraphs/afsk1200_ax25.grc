@@ -892,7 +892,7 @@ RX sampling rate</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1771, 582)</value>
+      <value>(2034, 606)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3307,7 +3307,7 @@ max_modulation_freq = 3000</value>
     </param>
     <param>
       <key>output_type</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>prefix_name</key>
@@ -3402,6 +3402,53 @@ max_modulation_freq = 3000</value>
     <param>
       <key>samp_rate</key>
       <value>audio_samp_rate</value>
+    </param>
+  </block>
+  <block>
+    <key>satnogs_quad_demod_filter_ff</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1795, 578)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>gain</key>
+      <value>((audio_samp_rate/10) / baud_rate)/(math.pi*1)</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_quad_demod_filter_ff_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>win</key>
+      <value>80</value>
     </param>
   </block>
   <block>
@@ -3807,7 +3854,7 @@ max_modulation_freq = 3000</value>
   </connection>
   <connection>
     <source_block_id>digital_clock_recovery_mm_xx_0</source_block_id>
-    <sink_block_id>digital_binary_slicer_fb_0</sink_block_id>
+    <sink_block_id>satnogs_quad_demod_filter_ff_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -3862,6 +3909,12 @@ max_modulation_freq = 3000</value>
   <connection>
     <source_block_id>satnogs_coarse_doppler_correction_cc_0</source_block_id>
     <sink_block_id>freq_xlating_fir_filter_xxx_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_quad_demod_filter_ff_0</source_block_id>
+    <sink_block_id>digital_binary_slicer_fb_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>

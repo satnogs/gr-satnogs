@@ -5,7 +5,7 @@
 # Title: CW Decoder
 # Author: Manolis Surligas (surligas@gmail.com)
 # Description: A CW (Morse) Decoder
-# Generated: Fri Feb 23 21:35:24 2018
+# Generated: Sun Mar 25 17:48:02 2018
 ##################################################
 
 from gnuradio import analog
@@ -66,7 +66,7 @@ class satnogs_cw_decoder(gr.top_block):
         self.satnogs_udp_msg_sink_0_0 = satnogs.udp_msg_sink(udp_IP, udp_port, 1500)
         self.satnogs_tcp_rigctl_msg_source_0 = satnogs.tcp_rigctl_msg_source("127.0.0.1", rigctl_port, False, 1000, 1500)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
-        self.satnogs_morse_decoder_0 = satnogs.morse_decoder(ord('#'))
+        self.satnogs_morse_decoder_0 = satnogs.morse_decoder(ord('#'), 3)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(16768, iq_file_path, False, enable_iq_dump)
         self.satnogs_frame_file_sink_0_0 = satnogs.frame_file_sink(decoded_data_file_path, 0)
         self.satnogs_cw_to_symbol_0 = satnogs.cw_to_symbol(samp_rate_rx/xlating_decimation/lpf_decimation/4, 0.25, 0.75, wpm)

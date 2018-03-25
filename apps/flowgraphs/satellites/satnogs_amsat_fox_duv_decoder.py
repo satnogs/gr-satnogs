@@ -5,7 +5,7 @@
 # Title: AMSAT FOX DUV Decoder
 # Author: Thanos Giolias (agiolias@csd.uoc.gr), Nikos Karamolegos (karamolegkos.n@gmail.com), Manolis Surligas (surligas@gmail.com)
 # Description: A DUV Decoder for the AMSAT FOX satellites
-# Generated: Fri Feb  2 11:24:35 2018
+# Generated: Sun Mar 25 17:42:58 2018
 ##################################################
 
 from gnuradio import analog
@@ -68,7 +68,7 @@ class satnogs_amsat_fox_duv_decoder(gr.top_block):
         self.satnogs_quad_demod_filter_ff_0 = satnogs.quad_demod_filter_ff(1.2)
         self.satnogs_ogg_encoder_0 = satnogs.ogg_encoder(file_path, audio_samp_rate, 1.0)
         self.satnogs_iq_sink_0 = satnogs.iq_sink(32767, iq_file_path, False, enable_iq_dump)
-        self.satnogs_frame_file_sink_0_1_0 = satnogs.frame_file_sink(decoded_data_file_path, 1)
+        self.satnogs_frame_file_sink_0_1_0 = satnogs.frame_file_sink(decoded_data_file_path, 0)
         self.satnogs_fox_telem_mm_0 = satnogs.fox_telem_mm()
         self.satnogs_decoder_8b10b_0 = satnogs.decoder_8b10b('0011111010', 960)
 
