@@ -25,7 +25,6 @@ add_subdirectory(scripts)
 GR_PYTHON_INSTALL(
     PROGRAMS
     flowgraphs/satnogs_fm_demod.py
-    flowgraphs/satnogs_cw_demod.py
     flowgraphs/satnogs_generic_iq_receiver.py
     flowgraphs/satnogs_bpsk_demod.py
     flowgraphs/satnogs_cw_decoder.py
