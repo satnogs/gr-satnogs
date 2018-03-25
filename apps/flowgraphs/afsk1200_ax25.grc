@@ -3113,10 +3113,6 @@ max_modulation_freq = 3000</value>
   <block>
     <key>satnogs_ax25_decoder_bm</key>
     <param>
-      <key>n_sync_flags</key>
-      <value>1</value>
-    </param>
-    <param>
       <key>alias</key>
       <value></value>
     </param>
@@ -3147,6 +3143,65 @@ max_modulation_freq = 3000</value>
     <param>
       <key>id</key>
       <value>satnogs_ax25_decoder_bm_0</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>max_frame_len</key>
+      <value>1024</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>promisc</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>addr</key>
+      <value>'GND'</value>
+    </param>
+    <param>
+      <key>ssid</key>
+      <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>satnogs_ax25_decoder_bm</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>descrambling</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(1563, 785)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>180</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>satnogs_ax25_decoder_bm_0_0</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -3240,7 +3295,7 @@ max_modulation_freq = 3000</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1332, 706)</value>
+      <value>(1292, 881)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3428,7 +3483,7 @@ max_modulation_freq = 3000</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1364, 801)</value>
+      <value>(1268, 666)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3745,6 +3800,12 @@ max_modulation_freq = 3000</value>
     <sink_key>0</sink_key>
   </connection>
   <connection>
+    <source_block_id>digital_binary_slicer_fb_0</source_block_id>
+    <sink_block_id>satnogs_ax25_decoder_bm_0_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
     <source_block_id>digital_clock_recovery_mm_xx_0</source_block_id>
     <sink_block_id>digital_binary_slicer_fb_0</sink_block_id>
     <source_key>0</source_key>
@@ -3782,6 +3843,18 @@ max_modulation_freq = 3000</value>
   </connection>
   <connection>
     <source_block_id>satnogs_ax25_decoder_bm_0</source_block_id>
+    <sink_block_id>satnogs_udp_msg_sink_0_0</sink_block_id>
+    <source_key>pdu</source_key>
+    <sink_key>in</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_ax25_decoder_bm_0_0</source_block_id>
+    <sink_block_id>satnogs_frame_file_sink_0_1_0</sink_block_id>
+    <source_key>pdu</source_key>
+    <sink_key>frame</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>satnogs_ax25_decoder_bm_0_0</source_block_id>
     <sink_block_id>satnogs_udp_msg_sink_0_0</sink_block_id>
     <source_key>pdu</source_key>
     <sink_key>in</sink_key>
