@@ -27,6 +27,7 @@ fm_demod_settings = {'usrpb200' : {'decimation_rx' : 5, 'audio_gain' : 0.9},
                   'usrp2' : {'decimation_rx' : 5, 'audio_gain' : 0.9},
                   'airspy' : {'decimation_rx' : 10, 'audio_gain' : 0.9},
                   'airspymini' : {'decimation_rx' : 5, 'audio_gain' : 0.9},
+                  'airspyhf' : {'decimation_rx' : 5, 'audio_gain' : 0.9},
                   'hackrf' : {'decimation_rx' : 5, 'audio_gain' : 0.9},
                   'rtlsdr' : {'decimation_rx' : 5, 'audio_gain' : 0.9}
                    }
